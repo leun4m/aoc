@@ -1,0 +1,9 @@
+[package]
+name = "aoc"
+version = "0.1.0"
+authors = ["Manuel Krebs <me@leun4m.de>"]
+edition = "2018"
+
+[dependencies]
+structopt = "0.3"
+regex = "1.4"

@@ -1,0 +1,44 @@
+mod year_2020;
+
+use std::fs::File;
+use std::io::{BufReader, Read};
+use std::path::PathBuf;
+use structopt::StructOpt;
+
+#[derive(Debug, StructOpt)]
+#[structopt(
+    name = "Advent of Code 2015",
+    about = "A solver for the Advent of Code riddles.",
+    author
+)]
+struct Opt {
+    /// Set year (2 or 4 digits)
+    #[structopt(short, long)]
+    year: u16,
+
+    /// Set day
+    #[structopt(short, long)]
+    day: u8,
+
+    /// Input file
+    #[structopt(parse(from_os_str))]
+    input: PathBuf,
+}
+fn main() {
+    let opt = Opt::from_args();
+    let input = read_file(opt.input);
+    match opt.year {
+        20 | 2020 => year_2020::solve_day(opt.day, &input),
+        _ => println!("Not a valid year!"),
+    }
+}
+
+fn read_file(path: PathBuf) -> String {
+    let file = File::open(path).expect("File could not be opened!");
+    let mut buf_reader = BufReader::new(file);
+    let mut contents = String::new();
+    buf_reader
+        .read_to_string(&mut contents)
+        .expect("Not readable!");
+    contents
+}
