@@ -1,3 +1,4 @@
+mod year_2015;
 mod year_2020;
 
 use std::fs::File;
@@ -28,6 +29,7 @@ fn main() {
     let opt = Opt::from_args();
     let input = read_file(opt.input);
     match opt.year {
+        15 | 2015 => year_2015::solve_day(opt.day, &input),
         20 | 2020 => year_2020::solve_day(opt.day, &input),
         _ => println!("Not a valid year!"),
     }
