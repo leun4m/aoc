@@ -18,6 +18,7 @@ mod test {
     use super::find_number;
 
     #[test]
+    #[ignore]
     fn example() {
         assert_eq!(609043, find_number("abcdef", 5));
         assert_eq!(1048970, find_number("pqrstuv", 5));
