@@ -8,7 +8,7 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
-    name = "Advent of Code 2015",
+    name = "Advent of Code",
     about = "A solver for the Advent of Code riddles.",
     author
 )]
@@ -21,13 +21,26 @@ struct Opt {
     #[structopt(short, long)]
     day: u8,
 
-    /// Input file
+    /// Input value
+    #[structopt(short, long)]
+    input: Option<String>,
+
+    /// Input file - if present this will be taken as input
     #[structopt(parse(from_os_str))]
-    input: PathBuf,
+    input_file: Option<PathBuf>,
 }
 fn main() {
     let opt = Opt::from_args();
-    let input = read_file(opt.input);
+
+    let input = if opt.input_file.is_some() {
+        read_file(opt.input_file.unwrap())
+    } else if opt.input.is_some() {
+        opt.input.unwrap()
+    } else {
+        eprintln!("No input given!");
+        return;
+    };
+
     match opt.year {
         15 | 2015 => year_2015::solve_day(opt.day, &input),
         20 | 2020 => year_2020::solve_day(opt.day, &input),
