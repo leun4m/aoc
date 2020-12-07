@@ -11,36 +11,27 @@ pub fn main(input: &str) {
 }
 
 fn part_one(groups: &Vec<Vec<Vec<char>>>) -> usize {
-    let mut group_answers: Vec<HashSet<&char>> = Vec::new();
-    for group in groups {
-        let mut group_set = HashSet::new();
-        for person in group {
-            for answer in person {
-                group_set.insert(answer);
-            }
-        }
-        group_answers.push(group_set.clone());
-        group_set.clear();
-    }
-
-    let mut sum = 0;
-    for a in &group_answers {
-        sum += a.len();
-    }
-    sum
+    groups
+        .iter()
+        .map(|group| {
+            group
+                .iter()
+                .flat_map(|person| person)
+                .collect::<HashSet<&char>>()
+                .len()
+        })
+        .sum()
 }
 
 fn part_two(groups: &Vec<Vec<Vec<char>>>) -> usize {
-    let mut group_answers = Vec::new();
+    let mut sum = 0;
     for group in groups {
         let mut group_set = Vec::new();
-        let mut first = true;
+        let mut first_person = true;
         for person in group {
-            if first {
-                first = false;
-                for c in person {
-                    group_set.push(c);
-                }
+            if first_person {
+                first_person = false;
+                group_set = person.iter().map(|x| x).collect();
             } else {
                 group_set = group_set
                     .iter()
@@ -49,29 +40,16 @@ fn part_two(groups: &Vec<Vec<Vec<char>>>) -> usize {
                     .collect();
             }
         }
-        group_answers.push(group_set.clone());
+        sum += group_set.len();
         group_set.clear();
     }
 
-    let mut sum = 0;
-    for a in &group_answers {
-        sum += a.len();
-    }
     sum
 }
 
 fn parse_input(input: &str) -> Vec<Vec<Vec<char>>> {
-    let mut groups = Vec::new();
-    let mut group = Vec::new();
-    for line in input.lines() {
-        if line.is_empty() {
-            groups.push(group.clone());
-            group.clear();
-        } else {
-            let person: Vec<char> = line.chars().collect();
-            group.push(person);
-        }
-    }
-    groups.push(group.clone());
-    groups
+    input
+        .split("\n\n")
+        .map(|x| x.split("\n").map(|x| x.chars().collect()).collect())
+        .collect()
 }
