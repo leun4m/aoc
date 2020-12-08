@@ -1,13 +1,13 @@
 use std::collections::HashSet;
 
 pub fn main(input: &str) {
-    let lines: Vec<&str> = input.lines().collect();
+    let lines: Vec<Operation> = input.lines().map(|x| Operation::parse(x)).collect();
 
     println!("Part One: {}", run(&lines));
     println!("Part Two: {}", find_bug_line(&lines).unwrap());
 }
 
-fn find_bug_line(lines: &Vec<&str>) -> Option<i32> {
+fn find_bug_line(lines: &Vec<Operation>) -> Option<i32> {
     for i in 0..lines.len() {
         let a = run_modified(lines, i);
         if a.is_some() {
@@ -17,7 +17,7 @@ fn find_bug_line(lines: &Vec<&str>) -> Option<i32> {
     None
 }
 
-fn run_modified(lines: &Vec<&str>, change_idx: usize) -> Option<i32> {
+fn run_modified(lines: &Vec<Operation>, change_idx: usize) -> Option<i32> {
     let mut current = 0;
     let mut global = 0;
     let mut visited_lines = HashSet::new();
@@ -25,15 +25,14 @@ fn run_modified(lines: &Vec<&str>, change_idx: usize) -> Option<i32> {
     while !visited_lines.contains(&current) && current != lines.len() {
         visited_lines.insert(current);
 
-        let line = if current == change_idx {
-            if lines[current].starts_with("nop") {
-                lines[current].replace("nop", "jmp")
-            } else {
-                lines[current].replace("jmp", "nop")
+        let mut line = lines[current];
+        if current == change_idx {
+            match lines[current] {
+                Operation::NOP(x) => line = Operation::JMP(x),
+                Operation::JMP(x) => line = Operation::NOP(x),
+                Operation::ACC(x) => line = Operation::ACC(x),
             }
-        } else {
-            lines[current].to_string()
-        };
+        }
 
         let result = do_operation(&line, current, global);
         current = result.0;
@@ -47,14 +46,14 @@ fn run_modified(lines: &Vec<&str>, change_idx: usize) -> Option<i32> {
     }
 }
 
-fn run(lines: &Vec<&str>) -> i32 {
+fn run(lines: &Vec<Operation>) -> i32 {
     let mut current = 0;
     let mut global = 0;
     let mut visited_lines = HashSet::new();
 
     while !visited_lines.contains(&current) {
         visited_lines.insert(current);
-        let result = do_operation(lines[current], current, global);
+        let result = do_operation(&lines[current], current, global);
         current = result.0;
         global = result.1;
     }
@@ -62,18 +61,31 @@ fn run(lines: &Vec<&str>) -> i32 {
     global
 }
 
-fn do_operation(operation: &str, current: usize, mut global: i32) -> (usize, i32) {
-    if operation.starts_with("nop") {
-        (current + 1, global)
-    } else if operation.starts_with("acc") {
-        global += operation.replace("acc ", "").parse::<i32>().unwrap();
-        (current + 1, global)
-    } else if operation.starts_with("jmp") {
-        (
-            (current as i32 + operation.replace("jmp ", "").parse::<i32>().unwrap()) as usize,
-            global,
-        )
-    } else {
-        panic!("unexpected")
+fn do_operation(operation: &Operation, current: usize, global: i32) -> (usize, i32) {
+    match operation {
+        Operation::NOP(_) => (current + 1, global),
+        Operation::ACC(x) => (current + 1, global + x),
+        Operation::JMP(x) => ((current as i32 + x) as usize, global),
+    }
+}
+
+#[derive(Copy, Clone)]
+enum Operation {
+    NOP(i32),
+    ACC(i32),
+    JMP(i32),
+}
+
+impl Operation {
+    fn parse(operation: &str) -> Self {
+        let splits: Vec<&str> = operation.split(" ").collect();
+        let value = splits[1].parse::<i32>().unwrap();
+
+        match splits[0] {
+            "nop" => Operation::NOP(value),
+            "acc" => Operation::ACC(value),
+            "jmp" => Operation::JMP(value),
+            _ => panic!("unexpected"),
+        }
     }
 }
