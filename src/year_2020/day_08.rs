@@ -25,13 +25,15 @@ fn run_modified(lines: &Vec<Operation>, change_idx: usize) -> Option<i32> {
     while !visited_lines.contains(&current) && current != lines.len() {
         visited_lines.insert(current);
 
-        let mut line = lines[current];
+        let line;
         if current == change_idx {
-            match lines[current] {
-                Operation::NOP(x) => line = Operation::JMP(x),
-                Operation::JMP(x) => line = Operation::NOP(x),
-                Operation::ACC(x) => line = Operation::ACC(x),
+            line = match lines[current] {
+                Operation::NOP(x) => Operation::JMP(x),
+                Operation::JMP(x) => Operation::NOP(x),
+                Operation::ACC(x) => Operation::ACC(x),
             }
+        } else {
+            line = lines[current];
         }
 
         let result = do_operation(&line, current, global);
