@@ -25,7 +25,7 @@ fn internal(input: &str, observed_wire: &str) -> (BaseType, BaseType) {
 
     first_read(input, &mut wires, &mut instructions);
     apply_instructions(&mut wires, &instructions);
-    let signal_one = wires.get(observed_wire).unwrap().clone();
+    let signal_one = *wires.get(observed_wire).unwrap();
 
     wires.clear();
     instructions.clear();
@@ -33,7 +33,7 @@ fn internal(input: &str, observed_wire: &str) -> (BaseType, BaseType) {
     first_read(input, &mut wires, &mut instructions);
     wires.insert(String::from(WIRE_TO_CHANGE), signal_one);
     apply_instructions(&mut wires, &instructions);
-    let signal_two = wires.get(observed_wire).unwrap().clone();
+    let signal_two = *wires.get(observed_wire).unwrap();
 
     (signal_one, signal_two)
 }
@@ -49,7 +49,7 @@ impl Symbol {
         let reg_number = Regex::new(REGEX_NUMBER).unwrap();
         let cap_num = reg_number.captures(input);
 
-        if input.contains(" ") {
+        if input.contains(' ') {
             Option::None
         } else if cap_num.is_some() {
             let signal = cap_num
@@ -67,11 +67,11 @@ impl Symbol {
 
     fn interpret(&self, wires: &HashMap<String, BaseType>) -> Option<BaseType> {
         match self {
-            Symbol::NUMBER(v) => Some(v.clone()),
+            Symbol::NUMBER(v) => Some(*v),
             Symbol::NAME(v) => {
                 let val = wires.get(v);
-                if val.is_some() {
-                    Some(val.unwrap().clone())
+                if let Some(x) = val {
+                    Some(*x)
                 } else {
                     None
                 }
@@ -131,13 +131,12 @@ impl Instruction {
 
         if cap_name.is_some() {
             Instruction::ASSIGN(Symbol::parse(expression).unwrap(), wire.to_string())
-        } else if cap_not.is_some() {
+        } else if let Some(not) = cap_not {
             Instruction::NOT(
-                Symbol::parse(cap_not.unwrap().get(1).unwrap().as_str()).unwrap(),
+                Symbol::parse(not.get(1).unwrap().as_str()).unwrap(),
                 wire.to_string(),
             )
-        } else if cap_binary.is_some() {
-            let op_expression = cap_binary.unwrap();
+        } else if let Some(op_expression) = cap_binary {
             Instruction::from_binary(
                 op_expression.get(1).unwrap().as_str(),
                 op_expression.get(2).unwrap().as_str(),
@@ -150,14 +149,16 @@ impl Instruction {
     }
 }
 
-fn apply_instructions(wires: &mut HashMap<String, BaseType>, instructions: &Vec<Instruction>) {
+fn apply_instructions(wires: &mut HashMap<String, BaseType>, instructions: &[Instruction]) {
     let mut applied_instructions = Vec::new();
     while applied_instructions.len() < instructions.len() {
         for instruction in instructions {
             let signal = perform_operation(&wires, &instruction);
-            if signal.is_some() && !applied_instructions.contains(&instruction) {
-                wires.insert(instruction.get_aim(), signal.unwrap());
-                applied_instructions.push(instruction);
+            if let Some(sig) = signal {
+                if !applied_instructions.contains(&instruction) {
+                    wires.insert(instruction.get_aim(), sig);
+                    applied_instructions.push(instruction);
+                }
             }
         }
     }
@@ -176,15 +177,14 @@ fn first_read(
     for line in input.lines() {
         let captures = reg_instruction
             .captures(line)
-            .expect(&format!("Invalid line: {}", &line));
+            .unwrap_or_else(|| panic!("Invalid line: {}", &line));
 
         let wire = captures.get(2).unwrap().as_str().to_string();
         let expression = captures.get(1).unwrap().as_str();
         let option_symbol = Symbol::parse(expression);
-        if option_symbol.is_some() {
-            let symbol = option_symbol.unwrap();
+        if let Some(symbol) = option_symbol {
             if let Symbol::NUMBER(a) = &symbol {
-                wires.insert(wire, a.clone());
+                wires.insert(wire, *a);
             } else {
                 instructions.push(Instruction::ASSIGN(symbol, wire))
             }
@@ -209,8 +209,8 @@ fn perform_operation(
         Instruction::ASSIGN(a, _) => a.interpret(&wires),
         Instruction::NOT(a, _) => {
             let option = a.interpret(&wires);
-            if option.is_some() {
-                Some(!option.unwrap())
+            if let Some(x) = option {
+                Some(!x)
             } else {
                 None
             }
@@ -242,11 +242,12 @@ fn apply_binary<F>(a: Option<BaseType>, b: Option<BaseType>, f: F) -> Option<Bas
 where
     F: Fn(BaseType, BaseType) -> BaseType,
 {
-    if a.is_some() && b.is_some() {
-        Some(f(a.unwrap(), b.unwrap()))
-    } else {
-        None
+    if let Some(x) = a {
+        if let Some(y) = b {
+            return Some(f(x, y));
+        }
     }
+    None
 }
 
 #[cfg(test)]

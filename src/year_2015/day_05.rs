@@ -38,16 +38,14 @@ fn contains_axa(text: &str) -> bool {
 fn contains_pair_twice(text: &str) -> bool {
     let mut last_char = NULL_CHAR;
     let mut pairs = HashMap::new();
-    let mut i: i32 = 0;
+    let mut i = 0;
     for char in text.chars() {
         let pair = format!("{}{}", last_char, char);
         let option = pairs.get(&pair);
         if option.is_some() && *option.unwrap() < (i - 1) {
             return true;
         } else {
-            if !pairs.contains_key(&pair) {
-                pairs.insert(pair, i);
-            }
+            pairs.entry(pair).or_insert(i);
             last_char = char;
             i += 1;
         }

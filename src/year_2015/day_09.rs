@@ -22,7 +22,7 @@ fn internal(input: &str) -> (u64, u64) {
 }
 
 fn shortest_longest(
-    permutations: &Vec<Vec<String>>,
+    permutations: &[Vec<String>],
     connections: &HashMap<(String, String), u64>,
 ) -> (u64, u64) {
     let mut min_duration = u64::MAX;
@@ -73,7 +73,7 @@ fn permutation_heap<T: Clone + Debug>(elements: &mut Vec<T>) -> Vec<Vec<T>> {
                 elements.swap(c[i], i);
             }
             generated_permutations.push(Vec::from(elements.as_slice()));
-            c[i] = c[i] + 1;
+            c[i] += 1;
             i = 0;
         } else {
             c[i] = 0;
@@ -88,7 +88,7 @@ fn parse_line(line: &str) -> (String, String, u64) {
     let regex = Regex::new(r"^(\w+) to (\w+) = (\d+)$").unwrap();
     let captures = regex
         .captures(line)
-        .expect(&format!("Line doesn't look as expected: {}", line));
+        .unwrap_or_else(|| panic!("Line doesn't look as expected: {}", line));
     (
         captures.get(1).unwrap().as_str().to_string(),
         captures.get(2).unwrap().as_str().to_string(),

@@ -18,7 +18,7 @@ fn main_internal(input: &str) -> (u32, u32) {
         let regex = Regex::new(r"^(.+) (\d+),(\d+) through (\d+),(\d+)$").unwrap();
         let cap = regex
             .captures(line)
-            .expect(&format!("Invalid cmd: {}", &line));
+            .unwrap_or_else(|| panic!("Invalid cmd: {}", &line));
         let cmd = cap.get(1).unwrap().as_str();
         let start = (
             cap.get(2).unwrap().as_str().parse::<usize>().unwrap(),
@@ -34,7 +34,7 @@ fn main_internal(input: &str) -> (u32, u32) {
     (count_lit_lights(&io_matrix), sum_brightness(&led_matrix))
 }
 
-fn sum_brightness(matrix: &Matrix<u32>) -> u32 {
+fn sum_brightness(matrix: &[Vec<u32>]) -> u32 {
     let mut brightness = 0;
     for row in matrix.iter() {
         for led in row.iter() {
@@ -44,7 +44,7 @@ fn sum_brightness(matrix: &Matrix<u32>) -> u32 {
     brightness
 }
 
-fn count_lit_lights(matrix: &Matrix<bool>) -> u32 {
+fn count_lit_lights(matrix: &[Vec<bool>]) -> u32 {
     let mut lights_on = 0;
     for row in matrix.iter() {
         for led in row.iter() {
@@ -79,9 +79,9 @@ where
     F: Fn(T) -> T,
     T: Copy,
 {
-    for x in start.0..(stop.0 + 1) {
-        for y in start.1..(stop.1 + 1) {
-            matrix[x][y] = f(matrix[x][y]);
+    for row in matrix.iter_mut().take(stop.0 + 1).skip(start.0) {
+        for cell in row.iter_mut().take(stop.1 + 1).skip(start.1) {
+            *cell = f(*cell);
         }
     }
 }

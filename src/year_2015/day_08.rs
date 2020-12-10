@@ -56,7 +56,7 @@ fn count(input: &str) -> RiddleResult {
     for line in input.lines() {
         let mut inside = regex
             .captures(line)
-            .expect(&format!("This is not surrounded by \": {}", line))
+            .unwrap_or_else(|| panic!("This is not surrounded by \": {}", line))
             .get(1)
             .unwrap()
             .as_str()
