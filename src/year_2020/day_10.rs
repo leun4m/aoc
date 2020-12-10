@@ -1,29 +1,31 @@
 pub fn main(input: &str) {
     let adapters = parse_input(input);
     let (difference_1, difference_3) = calculate_differences(&adapters);
+    let variations = calculate_variations(&adapters);
+
+    println!("Part 1: {}", difference_1 * difference_3);
+    println!("Part 2: {}", variations);
+}
+
+fn calculate_variations(adapters: &Vec<u64>) -> i64 {
     let mut product: i64 = 1;
     calculate_difference_vec(&adapters)
         .split(|&x| x == 3)
-        .for_each(|x| {
-            let a = x.len();
-            if a > 1 {
-                product *= match a {
-                    2 => 2,
-                    3 => 4,
-                    4 => 7,
-                    5 => 11,
-                    _ => panic!("unexpected a: {}", a),
-                }
-            }
-        });
+        .for_each(|x| product *= variations(x.len()));
+    product
+}
 
-    println!(
-        "Difference: {} {} {}",
-        difference_1,
-        difference_3,
-        difference_1 * difference_3
-    );
-    println!("Part TWO: {}", product);
+/// Calculates the number of variations for a given count of one distances
+fn variations(ones: usize) -> i64 {
+    match ones {
+        0 | 1 => 1,
+        2 => 2,
+        3 => 4,
+        4 => 7,
+        5 => 11,
+        // 1/2 * x^2 + 1/2 * x + 1
+        _ => panic!("unexpected number of 1s: {}", ones),
+    }
 }
 
 fn calculate_difference_vec(adapters: &Vec<u64>) -> Vec<u8> {
@@ -61,19 +63,3 @@ fn parse_input(input: &str) -> Vec<u64> {
     adapters.sort();
     adapters
 }
-
-// #[cfg(test)]
-// mod test {
-//     use super::*;
-
-// #[test]
-// fn permutations_test() {
-//     let a = arrangements(2);
-//     println!("{:?}", a);
-//     assert_eq!(4, a.len());
-//     assert!(a.contains(&vec!(false, false)));
-//     assert!(a.contains(&vec!(false, true)));
-//     assert!(a.contains(&vec!(true, false)));
-//     assert!(a.contains(&vec!(true, true)));
-// }
-// }
