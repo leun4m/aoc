@@ -27,7 +27,7 @@ pub fn main(input: &str) {
 }
 
 fn parse_map(input: &str) -> World {
-    let width = input.lines().nth(0).unwrap().chars().count() as u64;
+    let width = input.lines().next().unwrap().chars().count() as u64;
     let mut map = HashMap::new();
     let mut x = 0;
     let mut y = 0;

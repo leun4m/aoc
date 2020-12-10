@@ -18,7 +18,7 @@ fn parse_lines(input: &str) -> Vec<u64> {
 fn find_wrong_line(numbers: &[u64]) -> Option<u64> {
     for (i, number) in numbers[PREAMBLE..].iter().enumerate() {
         if !is_any_sum(*number, &numbers[i..(i + PREAMBLE)]) {
-            return Some(number.clone());
+            return Some(*number);
         }
     }
     None

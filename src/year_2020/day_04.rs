@@ -4,7 +4,7 @@ pub fn main(input: &str) {
     for passport_data in input.split("\n\n") {
         let mut passport = Passport::new();
         for pairs in passport_data.split_whitespace() {
-            let key_value = pairs.split(":").collect::<Vec<&str>>();
+            let key_value = pairs.split(':').collect::<Vec<&str>>();
             match key_value[0] {
                 "byr" => passport.byr = key_value[1],
                 "iyr" => passport.iyr = key_value[1],
@@ -94,7 +94,7 @@ impl<'a> Passport<'a> {
     }
 
     fn is_valid_hair_color(&self) -> bool {
-        self.hcl.starts_with("#") && u64::from_str_radix(&self.hcl.replace("#", ""), 16).is_ok()
+        self.hcl.starts_with('#') && u64::from_str_radix(&self.hcl.replace("#", ""), 16).is_ok()
     }
 
     fn is_valid_eye_color(&self) -> bool {

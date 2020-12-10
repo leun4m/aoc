@@ -15,7 +15,7 @@ pub fn main(input: &str) {
 
 const EXPECTED_SUM: u32 = 2020;
 
-fn find_2_numbers(numbers: &Vec<u32>) -> Option<u32> {
+fn find_2_numbers(numbers: &[u32]) -> Option<u32> {
     for i in 0..(numbers.len() - 2) {
         for j in (i + 1)..(numbers.len() - 1) {
             if numbers[i] + numbers[j] == EXPECTED_SUM {
@@ -26,7 +26,7 @@ fn find_2_numbers(numbers: &Vec<u32>) -> Option<u32> {
     None
 }
 
-fn find_3_numbers(numbers: &Vec<u32>) -> Option<u32> {
+fn find_3_numbers(numbers: &[u32]) -> Option<u32> {
     for i in 0..(numbers.len() - 2) {
         for j in (i + 1)..(numbers.len() - 1) {
             for k in (j + 1)..numbers.len() {

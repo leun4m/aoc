@@ -30,11 +30,7 @@ fn is_valid_2(min: usize, max: usize, char: char, password: &str) -> bool {
 }
 
 fn is_valid_1(min: usize, max: usize, char: char, password: &str) -> bool {
-    let count = password
-        .chars()
-        .filter(|c| c == &char)
-        .collect::<Vec<char>>()
-        .len();
+    let count = password.chars().filter(|c| c == &char).count();
 
     min <= count && count <= max
 }

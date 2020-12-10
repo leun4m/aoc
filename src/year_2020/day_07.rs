@@ -64,7 +64,7 @@ fn parse_file(input: &str) -> HashMap<String, HashMap<String, u32>> {
         if let Some(a) = reg_left.captures(line) {
             let color = a.get(1).unwrap().as_str().to_string();
             let mut map = HashMap::new();
-            for expression in reg_left.replace_all(line, "").split(",") {
+            for expression in reg_left.replace_all(line, "").split(',') {
                 if let Some(captures) = reg_right.captures(&expression) {
                     map.insert(
                         captures.get(2).unwrap().as_str().to_string(),

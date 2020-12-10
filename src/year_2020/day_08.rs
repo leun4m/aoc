@@ -7,7 +7,7 @@ pub fn main(input: &str) {
     println!("Part Two: {}", find_bug_line(&lines).unwrap());
 }
 
-fn find_bug_line(lines: &Vec<Operation>) -> Option<i32> {
+fn find_bug_line(lines: &[Operation]) -> Option<i32> {
     for i in 0..lines.len() {
         let a = run_modified(lines, i);
         if a.is_some() {
@@ -17,7 +17,7 @@ fn find_bug_line(lines: &Vec<Operation>) -> Option<i32> {
     None
 }
 
-fn run_modified(lines: &Vec<Operation>, change_idx: usize) -> Option<i32> {
+fn run_modified(lines: &[Operation], change_idx: usize) -> Option<i32> {
     let mut current = 0;
     let mut global = 0;
     let mut visited_lines = HashSet::new();
@@ -48,7 +48,7 @@ fn run_modified(lines: &Vec<Operation>, change_idx: usize) -> Option<i32> {
     }
 }
 
-fn run(lines: &Vec<Operation>) -> i32 {
+fn run(lines: &[Operation]) -> i32 {
     let mut current = 0;
     let mut global = 0;
     let mut visited_lines = HashSet::new();
@@ -80,7 +80,7 @@ enum Operation {
 
 impl Operation {
     fn parse(operation: &str) -> Self {
-        let splits: Vec<&str> = operation.split(" ").collect();
+        let splits: Vec<&str> = operation.split(' ').collect();
         let value = splits[1].parse::<i32>().unwrap();
 
         match splits[0] {

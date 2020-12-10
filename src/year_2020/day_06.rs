@@ -10,20 +10,14 @@ pub fn main(input: &str) {
     println!("Sum 2: {}", sum_2);
 }
 
-fn part_one(groups: &Vec<Vec<Vec<char>>>) -> usize {
+fn part_one(groups: &[Vec<Vec<char>>]) -> usize {
     groups
         .iter()
-        .map(|group| {
-            group
-                .iter()
-                .flat_map(|person| person)
-                .collect::<HashSet<&char>>()
-                .len()
-        })
+        .map(|group| group.iter().flatten().collect::<HashSet<&char>>().len())
         .sum()
 }
 
-fn part_two(groups: &Vec<Vec<Vec<char>>>) -> usize {
+fn part_two(groups: &[Vec<Vec<char>>]) -> usize {
     let mut sum = 0;
     for group in groups {
         let mut group_set = Vec::new();
@@ -31,12 +25,12 @@ fn part_two(groups: &Vec<Vec<Vec<char>>>) -> usize {
         for person in group {
             if first_person {
                 first_person = false;
-                group_set = person.iter().map(|x| x).collect();
+                group_set = person.iter().collect();
             } else {
                 group_set = group_set
                     .iter()
                     .filter(|x| person.contains(*x))
-                    .map(|x| *x)
+                    .copied()
                     .collect();
             }
         }
@@ -50,6 +44,6 @@ fn part_two(groups: &Vec<Vec<Vec<char>>>) -> usize {
 fn parse_input(input: &str) -> Vec<Vec<Vec<char>>> {
     input
         .split("\n\n")
-        .map(|x| x.split("\n").map(|x| x.chars().collect()).collect())
+        .map(|x| x.split('\n').map(|x| x.chars().collect()).collect())
         .collect()
 }
