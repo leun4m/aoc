@@ -7,7 +7,7 @@ pub fn main(input: &str) {
     println!("Part 2: {}", variations);
 }
 
-fn calculate_variations(adapters: &Vec<u64>) -> i64 {
+fn calculate_variations(adapters: &[u64]) -> i64 {
     let mut product: i64 = 1;
     calculate_difference_vec(&adapters)
         .split(|&x| x == 3)
@@ -28,7 +28,7 @@ fn variations(ones: usize) -> i64 {
     }
 }
 
-fn calculate_difference_vec(adapters: &Vec<u64>) -> Vec<u8> {
+fn calculate_difference_vec(adapters: &[u64]) -> Vec<u8> {
     let mut result = Vec::new();
     let mut previous = 0;
     for adapter in adapters {
@@ -39,7 +39,7 @@ fn calculate_difference_vec(adapters: &Vec<u64>) -> Vec<u8> {
     result
 }
 
-fn calculate_differences(adapters: &Vec<u64>) -> (i32, i32) {
+fn calculate_differences(adapters: &[u64]) -> (i32, i32) {
     let mut difference_1 = 0;
     let mut difference_3 = 1;
     let mut previous = 0;
@@ -60,6 +60,31 @@ fn parse_input(input: &str) -> Vec<u64> {
         .lines()
         .map(|x| x.parse().unwrap())
         .collect::<Vec<u64>>();
-    adapters.sort();
+    adapters.sort_unstable();
     adapters
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn example_1() {
+        let parsed = parse_input("16\n10\n15\n5\n1\n11\n7\n19\n6\n12\n4");
+
+        assert_eq!(vec![1, 4, 5, 6, 7, 10, 11, 12, 15, 16, 19], parsed);
+        assert_eq!((7, 5), calculate_differences(&parsed));
+        assert_eq!(8, calculate_variations(&parsed));
+    }
+
+    #[test]
+    fn example_2() {
+        let input = &[
+            1, 2, 3, 4, 7, 8, 9, 10, 11, 14, 17, 18, 19, 20, 23, 24, 25, 28, 31, 32, 33, 34, 35,
+            38, 39, 42, 45, 46, 47, 48, 49,
+        ];
+
+        assert_eq!((22, 10), calculate_differences(input));
+        assert_eq!(19208, calculate_variations(input));
+    }
 }
