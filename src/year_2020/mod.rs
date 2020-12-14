@@ -8,6 +8,7 @@ mod day_07;
 mod day_08;
 mod day_09;
 mod day_10;
+mod day_11;
 
 pub fn solve_day(day: u8, input: &str) {
     match day {
@@ -21,6 +22,7 @@ pub fn solve_day(day: u8, input: &str) {
         8 => day_08::main(&input),
         9 => day_09::main(&input),
         10 => day_10::main(&input),
+        11 => day_11::main(&input),
         _ => println!("There exists no implementation for this day."),
     };
 }
