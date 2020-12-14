@@ -7,4 +7,4 @@ edition = "2018"
 [dependencies]
 structopt = "0.3"
 regex = "1.4"
-md5 = "0.7"
+rust-crypto = "0.2"

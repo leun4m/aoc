@@ -1,3 +1,6 @@
+use crypto::digest::Digest;
+use crypto::md5;
+
 pub fn main(input: &str) {
     println!("5 leading Zeros: {}", find_number(input, 5));
     println!("6 leading Zeros: {}", find_number(input, 6));
@@ -5,8 +8,12 @@ pub fn main(input: &str) {
 
 fn find_number(input: &str, leading_zeros: usize) -> u32 {
     let prefix = &"0".repeat(leading_zeros);
+    let mut md5 = md5::Md5::new();
+    md5.input_str(input);
     for i in 1..u32::MAX {
-        if format!("{:x}", md5::compute([input, &i.to_string()].concat())).starts_with(prefix) {
+        let mut a = md5;
+        a.input_str(&i.to_string());
+        if a.result_str().starts_with(prefix) {
             return i;
         }
     }
@@ -22,5 +29,6 @@ mod test {
     fn example() {
         assert_eq!(609043, find_number("abcdef", 5));
         assert_eq!(1048970, find_number("pqrstuv", 5));
+        assert_eq!(9962624, find_number("yzbqklnj", 6));
     }
 }
