@@ -3,7 +3,7 @@ use std::collections::HashMap;
 pub fn main(input: &str) {
     let numbers: Vec<usize> = input.split(',').map(|x| x.parse().unwrap()).collect();
     println!("Part 1: {}", play(&numbers, 2020));
-    println!("Part 1: {}", play(&numbers, 30000000));
+    println!("Part 2: {}", play(&numbers, 30000000));
 }
 
 fn play(start: &[usize], number_of_interest: usize) -> usize {
