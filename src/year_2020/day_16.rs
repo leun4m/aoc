@@ -18,9 +18,9 @@ const FIELD_PREFIX: &str = "departure";
 
 type TicketNumber = u64;
 type Ticket = Vec<TicketNumber>;
-type RuleIntervals = HashMap<String, Vec<(TicketNumber, TicketNumber)>>;
-type RuleChoices = HashMap<String, HashSet<usize>>;
-type RuleIndex = HashMap<String, usize>;
+type RuleIntervals<'a> = HashMap<&'a str, Vec<(TicketNumber, TicketNumber)>>;
+type RuleChoices<'a> = HashMap<&'a str, HashSet<usize>>;
+type RuleIndex<'a> = HashMap<&'a str, usize>;
 type PositionTicketNumbers = HashMap<usize, HashSet<TicketNumber>>;
 
 fn parse_input(input: &str) -> (RuleIntervals, Ticket, Vec<Ticket>) {
@@ -33,7 +33,7 @@ fn parse_input(input: &str) -> (RuleIntervals, Ticket, Vec<Ticket>) {
     (rules, own_ticket, nearby_tickets)
 }
 
-fn parse_rules(lines: &mut Lines) -> RuleIntervals {
+fn parse_rules<'a>(lines: &mut std::str::Lines<'a>) -> RuleIntervals<'a> {
     let regex_rule = Regex::new("([^:]*): (\\d+)-(\\d+) or (\\d+)-(\\d+)").unwrap();
     let mut rules = HashMap::new();
 
@@ -43,7 +43,7 @@ fn parse_rules(lines: &mut Lines) -> RuleIntervals {
         }
         let captures = regex_rule.captures(line).unwrap();
 
-        let name = captures.get(1).unwrap().as_str().to_string();
+        let name = captures.get(1).unwrap().as_str();
         let i1 = parse_interval(&captures, 2, 3);
         let i2 = parse_interval(&captures, 4, 5);
 
@@ -90,11 +90,11 @@ fn multiply_special_fields(
         .product()
 }
 
-fn detect_mapping(
-    rule_choices: &mut RuleChoices,
-    rules: &RuleIntervals,
+fn detect_mapping<'a>(
+    rule_choices: &mut RuleChoices<'a>,
+    rules: &RuleIntervals<'a>,
     position_numbers: &PositionTicketNumbers,
-) -> RuleIndex {
+) -> RuleIndex<'a> {
     for (idx, numbers) in position_numbers {
         for &value in numbers {
             for (name, intervals) in rules {
@@ -102,9 +102,9 @@ fn detect_mapping(
                     .iter()
                     .any(|interval| interval.0 <= value && value <= interval.1)
                 {
-                    let mut set = rule_choices.get(name.as_str()).unwrap().clone();
+                    let mut set = rule_choices.get(*name).unwrap().clone();
                     set.remove(&idx);
-                    rule_choices.insert(name.to_string(), set);
+                    rule_choices.insert(name, set);
                 }
             }
         }
@@ -115,7 +115,7 @@ fn detect_mapping(
             if choices.len() == 1 {
                 rule_choices
                     .iter_mut()
-                    .filter(|(key, _)| key.as_str() != rule.as_str())
+                    .filter(|(&key, _)| key != rule)
                     .map(|(_, set)| set)
                     .for_each(|set| {
                         set.remove(choices.iter().next().unwrap());
@@ -126,14 +126,17 @@ fn detect_mapping(
 
     rule_choices
         .iter()
-        .map(|(name, indices)| (name.clone(), *indices.iter().next().unwrap()))
+        .map(|(name, indices)| (*name, *indices.iter().next().unwrap()))
         .collect()
 }
 
-fn get_all_possibilities(rules: &RuleIntervals, own_ticket: &[TicketNumber]) -> RuleChoices {
+fn get_all_possibilities<'a>(
+    rules: &RuleIntervals<'a>,
+    own_ticket: &[TicketNumber],
+) -> RuleChoices<'a> {
     let mut possibilities = HashMap::new();
     for name in rules.keys() {
-        possibilities.insert(name.clone(), (0..own_ticket.len()).collect());
+        possibilities.insert(*name, (0..own_ticket.len()).collect());
     }
     possibilities
 }
