@@ -1,3 +1,4 @@
+use std::cmp;
 use std::collections::HashSet;
 
 pub fn main(input: &str) {
@@ -17,25 +18,16 @@ pub fn run(instructions: &[(i32, i32)]) -> (i32, i32) {
 pub fn first_double(instructions: &[(i32, i32)]) -> (i32, i32) {
     let mut pos = (0, 0);
     let mut positions = HashSet::new();
-    for instruction in instructions {
-        if instruction.0 != 0 {
-            let step = if instruction.0 > 0 { 1 } else { -1 };
-            for _ in 0..instruction.0.abs() {
-                pos = (pos.0 + step, pos.1);
-                if positions.contains(&pos) {
-                    return pos;
-                }
-                positions.insert(pos);
+    for (x, y) in instructions {
+        let step_x = x.signum();
+        let step_y = y.signum();
+        let iterations = cmp::max(x.abs(), y.abs());
+        for _ in 0..iterations {
+            pos = (pos.0 + step_x, pos.1 + step_y);
+            if positions.contains(&pos) {
+                return pos;
             }
-        } else {
-            let step = if instruction.1 > 0 { 1 } else { -1 };
-            for _ in 0..instruction.1.abs() {
-                pos = (pos.0, pos.1 + step);
-                if positions.contains(&pos) {
-                    return pos;
-                }
-                positions.insert(pos);
-            }
+            positions.insert(pos);
         }
     }
     panic!("No double");
@@ -50,16 +42,16 @@ fn parse(input: &str) -> Vec<(i32, i32)> {
     let mut dir = Direction::North;
     for line in input.lines() {
         for instruction in line.split(", ") {
-             if instruction.chars().count() < 2 {
-                 break;
-             }
-             let first = instruction.chars().next().unwrap();
-             let num = instruction[1..].parse().unwrap();
-             
-             dir = rotate(&dir, first == 'R');
-             let pos = move_it(&dir, (0, 0), num);
+            if instruction.chars().count() < 2 {
+                break;
+            }
+            let first = instruction.chars().next().unwrap();
+            let num = instruction[1..].parse().unwrap();
 
-             vec.push(pos);
+            dir = rotate(&dir, first == 'R');
+            let pos = move_it(&dir, (0, 0), num);
+
+            vec.push(pos);
         }
     }
     vec
@@ -96,7 +88,7 @@ enum Direction {
     North,
     East,
     South,
-    West
+    West,
 }
 
 #[cfg(test)]
@@ -121,4 +113,3 @@ mod test {
         assert_eq!(4, distance(first_double(&parse("R8, R4, R4, R8"))));
     }
 }
-
