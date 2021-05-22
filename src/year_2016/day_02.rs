@@ -13,10 +13,10 @@ pub fn calc_number(instructions: &[Vec<Direction>]) -> String {
     for number in instructions {
         for dir in number {
             pos = match dir {
-                Direction::Up => (pos.0, pos.1 - 1),
-                Direction::Down => (pos.0, pos.1 + 1),
-                Direction::Left => (pos.0 - 1, pos.1),
-                Direction::Right => (pos.0 + 1, pos.1),
+                Direction::U => (pos.0, pos.1 - 1),
+                Direction::D => (pos.0, pos.1 + 1),
+                Direction::L => (pos.0 - 1, pos.1),
+                Direction::R => (pos.0 + 1, pos.1),
             };
             pos = clamp(&pos);
         }
@@ -27,7 +27,7 @@ pub fn calc_number(instructions: &[Vec<Direction>]) -> String {
 
 pub fn calc_number2(instructions: &[Vec<Direction>]) -> String {
     let mut result = String::new();
-    let mut field = Starfield::Five;
+    let mut field = Starfield::N5;
 
     for number in instructions {
         for dir in number {
@@ -42,88 +42,88 @@ pub fn calc_number2(instructions: &[Vec<Direction>]) -> String {
 
 #[derive(Clone, Copy)]
 enum Starfield {
-    One,
-    Two,
-    Three,
-    Four,
-    Five,
-    Six,
-    Seven,
-    Eight,
-    Nine,
-    A,
-    B,
-    C,
-    D,
+    N1,
+    N2,
+    N3,
+    N4,
+    N5,
+    N6,
+    N7,
+    N8,
+    N9,
+    NA,
+    NB,
+    NC,
+    ND,
 }
 
 impl Starfield {
     fn move_to(&self, dir: &Direction) -> Starfield {
         match self {
-            Starfield::One => match dir {
-                Direction::Down => Starfield::Three,
+            Starfield::N1 => match dir {
+                Direction::D => Starfield::N3,
                 _ => *self,
             },
-            Starfield::Two => match dir {
-                Direction::Right => Starfield::Three,
-                Direction::Down => Starfield::Six,
+            Starfield::N2 => match dir {
+                Direction::R => Starfield::N3,
+                Direction::D => Starfield::N6,
                 _ => *self,
             },
-            Starfield::Three => match dir {
-                Direction::Up => Starfield::One,
-                Direction::Left => Starfield::Two,
-                Direction::Right => Starfield::Four,
-                Direction::Down => Starfield::Seven,
+            Starfield::N3 => match dir {
+                Direction::U => Starfield::N1,
+                Direction::L => Starfield::N2,
+                Direction::R => Starfield::N4,
+                Direction::D => Starfield::N7,
             },
-            Starfield::Four => match dir {
-                Direction::Left => Starfield::Three,
-                Direction::Down => Starfield::Eight,
+            Starfield::N4 => match dir {
+                Direction::L => Starfield::N3,
+                Direction::D => Starfield::N8,
                 _ => *self,
             },
-            Starfield::Five => match dir {
-                Direction::Right => Starfield::Six,
+            Starfield::N5 => match dir {
+                Direction::R => Starfield::N6,
                 _ => *self,
             },
-            Starfield::Six => match dir {
-                Direction::Up => Starfield::Two,
-                Direction::Down => Starfield::A,
-                Direction::Left => Starfield::Five,
-                Direction::Right => Starfield::Seven,
+            Starfield::N6 => match dir {
+                Direction::U => Starfield::N2,
+                Direction::D => Starfield::NA,
+                Direction::L => Starfield::N5,
+                Direction::R => Starfield::N7,
             },
-            Starfield::Seven => match dir {
-                Direction::Up => Starfield::Three,
-                Direction::Down => Starfield::B,
-                Direction::Left => Starfield::Six,
-                Direction::Right => Starfield::Eight,
+            Starfield::N7 => match dir {
+                Direction::U => Starfield::N3,
+                Direction::D => Starfield::NB,
+                Direction::L => Starfield::N6,
+                Direction::R => Starfield::N8,
             },
-            Starfield::Eight => match dir {
-                Direction::Up => Starfield::Four,
-                Direction::Down => Starfield::C,
-                Direction::Left => Starfield::Seven,
-                Direction::Right => Starfield::Nine,
+            Starfield::N8 => match dir {
+                Direction::U => Starfield::N4,
+                Direction::D => Starfield::NC,
+                Direction::L => Starfield::N7,
+                Direction::R => Starfield::N9,
             },
-            Starfield::Nine => match dir {
-                Direction::Left => Starfield::Eight,
+            Starfield::N9 => match dir {
+                Direction::L => Starfield::N8,
                 _ => *self,
             },
-            Starfield::A => match dir {
-                Direction::Up => Starfield::Six,
-                Direction::Right => Starfield::B,
+            Starfield::NA => match dir {
+                Direction::U => Starfield::N6,
+                Direction::R => Starfield::NB,
                 _ => *self,
             },
-            Starfield::B => match dir {
-                Direction::Up => Starfield::Seven,
-                Direction::Down => Starfield::D,
-                Direction::Left => Starfield::A,
-                Direction::Right => Starfield::C,
+            Starfield::NB => match dir {
+                Direction::U => Starfield::N7,
+                Direction::D => Starfield::ND,
+                Direction::L => Starfield::NA,
+                Direction::R => Starfield::NC,
             },
-            Starfield::C => match dir {
-                Direction::Up => Starfield::Eight,
-                Direction::Left => Starfield::B,
+            Starfield::NC => match dir {
+                Direction::U => Starfield::N8,
+                Direction::L => Starfield::NB,
                 _ => *self,
             },
-            Starfield::D => match dir {
-                Direction::Up => Starfield::B,
+            Starfield::ND => match dir {
+                Direction::U => Starfield::NB,
                 _ => *self,
             },
         }
@@ -131,19 +131,19 @@ impl Starfield {
 
     fn as_char(&self) -> char {
         match self {
-            Starfield::One => '1',
-            Starfield::Two => '2',
-            Starfield::Three => '3',
-            Starfield::Four => '4',
-            Starfield::Five => '5',
-            Starfield::Six => '6',
-            Starfield::Seven => '7',
-            Starfield::Eight => '8',
-            Starfield::Nine => '9',
-            Starfield::A => 'A',
-            Starfield::B => 'B',
-            Starfield::C => 'C',
-            Starfield::D => 'D',
+            Starfield::N1 => '1',
+            Starfield::N2 => '2',
+            Starfield::N3 => '3',
+            Starfield::N4 => '4',
+            Starfield::N5 => '5',
+            Starfield::N6 => '6',
+            Starfield::N7 => '7',
+            Starfield::N8 => '8',
+            Starfield::N9 => '9',
+            Starfield::NA => 'A',
+            Starfield::NB => 'B',
+            Starfield::NC => 'C',
+            Starfield::ND => 'D',
         }
     }
 }
@@ -154,10 +154,10 @@ pub fn parse(input: &str) -> Vec<Vec<Direction>> {
         .map(|line| {
             line.chars()
                 .map(|x| match x {
-                    'U' => Direction::Up,
-                    'D' => Direction::Down,
-                    'L' => Direction::Left,
-                    'R' => Direction::Right,
+                    'U' => Direction::U,
+                    'D' => Direction::D,
+                    'L' => Direction::L,
+                    'R' => Direction::R,
                     x => panic!("Unexpected symbol: {}", x),
                 })
                 .collect()
@@ -166,10 +166,10 @@ pub fn parse(input: &str) -> Vec<Vec<Direction>> {
 }
 
 pub enum Direction {
-    Up,
-    Down,
-    Left,
-    Right,
+    U,
+    D,
+    L,
+    R,
 }
 
 pub fn number_of_pos(pos: &(i32, i32)) -> char {
