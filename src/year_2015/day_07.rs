@@ -40,8 +40,8 @@ fn internal(input: &str, observed_wire: &str) -> (BaseType, BaseType) {
 
 #[derive(Debug, PartialEq)]
 enum Symbol {
-    NUMBER(BaseType),
-    NAME(String),
+    Number(BaseType),
+    Name(String),
 }
 
 impl Symbol {
@@ -59,16 +59,16 @@ impl Symbol {
                 .as_str()
                 .parse::<BaseType>()
                 .unwrap();
-            Some(Symbol::NUMBER(signal))
+            Some(Symbol::Number(signal))
         } else {
-            Some(Symbol::NAME(input.to_string()))
+            Some(Symbol::Name(input.to_string()))
         }
     }
 
     fn interpret(&self, wires: &HashMap<String, BaseType>) -> Option<BaseType> {
         match self {
-            Symbol::NUMBER(v) => Some(*v),
-            Symbol::NAME(v) => {
+            Symbol::Number(v) => Some(*v),
+            Symbol::Name(v) => {
                 let val = wires.get(v);
                 if let Some(x) = val {
                     Some(*x)
@@ -83,23 +83,23 @@ impl Symbol {
 /// The last value always represents the value to assign to
 #[derive(Debug, PartialEq)]
 enum Instruction {
-    ASSIGN(Symbol, String),
-    NOT(Symbol, String),
-    AND(Symbol, Symbol, String),
-    OR(Symbol, Symbol, String),
-    LSHIFT(Symbol, Symbol, String),
-    RSHIFT(Symbol, Symbol, String),
+    Assign(Symbol, String),
+    Not(Symbol, String),
+    And(Symbol, Symbol, String),
+    Or(Symbol, Symbol, String),
+    LShift(Symbol, Symbol, String),
+    RShift(Symbol, Symbol, String),
 }
 
 impl Instruction {
     fn get_aim(&self) -> String {
         match self {
-            Instruction::ASSIGN(_, z)
-            | Instruction::NOT(_, z)
-            | Instruction::AND(_, _, z)
-            | Instruction::OR(_, _, z)
-            | Instruction::LSHIFT(_, _, z)
-            | Instruction::RSHIFT(_, _, z) => z.clone(),
+            Instruction::Assign(_, z)
+            | Instruction::Not(_, z)
+            | Instruction::And(_, _, z)
+            | Instruction::Or(_, _, z)
+            | Instruction::LShift(_, _, z)
+            | Instruction::RShift(_, _, z) => z.clone(),
         }
     }
 
@@ -107,10 +107,10 @@ impl Instruction {
         let sym_left = Symbol::parse(left).unwrap();
         let sym_right = Symbol::parse(right).unwrap();
         match operator {
-            "AND" => Instruction::AND(sym_left, sym_right, wire),
-            "OR" => Instruction::OR(sym_left, sym_right, wire),
-            "LSHIFT" => Instruction::LSHIFT(sym_left, sym_right, wire),
-            "RSHIFT" => Instruction::RSHIFT(sym_left, sym_right, wire),
+            "AND" => Instruction::And(sym_left, sym_right, wire),
+            "OR" => Instruction::Or(sym_left, sym_right, wire),
+            "LSHIFT" => Instruction::LShift(sym_left, sym_right, wire),
+            "RSHIFT" => Instruction::RShift(sym_left, sym_right, wire),
             _ => {
                 panic!("Unknown Operator: {}", operator);
             }
@@ -130,9 +130,9 @@ impl Instruction {
         let cap_not = reg_not.captures(expression);
 
         if cap_name.is_some() {
-            Instruction::ASSIGN(Symbol::parse(expression).unwrap(), wire.to_string())
+            Instruction::Assign(Symbol::parse(expression).unwrap(), wire.to_string())
         } else if let Some(not) = cap_not {
-            Instruction::NOT(
+            Instruction::Not(
                 Symbol::parse(not.get(1).unwrap().as_str()).unwrap(),
                 wire.to_string(),
             )
@@ -183,10 +183,10 @@ fn first_read(
         let expression = captures.get(1).unwrap().as_str();
         let option_symbol = Symbol::parse(expression);
         if let Some(symbol) = option_symbol {
-            if let Symbol::NUMBER(a) = &symbol {
+            if let Symbol::Number(a) = &symbol {
                 wires.insert(wire, *a);
             } else {
-                instructions.push(Instruction::ASSIGN(symbol, wire))
+                instructions.push(Instruction::Assign(symbol, wire))
             }
         } else {
             instructions.push(Instruction::parse(
@@ -206,8 +206,8 @@ fn perform_operation(
     instruction: &Instruction,
 ) -> Option<BaseType> {
     match &instruction {
-        Instruction::ASSIGN(a, _) => a.interpret(&wires),
-        Instruction::NOT(a, _) => {
+        Instruction::Assign(a, _) => a.interpret(&wires),
+        Instruction::Not(a, _) => {
             let option = a.interpret(&wires);
             if let Some(x) = option {
                 Some(!x)
@@ -215,22 +215,22 @@ fn perform_operation(
                 None
             }
         }
-        Instruction::AND(a, b, _) => {
+        Instruction::And(a, b, _) => {
             let option_a = a.interpret(&wires);
             let option_b = b.interpret(&wires);
             apply_binary(option_a, option_b, BaseType::bitand)
         }
-        Instruction::OR(a, b, _) => {
+        Instruction::Or(a, b, _) => {
             let option_a = a.interpret(&wires);
             let option_b = b.interpret(&wires);
             apply_binary(option_a, option_b, BaseType::bitor)
         }
-        Instruction::LSHIFT(a, b, _) => {
+        Instruction::LShift(a, b, _) => {
             let option_a = a.interpret(&wires);
             let option_b = b.interpret(&wires);
             apply_binary(option_a, option_b, BaseType::shl)
         }
-        Instruction::RSHIFT(a, b, _) => {
+        Instruction::RShift(a, b, _) => {
             let option_a = a.interpret(&wires);
             let option_b = b.interpret(&wires);
             apply_binary(option_a, option_b, BaseType::shr)
