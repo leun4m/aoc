@@ -60,8 +60,7 @@ fn get_cities(connections: &HashMap<(String, String), u64>) -> Vec<String> {
 }
 
 fn permutation_heap<T: Clone + Debug>(elements: &mut Vec<T>) -> Vec<Vec<T>> {
-    let mut generated_permutations = Vec::new();
-    generated_permutations.push(Vec::from(elements.as_slice()));
+    let mut generated_permutations = vec![Vec::from(elements.as_slice())];
 
     let mut c = vec![0; elements.len()];
     let mut i = 0;

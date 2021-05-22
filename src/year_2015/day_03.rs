@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-use std::iter::FromIterator;
 
 pub fn main(input: &str) {
     let year1 = houses_visited(&get_positions(&input));
@@ -9,7 +8,7 @@ pub fn main(input: &str) {
 }
 
 fn houses_visited(positions: &[(i32, i32)]) -> u32 {
-    let unique: HashSet<(i32, i32)> = HashSet::from_iter(positions.iter().cloned());
+    let unique: HashSet<(i32, i32)> = positions.iter().cloned().collect::<HashSet<_, _>>();
     unique.len() as u32
 }
 
@@ -19,8 +18,7 @@ fn get_positions(input: &str) -> Vec<(i32, i32)> {
     }
 
     let mut santa = Position(0, 0);
-    let mut houses = Vec::new();
-    houses.push(santa.into());
+    let mut houses = vec![santa.into()];
 
     for char in input.chars() {
         santa.move_it(char);
@@ -37,9 +35,7 @@ fn get_positions_with_robot(input: &str) -> Vec<(i32, i32)> {
     let mut is_santa = true;
     let mut santa = Position(0, 0);
     let mut robot = Position(0, 0);
-    let mut houses = Vec::new();
-    houses.push((santa.0, santa.0));
-    houses.push((robot.0, robot.0));
+    let mut houses = vec![(santa.0, santa.0), (robot.0, robot.0)];
 
     for char in input.chars() {
         if is_santa {
@@ -81,9 +77,9 @@ impl Position {
     }
 }
 
-impl Into<(i32, i32)> for Position {
-    fn into(self) -> (i32, i32) {
-        (self.0, self.1)
+impl From<Position> for (i32, i32) {
+    fn from(position: Position) -> (i32, i32) {
+        (position.0, position.1)
     }
 }
 

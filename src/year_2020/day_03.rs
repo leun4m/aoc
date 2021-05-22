@@ -35,8 +35,8 @@ fn parse_map(input: &str) -> World {
     for line in input.lines() {
         for char in line.chars() {
             let square = match char {
-                '.' => Square::OPEN,
-                '#' => Square::TREE,
+                '.' => Square::Open,
+                '#' => Square::Tree,
                 _ => panic!("Unexpected char: {}", char),
             };
             map.insert(Position::new(x, y), square);
@@ -50,8 +50,8 @@ fn parse_map(input: &str) -> World {
 }
 
 enum Square {
-    OPEN,
-    TREE,
+    Open,
+    Tree,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
@@ -100,7 +100,7 @@ impl World {
 
     fn is_tree(&self, position: &Position) -> bool {
         match self.map.get(&position) {
-            Some(Square::TREE) => true,
+            Some(Square::Tree) => true,
             None => panic!("Not a valid position {}", position),
             _ => false,
         }

@@ -28,9 +28,9 @@ fn run_modified(lines: &[Operation], change_idx: usize) -> Option<i32> {
         let line;
         if current == change_idx {
             line = match lines[current] {
-                Operation::NOP(x) => Operation::JMP(x),
-                Operation::JMP(x) => Operation::NOP(x),
-                Operation::ACC(x) => Operation::ACC(x),
+                Operation::Nop(x) => Operation::Jmp(x),
+                Operation::Jmp(x) => Operation::Nop(x),
+                Operation::Acc(x) => Operation::Acc(x),
             }
         } else {
             line = lines[current];
@@ -65,17 +65,17 @@ fn run(lines: &[Operation]) -> i32 {
 
 fn do_operation(operation: &Operation, current: usize, global: i32) -> (usize, i32) {
     match operation {
-        Operation::NOP(_) => (current + 1, global),
-        Operation::ACC(x) => (current + 1, global + x),
-        Operation::JMP(x) => ((current as i32 + x) as usize, global),
+        Operation::Nop(_) => (current + 1, global),
+        Operation::Acc(x) => (current + 1, global + x),
+        Operation::Jmp(x) => ((current as i32 + x) as usize, global),
     }
 }
 
 #[derive(Copy, Clone)]
 enum Operation {
-    NOP(i32),
-    ACC(i32),
-    JMP(i32),
+    Nop(i32),
+    Acc(i32),
+    Jmp(i32),
 }
 
 impl Operation {
@@ -84,9 +84,9 @@ impl Operation {
         let value = splits[1].parse::<i32>().unwrap();
 
         match splits[0] {
-            "nop" => Operation::NOP(value),
-            "acc" => Operation::ACC(value),
-            "jmp" => Operation::JMP(value),
+            "nop" => Operation::Nop(value),
+            "acc" => Operation::Acc(value),
+            "jmp" => Operation::Jmp(value),
             _ => panic!("unexpected"),
         }
     }

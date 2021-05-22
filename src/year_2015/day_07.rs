@@ -69,12 +69,7 @@ impl Symbol {
         match self {
             Symbol::Number(v) => Some(*v),
             Symbol::Name(v) => {
-                let val = wires.get(v);
-                if let Some(x) = val {
-                    Some(*x)
-                } else {
-                    None
-                }
+                wires.get(v).copied()
             }
         }
     }
@@ -208,12 +203,7 @@ fn perform_operation(
     match &instruction {
         Instruction::Assign(a, _) => a.interpret(&wires),
         Instruction::Not(a, _) => {
-            let option = a.interpret(&wires);
-            if let Some(x) = option {
-                Some(!x)
-            } else {
-                None
-            }
+            a.interpret(&wires).map(|x| !x)
         }
         Instruction::And(a, b, _) => {
             let option_a = a.interpret(&wires);
