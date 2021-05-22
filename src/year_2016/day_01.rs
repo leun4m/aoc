@@ -1,29 +1,68 @@
+use std::collections::HashSet;
+
 pub fn main(input: &str) {
-    println!("{}", distance(run(input)));
+    let instructions = parse(input);
+    println!("{}", distance(run(&instructions)));
+    println!("{}", distance(first_double(&instructions)));
 }
 
-pub fn run(input: &str) -> (i32, i32) {
-    let (mut x, mut y) = (0, 0);
+pub fn run(instructions: &[(i32, i32)]) -> (i32, i32) {
+    let mut pos = (0, 0);
+    for instruction in instructions {
+        pos = (pos.0 + instruction.0, pos.1 + instruction.1);
+    }
+    pos
+}
+
+pub fn first_double(instructions: &[(i32, i32)]) -> (i32, i32) {
+    let mut pos = (0, 0);
+    let mut positions = HashSet::new();
+    for instruction in instructions {
+        if instruction.0 != 0 {
+            let step = if instruction.0 > 0 { 1 } else { -1 };
+            for _ in 0..instruction.0.abs() {
+                pos = (pos.0 + step, pos.1);
+                if positions.contains(&pos) {
+                    return pos;
+                }
+                positions.insert(pos);
+            }
+        } else {
+            let step = if instruction.1 > 0 { 1 } else { -1 };
+            for _ in 0..instruction.1.abs() {
+                pos = (pos.0, pos.1 + step);
+                if positions.contains(&pos) {
+                    return pos;
+                }
+                positions.insert(pos);
+            }
+        }
+    }
+    panic!("No double");
+}
+
+pub fn distance((x, y): (i32, i32)) -> i32 {
+    x.abs() + y.abs()
+}
+
+fn parse(input: &str) -> Vec<(i32, i32)> {
+    let mut vec = Vec::new();
     let mut dir = Direction::North;
     for line in input.lines() {
         for instruction in line.split(", ") {
              if instruction.chars().count() < 2 {
                  break;
              }
-             let first = instruction.chars().nth(0).unwrap();
+             let first = instruction.chars().next().unwrap();
              let num = instruction[1..].parse().unwrap();
              
              dir = rotate(&dir, first == 'R');
-             let pos = move_it(&dir, (x, y), num);
-             x = pos.0;
-             y = pos.1;
+             let pos = move_it(&dir, (0, 0), num);
+
+             vec.push(pos);
         }
     }
-    (x, y)
-}
-
-pub fn distance((x, y): (i32, i32)) -> i32 {
-    x.abs() + y.abs()
+    vec
 }
 
 fn move_it(dir: &Direction, (x, y): (i32, i32), num: i32) -> (i32, i32) {
@@ -66,14 +105,20 @@ mod test {
 
     #[test]
     pub fn example_position() {
-        assert_eq!((3, 2), run("R2, L3"));
-        assert_eq!((-2, 0), run("R2, R2, R2"));
+        assert_eq!((3, 2), run(&parse("R2, L3")));
+        assert_eq!((-2, 0), run(&parse("R2, R2, R2")));
     }
 
     #[test]
     pub fn example_distance() {
         assert_eq!(5, distance((2, 3)));
         assert_eq!(2, distance((2, 0)));
-        assert_eq!(12, distance(run("R5, L5, R5, R3")));
+        assert_eq!(12, distance(run(&parse("R5, L5, R5, R3"))));
+    }
+
+    #[test]
+    pub fn example_first_double() {
+        assert_eq!(4, distance(first_double(&parse("R8, R4, R4, R8"))));
     }
 }
+
