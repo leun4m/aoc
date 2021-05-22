@@ -149,9 +149,9 @@ impl Starfield {
 }
 
 pub fn parse(input: &str) -> Vec<Vec<Direction>> {
-    let mut vec = Vec::new();
-    for line in input.lines() {
-        vec.push(
+    input
+        .lines()
+        .map(|line| {
             line.chars()
                 .map(|x| match x {
                     'U' => Direction::Up,
@@ -160,10 +160,9 @@ pub fn parse(input: &str) -> Vec<Vec<Direction>> {
                     'R' => Direction::Right,
                     x => panic!("Unexpected symbol: {}", x),
                 })
-                .collect(),
-        );
-    }
-    vec
+                .collect()
+        })
+        .collect()
 }
 
 pub enum Direction {
