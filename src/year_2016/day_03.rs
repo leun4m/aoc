@@ -76,16 +76,11 @@ mod test {
 203 403 603";
         let triangles = parse_vertical(input);
         assert_eq!(6, triangles.len());
-        assert_eq!(
-            vec![
-                (101, 102, 103),
-                (301, 302, 303),
-                (501, 502, 503),
-                (201, 202, 203),
-                (401, 402, 403),
-                (601, 602, 603)
-            ],
-            triangles
-        );
+        assert!(triangles.contains(&(101, 102, 103)));
+        assert!(triangles.contains(&(201, 202, 203)));
+        assert!(triangles.contains(&(301, 302, 303)));
+        assert!(triangles.contains(&(401, 402, 403)));
+        assert!(triangles.contains(&(501, 502, 503)));
+        assert!(triangles.contains(&(601, 602, 603)));
     }
 }
