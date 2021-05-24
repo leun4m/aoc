@@ -1,3 +1,5 @@
+use crate::util::INVALID_DAY;
+
 mod day_01;
 mod day_02;
 mod day_03;
@@ -33,6 +35,6 @@ pub fn solve_day(day: u8, input: &str) {
         15 => day_15::main(input),
         16 => day_16::main(input),
         17 => day_17::main(input),
-        _ => println!("There exists no implementation for this day."),
+        _ => println!("{}", INVALID_DAY),
     };
 }
