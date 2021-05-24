@@ -68,9 +68,7 @@ impl Symbol {
     fn interpret(&self, wires: &HashMap<String, BaseType>) -> Option<BaseType> {
         match self {
             Symbol::Number(v) => Some(*v),
-            Symbol::Name(v) => {
-                wires.get(v).copied()
-            }
+            Symbol::Name(v) => wires.get(v).copied(),
         }
     }
 }
@@ -202,9 +200,7 @@ fn perform_operation(
 ) -> Option<BaseType> {
     match &instruction {
         Instruction::Assign(a, _) => a.interpret(&wires),
-        Instruction::Not(a, _) => {
-            a.interpret(&wires).map(|x| !x)
-        }
+        Instruction::Not(a, _) => a.interpret(&wires).map(|x| !x),
         Instruction::And(a, b, _) => {
             let option_a = a.interpret(&wires);
             let option_b = b.interpret(&wires);
