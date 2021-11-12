@@ -103,7 +103,7 @@ fn detect_mapping<'a>(
                     .any(|interval| interval.0 <= value && value <= interval.1)
                 {
                     let mut set = rule_choices.get(*name).unwrap().clone();
-                    set.remove(&idx);
+                    set.remove(idx);
                     rule_choices.insert(name, set);
                 }
             }
@@ -150,7 +150,7 @@ fn analyse_tickets(
 
     for ticket in tickets {
         let in_range = |&x| {
-            if fits_any_rule(&rules, x) {
+            if fits_any_rule(rules, x) {
                 true
             } else {
                 error_numbers.push(x);

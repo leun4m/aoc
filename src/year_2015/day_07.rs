@@ -146,7 +146,7 @@ fn apply_instructions(wires: &mut HashMap<String, BaseType>, instructions: &[Ins
     let mut applied_instructions = Vec::new();
     while applied_instructions.len() < instructions.len() {
         for instruction in instructions {
-            let signal = perform_operation(&wires, &instruction);
+            let signal = perform_operation(wires, instruction);
             if let Some(sig) = signal {
                 if !applied_instructions.contains(&instruction) {
                     wires.insert(instruction.get_aim(), sig);
@@ -199,26 +199,26 @@ fn perform_operation(
     instruction: &Instruction,
 ) -> Option<BaseType> {
     match &instruction {
-        Instruction::Assign(a, _) => a.interpret(&wires),
-        Instruction::Not(a, _) => a.interpret(&wires).map(|x| !x),
+        Instruction::Assign(a, _) => a.interpret(wires),
+        Instruction::Not(a, _) => a.interpret(wires).map(|x| !x),
         Instruction::And(a, b, _) => {
-            let option_a = a.interpret(&wires);
-            let option_b = b.interpret(&wires);
+            let option_a = a.interpret(wires);
+            let option_b = b.interpret(wires);
             apply_binary(option_a, option_b, BaseType::bitand)
         }
         Instruction::Or(a, b, _) => {
-            let option_a = a.interpret(&wires);
-            let option_b = b.interpret(&wires);
+            let option_a = a.interpret(wires);
+            let option_b = b.interpret(wires);
             apply_binary(option_a, option_b, BaseType::bitor)
         }
         Instruction::LShift(a, b, _) => {
-            let option_a = a.interpret(&wires);
-            let option_b = b.interpret(&wires);
+            let option_a = a.interpret(wires);
+            let option_b = b.interpret(wires);
             apply_binary(option_a, option_b, BaseType::shl)
         }
         Instruction::RShift(a, b, _) => {
-            let option_a = a.interpret(&wires);
-            let option_b = b.interpret(&wires);
+            let option_a = a.interpret(wires);
+            let option_b = b.interpret(wires);
             apply_binary(option_a, option_b, BaseType::shr)
         }
     }

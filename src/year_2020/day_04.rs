@@ -67,9 +67,9 @@ impl<'a> Passport<'a> {
     }
 
     fn is_valid(&self) -> bool {
-        Self::is_num_between(&self.byr, 1920, 2002)
-            && Self::is_num_between(&self.iyr, 2010, 2020)
-            && Self::is_num_between(&self.eyr, 2020, 2030)
+        Self::is_num_between(self.byr, 1920, 2002)
+            && Self::is_num_between(self.iyr, 2010, 2020)
+            && Self::is_num_between(self.eyr, 2020, 2030)
             && self.is_valid_height()
             && self.is_valid_hair_color()
             && self.is_valid_eye_color()

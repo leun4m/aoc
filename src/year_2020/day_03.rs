@@ -99,7 +99,7 @@ impl World {
     }
 
     fn is_tree(&self, position: &Position) -> bool {
-        match self.map.get(&position) {
+        match self.map.get(position) {
             Some(Square::Tree) => true,
             None => panic!("Not a valid position {}", position),
             _ => false,

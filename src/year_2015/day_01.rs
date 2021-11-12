@@ -2,7 +2,7 @@ pub fn main(input: &str) {
     if !input.is_ascii() {
         panic!("Input is not ascii!");
     }
-    let (floor, index) = count(&input);
+    let (floor, index) = count(input);
     println!("Floor: {}", floor);
     println!("First time in basement: {}", index);
 }

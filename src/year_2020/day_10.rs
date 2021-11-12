@@ -9,7 +9,7 @@ pub fn main(input: &str) {
 
 fn calculate_variations(adapters: &[u64]) -> i64 {
     let mut product: i64 = 1;
-    calculate_difference_vec(&adapters)
+    calculate_difference_vec(adapters)
         .split(|&x| x == 3)
         .for_each(|x| product *= variations(x.len()));
     product
