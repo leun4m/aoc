@@ -5,7 +5,7 @@ pub const INVALID_YEAR: &str = "Not a valid year!";
 pub const NO_INPUT: &str = "No input given!";
 
 /// Counts occurences of every char in `text`.
-pub fn count_chars(text: &str) -> HashMap<char, i32> {
+pub fn count_chars(text: &str) -> HashMap<char, u32> {
     let mut map = HashMap::new();
 
     for c in text.chars() {

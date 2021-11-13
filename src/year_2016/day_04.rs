@@ -112,12 +112,12 @@ fn get_ranking(text: &str) -> Vec<char> {
         .copied()
         .unique()
         .sorted_by(|a, b| b.cmp(a))
-        .collect::<Vec<i32>>();
+        .collect::<Vec<u32>>();
 
     let mut vec = Vec::new();
     for i in counts {
         for c in &chars {
-            if Some(&(i as i32)) == map.get(c) {
+            if Some(&i) == map.get(c) {
                 vec.push(*c);
                 if vec.len() >= 5 {
                     return vec;
