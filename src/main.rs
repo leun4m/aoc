@@ -1,6 +1,7 @@
 mod util;
 mod year_2015;
 mod year_2016;
+mod year_2018;
 mod year_2020;
 
 use std::fs::File;
@@ -46,6 +47,7 @@ fn main() {
     match opt.year {
         15 | 2015 => year_2015::solve_day(opt.day, &input),
         16 | 2016 => year_2016::solve_day(opt.day, &input),
+        18 | 2018 => year_2018::solve_day(opt.day, &input),
         20 | 2020 => year_2020::solve_day(opt.day, &input),
         _ => println!("{}", util::INVALID_YEAR),
     }
