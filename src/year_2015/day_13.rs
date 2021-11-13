@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashMap;
 
@@ -49,13 +50,29 @@ impl Rules {
     pub fn add(&mut self, (from, to, value): (&str, &str, i32)) {
         self.rules.insert((from.to_string(), to.to_string()), value);
     }
+
+    pub fn get(&self, from: &str, to: &str) -> i32 {
+        *self
+            .rules
+            .get(&(from.to_string(), to.to_string()))
+            .unwrap_or(&0)
+    }
+
+    pub fn people(&self) -> Vec<String> {
+        self.rules
+            .keys()
+            .map(|(from, _)| from.clone())
+            .unique()
+            .sorted()
+            .collect()
+    }
 }
 
 mod test {
     use super::*;
 
     #[test]
-    pub fn parse_works() {
+    fn parse_works() {
         let input = "
 Alice would gain 54 happiness units by sitting next to Bob.
 Alice would lose 79 happiness units by sitting next to Carol.
@@ -88,11 +105,38 @@ David would gain 41 happiness units by sitting next to Carol.";
     }
 
     #[test]
-    pub fn parse_rule_works() {
+    fn parse_rule_works() {
         let input = "Alice would gain 54 happiness units by sitting next to Bob.";
         assert_eq!(
             parse_rule(input),
             ("Alice".to_string(), "Bob".to_string(), 54)
+        );
+    }
+
+    #[test]
+    fn rules_people_works() {
+        let mut expected_rules = Rules::new();
+        expected_rules.add(("Alice", "Bob", 54));
+        expected_rules.add(("Alice", "Carol", -79));
+        expected_rules.add(("Alice", "David", -2));
+        expected_rules.add(("Bob", "Alice", 83));
+        expected_rules.add(("Bob", "Carol", -7));
+        expected_rules.add(("Bob", "David", -63));
+        expected_rules.add(("Carol", "Alice", -62));
+        expected_rules.add(("Carol", "Bob", 60));
+        expected_rules.add(("Carol", "David", 55));
+        expected_rules.add(("David", "Alice", 46));
+        expected_rules.add(("David", "Bob", -7));
+        expected_rules.add(("David", "Carol", 41));
+
+        assert_eq!(
+            expected_rules.people(),
+            vec![
+                "Alice".to_string(),
+                "Bob".to_string(),
+                "Carol".to_string(),
+                "David".to_string()
+            ]
         );
     }
 }
