@@ -1,5 +1,5 @@
-use std::fmt::Debug;
 use std::collections::HashMap;
+use std::fmt::Debug;
 
 pub const INVALID_DAY: &str = "There exists no implementation for this day";
 pub const INVALID_YEAR: &str = "Not a valid year!";
@@ -39,7 +39,6 @@ pub fn permutation_heap<T: Clone + Debug>(elements: &mut Vec<T>) -> Vec<Vec<T>> 
 
     generated_permutations
 }
-
 
 #[cfg(test)]
 mod test {

@@ -1,3 +1,5 @@
+use crate::util;
+
 use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashMap;
@@ -32,7 +34,27 @@ fn parse_rule(line: &str) -> (String, String, i32) {
 }
 
 fn part_one(rules: &Rules) -> i32 {
-    0
+    let mut people = rules.people();
+    let arrangements = util::permutation_heap(&mut people);
+    let a = arrangements
+        .iter()
+        .map(|p| (p, calc_happiness(p, rules)))
+        .sorted_by(|a, b| b.1.cmp(&a.1))
+        .collect::<Vec<(&Vec<String>, i32)>>();
+
+    // for (p, h) in a.iter() {
+    //     println!("{:?} {}", p, h)
+    // }
+
+    a.get(0).unwrap().1
+}
+
+fn calc_happiness(people: &[String], rules: &Rules) -> i32 {
+    let mut result = rules.get(people.iter().last().unwrap(), people.iter().next().unwrap());
+    for i in 0..(people.len() - 1) {
+        result += rules.get(&people[i], &people[i + 1]);
+    }
+    result
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -51,11 +73,15 @@ impl Rules {
         self.rules.insert((from.to_string(), to.to_string()), value);
     }
 
-    pub fn get(&self, from: &str, to: &str) -> i32 {
+    fn get_single(&self, from: &str, to: &str) -> i32 {
         *self
             .rules
             .get(&(from.to_string(), to.to_string()))
             .unwrap_or(&0)
+    }
+
+    pub fn get(&self, from: &str, to: &str) -> i32 {
+        self.get_single(from, to) + self.get_single(to, from)
     }
 
     pub fn people(&self) -> Vec<String> {
@@ -68,6 +94,7 @@ impl Rules {
     }
 }
 
+#[cfg(test)]
 mod test {
     use super::*;
 
@@ -138,5 +165,24 @@ David would gain 41 happiness units by sitting next to Carol.";
                 "David".to_string()
             ]
         );
+    }
+
+    #[test]
+    fn part_one_works() {
+        let input = "
+Alice would gain 54 happiness units by sitting next to Bob.
+Alice would lose 79 happiness units by sitting next to Carol.
+Alice would lose 2 happiness units by sitting next to David.
+Bob would gain 83 happiness units by sitting next to Alice.
+Bob would lose 7 happiness units by sitting next to Carol.
+Bob would lose 63 happiness units by sitting next to David.
+Carol would lose 62 happiness units by sitting next to Alice.
+Carol would gain 60 happiness units by sitting next to Bob.
+Carol would gain 55 happiness units by sitting next to David.
+David would gain 46 happiness units by sitting next to Alice.
+David would lose 7 happiness units by sitting next to Bob.
+David would gain 41 happiness units by sitting next to Carol.";
+
+        assert_eq!(part_one(&parse(input)), 330);
     }
 }
