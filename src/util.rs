@@ -6,14 +6,13 @@ pub const NO_INPUT: &str = "No input given!";
 
 /// Counts occurences of every char in `text`.
 pub fn count_chars(text: &str) -> HashMap<char, u32> {
-    let mut map = HashMap::new();
+    let mut result = HashMap::new();
 
     for c in text.chars() {
-        let counter = map.get(&c).copied().unwrap_or(0);
-        map.insert(c, counter + 1);
+        *result.entry(c).or_insert(0) += 1;
     }
 
-    map
+    result
 }
 
 #[cfg(test)]
