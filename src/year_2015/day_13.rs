@@ -7,6 +7,7 @@ use std::collections::HashMap;
 pub fn main(input: &str) {
     let rules = parse(input);
     println!("Part 1: {}", part_one(&rules));
+    println!("Part 2: {}", part_two(&rules));
 }
 
 fn parse(input: &str) -> Rules {
@@ -34,19 +35,26 @@ fn parse_rule(line: &str) -> (String, String, i32) {
 }
 
 fn part_one(rules: &Rules) -> i32 {
+    get_best_seating(rules, false)
+}
+
+fn part_two(rules: &Rules) -> i32 {
+    get_best_seating(rules, true)
+}
+
+fn get_best_seating(rules: &Rules, add_neutral: bool) -> i32 {
     let mut people = rules.people();
-    let arrangements = util::permutation_heap(&mut people);
-    let a = arrangements
+
+    if add_neutral {
+        people.push("leun4m".to_string());
+    }
+
+    util::permutation_heap(&mut people)
         .iter()
-        .map(|p| (p, calc_happiness(p, rules)))
-        .sorted_by(|a, b| b.1.cmp(&a.1))
-        .collect::<Vec<(&Vec<String>, i32)>>();
-
-    // for (p, h) in a.iter() {
-    //     println!("{:?} {}", p, h)
-    // }
-
-    a.get(0).unwrap().1
+        .map(|table| calc_happiness(table, rules))
+        .sorted_by(|b, a| a.cmp(&b))
+        .next()
+        .unwrap()
 }
 
 fn calc_happiness(people: &[String], rules: &Rules) -> i32 {
