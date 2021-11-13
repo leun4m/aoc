@@ -7,6 +7,8 @@ Solutions from the various years of [AdventOfCode](https://adventofcode.com) in 
 ### In Progress
 
 - 2020
+- 2018
+- 2016
 - 2015
 
 ## Structure
@@ -30,3 +32,4 @@ Currently, the only packages used are:
 - `structopt` (to not worry about the CLI stuff)
 - `regex` (since many puzzles require parsing input)
 - `crypto` [Day 4 in 2015](https://github.com/leun4m/aoc/blob/main/src/year_2015/day_04.rs) required md5 hashing
+- `itertool` (Provides neat functional stuff for iterators like `unique()`, `sorted()` which `std` doesn't provide)
