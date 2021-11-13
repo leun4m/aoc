@@ -1,6 +1,6 @@
+use crate::util;
 use itertools::Itertools;
 use regex::Regex;
-use std::collections::HashMap;
 
 pub fn main(input: &str) {
     let rooms = parse(input);
@@ -102,26 +102,11 @@ impl Room {
     }
 }
 
-fn count_chars(text: &str) -> HashMap<char, i32> {
-    let mut map = HashMap::new();
-
-    for c in text.chars().filter(|x| *x != '-') {
-        let counter = map.get(&c).unwrap_or(&0);
-        map.insert(c, counter + 1);
-    }
-
-    map
-}
-
 fn get_ranking(text: &str) -> Vec<char> {
-    let map = count_chars(text);
+    let text_pure = text.replace("-", "");
+    let map = util::count_chars(&text_pure);
 
-    let chars = text
-        .chars()
-        .filter(|x| *x != '-')
-        .unique()
-        .sorted()
-        .collect::<Vec<char>>();
+    let chars = text_pure.chars().unique().sorted().collect::<Vec<char>>();
     let counts = map
         .values()
         .copied()
