@@ -4,9 +4,9 @@ const TIME: u32 = 2503;
 
 pub fn main(input: &str) {
     let mut reindeers = parse(input);
-    
+
     println!("Part 1: {}", part_one(&mut reindeers));
-    
+
     for reindeer in reindeers.iter_mut() {
         reindeer.reset();
     }
@@ -53,7 +53,7 @@ fn part_two(reindeers: &mut [Reindeer]) -> u32 {
         }
 
         let first = reindeers.iter_mut().max_by_key(|r| r.distance()).unwrap();
-        first.add_points();
+        first.add_point();
     }
     reindeers.iter().map(|r| r.score()).max().unwrap()
 }
@@ -72,8 +72,8 @@ struct Reindeer {
 
 #[derive(Debug, PartialEq, Eq)]
 enum State {
-    Fly,
-    Rest,
+    Flying,
+    Resting,
 }
 
 impl Reindeer {
@@ -83,7 +83,7 @@ impl Reindeer {
             speed,
             speed_time,
             rest_time,
-            current_state: State::Rest,
+            current_state: State::Resting,
             current_time: 0,
             distance: 0,
             score: 0,
@@ -95,7 +95,7 @@ impl Reindeer {
             self.switch_state();
         }
 
-        if self.current_state == State::Fly {
+        if self.current_state == State::Flying {
             self.distance += self.speed;
         }
 
@@ -104,12 +104,12 @@ impl Reindeer {
 
     fn switch_state(&mut self) {
         match &self.current_state {
-            State::Rest => {
-                self.current_state = State::Fly;
+            State::Resting => {
+                self.current_state = State::Flying;
                 self.current_time = self.speed_time;
             }
-            State::Fly => {
-                self.current_state = State::Rest;
+            State::Flying => {
+                self.current_state = State::Resting;
                 self.current_time = self.rest_time;
             }
         }
@@ -118,19 +118,19 @@ impl Reindeer {
     pub fn distance(&self) -> u32 {
         self.distance
     }
-    
+
     pub fn score(&self) -> u32 {
         self.score
     }
 
     pub fn reset(&mut self) {
         self.distance = 0;
-        self.current_state = State::Rest;
+        self.current_state = State::Resting;
         self.current_time = 0;
         self.score = 0;
     }
 
-    pub fn add_points(&mut self) {
+    pub fn add_point(&mut self) {
         self.score += 1;
     }
 }
