@@ -3,16 +3,32 @@ use regex::Regex;
 use std::collections::HashMap;
 
 pub fn main(input: &str) {
-    println!("Part 1: {}", part_one(input));
+    let rooms = parse(input);
+    println!("Part 1: {}", part_one(&rooms));
+    println!("Part 2: {}", part_two(&rooms));
 }
 
-fn part_one(input: &str) -> u32 {
+fn parse(input: &str) -> Vec<Room> {
     input
         .lines()
         .map(|line| parse_line(line))
+        .collect::<Vec<Room>>()
+}
+
+fn part_one(rooms: &[Room]) -> u32 {
+    rooms
+        .iter()
         .filter(|room| room.is_real())
         .map(|room| room.id())
         .sum()
+}
+
+fn part_two(rooms: &[Room]) -> u32 {
+    rooms
+        .iter()
+        .find(|room| room.decrypt().contains("northpole"))
+        .unwrap()
+        .id()
 }
 
 fn parse_line(line: &str) -> Room {
@@ -63,6 +79,26 @@ impl Room {
 
     pub fn id(&self) -> u32 {
         self.id
+    }
+
+    pub fn decrypt(&self) -> String {
+        let shift = (self.id % 26) as u8;
+        self.name
+            .to_ascii_lowercase()
+            .chars()
+            .map(|x| {
+                if x == '-' {
+                    return ' ';
+                }
+
+                let a = ((x as u8) + shift) as char;
+                if 'z' < a {
+                    ((a as u8) - 26) as char
+                } else {
+                    a
+                }
+            })
+            .collect()
     }
 }
 
@@ -138,5 +174,13 @@ mod test {
         assert!(Room::new("a-b-c-d-e-f-g-h", 987, ['a', 'b', 'c', 'd', 'e']).is_real());
         assert!(Room::new("not-a-real-room", 404, ['o', 'a', 'r', 'e', 'l']).is_real());
         assert!(!Room::new("totally-real-room", 200, ['d', 'e', 'c', 'o', 'y']).is_real());
+    }
+
+    #[test]
+    fn check_decrypt() {
+        assert_eq!(
+            parse_line("qzmt-zixmtkozy-ivhz-343[abcde]").decrypt(),
+            "very encrypted name"
+        );
     }
 }
