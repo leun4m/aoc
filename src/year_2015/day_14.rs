@@ -4,7 +4,14 @@ const TIME: u32 = 2503;
 
 pub fn main(input: &str) {
     let mut reindeers = parse(input);
+    
     println!("Part 1: {}", part_one(&mut reindeers));
+    
+    for reindeer in reindeers.iter_mut() {
+        reindeer.reset();
+    }
+
+    println!("Part 2: {}", part_two(&mut reindeers));
 }
 
 fn parse(input: &str) -> Vec<Reindeer> {
@@ -39,6 +46,18 @@ fn part_one(reindeers: &mut [Reindeer]) -> u32 {
     reindeers.iter().map(|r| r.distance()).max().unwrap()
 }
 
+fn part_two(reindeers: &mut [Reindeer]) -> u32 {
+    for _ in 0..TIME {
+        for reindeer in reindeers.iter_mut() {
+            reindeer.tick()
+        }
+
+        let first = reindeers.iter_mut().max_by_key(|r| r.distance()).unwrap();
+        first.add_points();
+    }
+    reindeers.iter().map(|r| r.score()).max().unwrap()
+}
+
 #[derive(Debug, PartialEq, Eq)]
 struct Reindeer {
     name: String,
@@ -48,6 +67,7 @@ struct Reindeer {
     current_state: State,
     current_time: u32,
     distance: u32,
+    score: u32,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -66,6 +86,7 @@ impl Reindeer {
             current_state: State::Rest,
             current_time: 0,
             distance: 0,
+            score: 0,
         }
     }
 
@@ -96,6 +117,21 @@ impl Reindeer {
 
     pub fn distance(&self) -> u32 {
         self.distance
+    }
+    
+    pub fn score(&self) -> u32 {
+        self.score
+    }
+
+    pub fn reset(&mut self) {
+        self.distance = 0;
+        self.current_state = State::Rest;
+        self.current_time = 0;
+        self.score = 0;
+    }
+
+    pub fn add_points(&mut self) {
+        self.score += 1;
     }
 }
 
