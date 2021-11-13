@@ -1,6 +1,6 @@
+use crate::util;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
-use std::fmt::Debug;
 
 pub fn main(input: &str) {
     let result = internal(input);
@@ -16,7 +16,7 @@ fn internal(input: &str) -> (u64, u64) {
         connections.insert((to, from), distance);
     }
 
-    let permutations = permutation_heap(&mut get_cities(&connections));
+    let permutations = util::permutation_heap(&mut get_cities(&connections));
     println!("PERMUTATIONS: {}", permutations.len());
     shortest_longest(&permutations, &connections)
 }
@@ -57,30 +57,6 @@ fn get_cities(connections: &HashMap<(String, String), u64>) -> Vec<String> {
         cities.insert(b.clone());
     });
     cities.into_iter().collect()
-}
-
-fn permutation_heap<T: Clone + Debug>(elements: &mut Vec<T>) -> Vec<Vec<T>> {
-    let mut generated_permutations = vec![Vec::from(elements.as_slice())];
-
-    let mut c = vec![0; elements.len()];
-    let mut i = 0;
-    while i < elements.len() {
-        if c[i] < i {
-            if i % 2 == 0 {
-                elements.swap(0, i);
-            } else {
-                elements.swap(c[i], i);
-            }
-            generated_permutations.push(Vec::from(elements.as_slice()));
-            c[i] += 1;
-            i = 0;
-        } else {
-            c[i] = 0;
-            i += 1;
-        }
-    }
-
-    generated_permutations
 }
 
 fn parse_line(line: &str) -> (String, String, u64) {
