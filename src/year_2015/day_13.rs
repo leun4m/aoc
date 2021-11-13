@@ -52,7 +52,7 @@ fn get_best_seating(rules: &Rules, add_neutral: bool) -> i32 {
     util::permutation_heap(&mut people)
         .iter()
         .map(|table| calc_happiness(table, rules))
-        .sorted_by(|b, a| a.cmp(&b))
+        .sorted_by(|b, a| a.cmp(b))
         .next()
         .unwrap()
 }
