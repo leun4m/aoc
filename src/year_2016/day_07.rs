@@ -1,6 +1,7 @@
 pub fn main(input: &str) {
     let addresses = parse(input);
     println!("Part 1: {}", part_one(&addresses));
+    println!("Part 2: {}", part_two(&addresses));
 }
 
 fn parse(input: &str) -> Vec<&str> {
@@ -9,6 +10,10 @@ fn parse(input: &str) -> Vec<&str> {
 
 fn part_one(addresses: &[&str]) -> usize {
     addresses.iter().filter(|x| is_tls(x)).count()
+}
+
+fn part_two(addresses: &[&str]) -> usize {
+    addresses.iter().filter(|x| is_ssl(x)).count()
 }
 
 fn is_tls(ip: &str) -> bool {
@@ -32,11 +37,38 @@ fn is_tls(ip: &str) -> bool {
     contains_in_supernet
 }
 
+fn is_ssl(ip: &str) -> bool {
+    let parts = separate(ip);
+    let supernet_parts = parts
+        .iter()
+        .filter(|x| x.is_supernet())
+        .flat_map(|x| get_aba(&x.inner()))
+        .collect::<Vec<(char, char, char)>>();
+    let hypernet_parts = parts
+        .iter()
+        .filter(|x| !x.is_supernet())
+        .flat_map(|x| get_aba(&x.inner()))
+        .collect::<Vec<(char, char, char)>>();
+
+    supernet_parts
+        .iter()
+        .any(|x| has_matching(x, &hypernet_parts))
+}
+
+fn has_matching(aba: &(char, char, char), list: &Vec<(char, char, char)>) -> bool {
+    for bab in list {
+        if aba.0 == bab.1 && aba.1 == bab.0 {
+            return true;
+        }
+    }
+    false
+}
+
 fn is_abba(word: &str) -> bool {
     let chars = word.chars().collect::<Vec<char>>();
 
     for i in 0..word.len() {
-        if i + 3 >= word.len() {
+        if word.len() <= i + 3 {
             break;
         }
 
@@ -46,6 +78,23 @@ fn is_abba(word: &str) -> bool {
     }
 
     false
+}
+
+fn get_aba(word: &str) -> Vec<(char, char, char)> {
+    let mut result = Vec::new();
+    let chars = word.chars().collect::<Vec<char>>();
+
+    for i in 0..word.len() {
+        if word.len() <= i + 2 {
+            break;
+        }
+
+        if chars[i] == chars[i + 2] && chars[i] != chars[i + 1] {
+            result.push((chars[i], chars[i + 1], chars[i + 2]))
+        }
+    }
+
+    result
 }
 
 fn separate(ip: &str) -> Vec<IPPart> {
@@ -89,6 +138,21 @@ enum IPPart {
     Hypernet(String),
 }
 
+impl IPPart {
+    pub fn is_supernet(&self) -> bool {
+        match self {
+            IPPart::Supernet(_) => true,
+            _ => false,
+        }
+    }
+
+    pub fn inner(&self) -> String {
+        match self {
+            IPPart::Supernet(x) | IPPart::Hypernet(x) => x.clone(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -123,5 +187,13 @@ mod test {
         assert!(!is_tls("abcd[bddb]xyyx"));
         assert!(!is_tls("aaaa[qwer]tyui"));
         assert!(is_tls("ioxxoj[asdfgh]zxcvbn"));
+    }
+
+    #[test]
+    fn is_ssl_works() {
+        assert!(is_ssl("aba[bab]xyz"));
+        assert!(!is_ssl("xyx[xyx]xyx"));
+        assert!(is_ssl("aaa[kek]eke"));
+        assert!(is_ssl("zazbz[bzb]cdb"));
     }
 }
