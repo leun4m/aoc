@@ -55,7 +55,7 @@ fn is_ssl(ip: &str) -> bool {
         .any(|x| has_matching(x, &hypernet_parts))
 }
 
-fn has_matching(aba: &(char, char, char), list: &Vec<(char, char, char)>) -> bool {
+fn has_matching(aba: &(char, char, char), list: &[(char, char, char)]) -> bool {
     for bab in list {
         if aba.0 == bab.1 && aba.1 == bab.0 {
             return true;
@@ -140,10 +140,7 @@ enum IPPart {
 
 impl IPPart {
     pub fn is_supernet(&self) -> bool {
-        match self {
-            IPPart::Supernet(_) => true,
-            _ => false,
-        }
+        matches!(self, IPPart::Supernet(_))
     }
 
     pub fn inner(&self) -> String {
