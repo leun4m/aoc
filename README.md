@@ -4,17 +4,17 @@ Solutions from the various years of [AdventOfCode](https://adventofcode.com) in 
 
 ## Years
 
-### In Progress
-
-- 2020
-- 2018
-- 2016
-- 2015
+| Year | Progress | Days  |
+| ---- | -------: | ----: |
+| 2015 |    0.52% | 13/25 |
+| 2016 |    0.24% |  6/25 |
+| 2018 |    0.08% |  2/25 |
+| 2020 |    0.64% | 16/25 |
 
 ## Structure
 
 Each year has it's own module and in that each day is a submodule, so each day is a separate file.
-The day modules should in generally not know each other, they are meant to be isolated. 
+The day modules should in generally not know each other, they are meant to be isolated.
 
 For convenience each day has a `main(input: &str)` function as a starting point.
 This `main`-function is supposed to calculate the solution to the given input and output them.
