@@ -2,11 +2,11 @@ use regex::Regex;
 use std::collections::HashMap;
 
 pub fn main(input: &str) {
-    println!("Part 1: {}", part_one(input));
+    let root = parse(input)
+;    println!("Part 1: {}", part_one(&root));
 }
 
-fn part_one(input: &str) -> i32 {
-    let root = parse(input);
+fn part_one(root: &JSONElement) -> i32 {
     sum_numbers(&root)
 }
 
@@ -208,16 +208,16 @@ mod test {
 
     #[test]
     fn part_one_works() {
-        assert_eq!(part_one(r#"[1,2,3]"#), 6);
-        assert_eq!(part_one(r#"{"a":2,"b":4}"#), 6);
+        assert_eq!(part_one(&parse(r#"[1,2,3]"#)), 6);
+        assert_eq!(part_one(&parse(r#"{"a":2,"b":4}"#)), 6);
 
-        assert_eq!(part_one(r#"[[[3]]]"#), 3);
-        assert_eq!(part_one(r#"{"a":{"b":4},"c":-1}"#), 3);
+        assert_eq!(part_one(&parse(r#"[[[3]]]"#)), 3);
+        assert_eq!(part_one(&parse(r#"{"a":{"b":4},"c":-1}"#)), 3);
 
-        assert_eq!(part_one(r#"{"a":[-1,1]}"#), 0);
-        assert_eq!(part_one(r#"[-1,{"a":1}]"#), 0);
+        assert_eq!(part_one(&parse(r#"{"a":[-1,1]}"#)), 0);
+        assert_eq!(part_one(&parse(r#"[-1,{"a":1}]"#)), 0);
 
-        assert_eq!(part_one(r#"[]"#), 0);
-        assert_eq!(part_one(r#"{}"#), 0);
+        assert_eq!(part_one(&parse(r#"[]"#)), 0);
+        assert_eq!(part_one(&parse(r#"{}"#)), 0);
     }
 }
