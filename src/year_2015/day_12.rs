@@ -32,7 +32,7 @@ fn part_two(root: &JSONElement) -> i32 {
     }
 }
 
-fn parse(input: &str) -> Box<JSONElement> {
+fn parse(input: &str) -> JSONElement {
     let trimmed = input.trim();
 
     let regex_number: Regex = Regex::new(r#"^-?\d+$"#).unwrap();
@@ -40,16 +40,16 @@ fn parse(input: &str) -> Box<JSONElement> {
 
     if let Some(capture) = regex_number.captures(trimmed) {
         let value = capture[0].parse::<i32>().unwrap();
-        Box::new(JSONElement::JSONNumber(value))
+        JSONElement::JSONNumber(value)
     } else if let Some(capture) = regex_string.captures(trimmed) {
         let value = capture[1].parse::<String>().unwrap();
-        Box::new(JSONElement::JSONString(value))
+        JSONElement::JSONString(value)
     } else if trimmed.starts_with('[') && trimmed.ends_with(']') {
         let value = parse_array(&trimmed[1..trimmed.len() - 1]);
-        Box::new(JSONElement::JSONArray(value))
+        JSONElement::JSONArray(value)
     } else if trimmed.starts_with('{') && trimmed.ends_with('}') {
         let value = parse_object(&trimmed[1..trimmed.len() - 1]);
-        Box::new(JSONElement::JSONObject(value))
+        JSONElement::JSONObject(value)
     } else {
         panic!("Unexpected Input: {}", trimmed);
     }
@@ -68,7 +68,7 @@ fn parse_array(inner: &str) -> Vec<JSONElement> {
 
     for c in trimmed.chars() {
         if count_brackets == 0 && c == ',' {
-            result.push(*parse(&word));
+            result.push(parse(&word));
             word.clear();
         } else {
             word.push(c);
@@ -76,7 +76,7 @@ fn parse_array(inner: &str) -> Vec<JSONElement> {
         }
     }
 
-    result.push(*parse(&word));
+    result.push(parse(&word));
 
     result
 }
@@ -102,7 +102,7 @@ fn parse_object(inner: &str) -> HashMap<String, JSONElement> {
                 x => x,
             }
         } else if count_brackets == 0 && c == ',' {
-            result.insert(key.clone(), *parse(&value));
+            result.insert(key.clone(), parse(&value));
             
             key.clear();
             value.clear();
@@ -127,7 +127,7 @@ fn parse_object(inner: &str) -> HashMap<String, JSONElement> {
         }
     }
 
-    result.insert(key, *parse(&value));
+    result.insert(key, parse(&value));
 
     result
 }
@@ -167,41 +167,41 @@ mod test {
 
     #[test]
     fn parse_number_works() {
-        assert_eq!(parse("1"), Box::new(JSONElement::JSONNumber(1)));
-        assert_eq!(parse("-10"), Box::new(JSONElement::JSONNumber(-10)));
-        assert_eq!(parse("12345"), Box::new(JSONElement::JSONNumber(12345)));
+        assert_eq!(parse("1"), JSONElement::JSONNumber(1));
+        assert_eq!(parse("-10"), JSONElement::JSONNumber(-10));
+        assert_eq!(parse("12345"), JSONElement::JSONNumber(12345));
     }
 
     #[test]
     fn parse_string_works() {
         assert_eq!(
             parse("\"h\""),
-            Box::new(JSONElement::JSONString("h".into()))
+            JSONElement::JSONString("h".into())
         );
         assert_eq!(
             parse("\"Test\""),
-            Box::new(JSONElement::JSONString("Test".into()))
+            JSONElement::JSONString("Test".into())
         );
-        assert_eq!(parse("\"\""), Box::new(JSONElement::JSONString("".into())));
+        assert_eq!(parse("\"\""), JSONElement::JSONString("".into()));
     }
 
     #[test]
     fn parse_array_works() {
-        assert_eq!(parse("[]"), Box::new(JSONElement::JSONArray(Vec::new())));
+        assert_eq!(parse("[]"), JSONElement::JSONArray(Vec::new()));
         assert_eq!(
             parse("[\"a\"]"),
-            Box::new(JSONElement::JSONArray(vec![JSONElement::JSONString(
+            JSONElement::JSONArray(vec![JSONElement::JSONString(
                 "a".into()
-            )]))
+            )])
         );
 
         assert_eq!(
             parse("[1,2,3]"),
-            Box::new(JSONElement::JSONArray(vec![
+            JSONElement::JSONArray(vec![
                 JSONElement::JSONNumber(1),
                 JSONElement::JSONNumber(2),
                 JSONElement::JSONNumber(3),
-            ]))
+            ])
         );
     }
 
@@ -209,21 +209,21 @@ mod test {
     fn parse_object_works() {
         assert_eq!(
             parse("{}"),
-            Box::new(JSONElement::JSONObject(HashMap::new()))
+            JSONElement::JSONObject(HashMap::new())
         );
         assert_eq!(
             parse("{\"a\":\"abc\"}"),
-            Box::new(JSONElement::JSONObject(HashMap::from([(
+            JSONElement::JSONObject(HashMap::from([(
                 "a".into(),
                 JSONElement::JSONString("abc".into())
-            )])))
+            )]))
         );
         assert_eq!(
             parse("{\"a\":\"abc\", \"b\":123}"),
-            Box::new(JSONElement::JSONObject(HashMap::from([
+            JSONElement::JSONObject(HashMap::from([
                 ("a".into(), JSONElement::JSONString("abc".into())),
                 ("b".into(), JSONElement::JSONNumber(123))
-            ])))
+            ]))
         );
     }
 
