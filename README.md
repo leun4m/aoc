@@ -4,12 +4,13 @@ Solutions from the various years of [AdventOfCode](https://adventofcode.com) in 
 
 ## Years
 
-| Year | Progress | Days  |
-| ---- | -------: | ----: |
-| 2015 |    0.56% | 14/25 |
-| 2016 |    0.24% |  6/25 |
-| 2018 |    0.08% |  2/25 |
-| 2020 |    0.64% | 16/25 |
+| Year | Progress |    Days |
+| ---- | -------: | ------: |
+| 2015 |     56 % | 14 / 25 |
+| 2016 |     24 % |  6 / 25 |
+| 2017 |      0 % |  0 / 25 |
+| 2018 |      8 % |  2 / 25 |
+| 2020 |     64 % | 16 / 25 |
 
 ## Structure
 
