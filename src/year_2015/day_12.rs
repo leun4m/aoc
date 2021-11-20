@@ -2,20 +2,33 @@ use regex::Regex;
 use std::collections::HashMap;
 
 pub fn main(input: &str) {
-    let root = parse(input)
-;    println!("Part 1: {}", part_one(&root));
+    let root = parse(input);
+    println!("Part 1: {}", part_one(&root));
+    println!("Part 2: {}", part_two(&root));
 }
 
 fn part_one(root: &JSONElement) -> i32 {
-    sum_numbers(&root)
-}
-
-fn sum_numbers(root: &JSONElement) -> i32 {
     match root {
         JSONElement::JSONString(_) => 0,
         JSONElement::JSONNumber(x) => *x,
-        JSONElement::JSONArray(v) => v.iter().map(|x| sum_numbers(x)).sum(),
-        JSONElement::JSONObject(m) => m.values().map(|x| sum_numbers(x)).sum(),
+        JSONElement::JSONArray(v) => v.iter().map(|x| part_one(x)).sum(),
+        JSONElement::JSONObject(m) => m.values().map(|x| part_one(x)).sum(),
+    }
+}
+
+fn part_two(root: &JSONElement) -> i32 {
+    let red_value: JSONElement = JSONElement::JSONString("red".into());
+    match root {
+        JSONElement::JSONString(_) => 0,
+        JSONElement::JSONNumber(x) => *x,
+        JSONElement::JSONArray(v) => v.iter().map(|x| part_two(x)).sum(),
+        JSONElement::JSONObject(m) => {
+            if m.values().any(|x| x == &red_value) {
+                0
+            } else {
+                m.values().map(|x| part_two(x)).sum()
+            }
+        }
     }
 }
 
@@ -132,7 +145,7 @@ impl State {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 enum JSONElement {
     JSONObject(HashMap<String, JSONElement>),
     JSONArray(Vec<JSONElement>),
@@ -219,5 +232,13 @@ mod test {
 
         assert_eq!(part_one(&parse(r#"[]"#)), 0);
         assert_eq!(part_one(&parse(r#"{}"#)), 0);
+    }
+
+    #[test]
+    fn part_two_works() {
+        assert_eq!(part_two(&parse(r#"[1,2,3]"#)), 6);
+        assert_eq!(part_two(&parse(r#"[1,{"c":"red","b":2},3]"#)), 4);
+        assert_eq!(part_two(&parse(r#"{"d":"red","e":[1,2,3,4],"f":5}"#)), 0);
+        assert_eq!(part_two(&parse(r#"[1,"red",5]"#)), 6);
     }
 }

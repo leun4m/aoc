@@ -6,7 +6,7 @@ Solutions from the various years of [AdventOfCode](https://adventofcode.com) in 
 
 | Year | Progress | Days  |
 | ---- | -------: | ----: |
-| 2015 |    0.52% | 13/25 |
+| 2015 |    0.56% | 14/25 |
 | 2016 |    0.24% |  6/25 |
 | 2018 |    0.08% |  2/25 |
 | 2020 |    0.64% | 16/25 |
