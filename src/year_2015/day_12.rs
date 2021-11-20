@@ -29,13 +29,13 @@ fn parse(input: &str) -> Box<JSONElement> {
     } else if let Some(capture) = regex_string.captures(trimmed) {
         let value = capture[1].parse::<String>().unwrap();
         return Box::new(JSONElement::JSONString(value));
-    } else if trimmed.starts_with("[") && trimmed.ends_with("]") {
+    } else if trimmed.starts_with('[') && trimmed.ends_with(']') {
         if trimmed == "[]" {
             return Box::new(JSONElement::JSONArray(Vec::new()));
         } else {
             return parse_array(&trimmed[1..trimmed.len() - 1]);
         }
-    } else if trimmed.starts_with("{") && trimmed.ends_with("}") {
+    } else if trimmed.starts_with('{') && trimmed.ends_with('}') {
         if trimmed == "{}" {
             return Box::new(JSONElement::JSONObject(HashMap::new()));
         } else {
@@ -47,13 +47,13 @@ fn parse(input: &str) -> Box<JSONElement> {
 }
 
 fn parse_array(inner: &str) -> Box<JSONElement> {
-    let mut a: Vec<JSONElement> = Vec::new();
+    let mut list: Vec<JSONElement> = Vec::new();
 
     let mut word = String::new();
     let mut count_brackets = 0;
     for c in inner.chars() {
         if count_brackets == 0 && c == ',' {
-            a.push(*parse(&word));
+            list.push(*parse(&word));
             word = String::new();
         } else {
             word.push(c);
@@ -65,13 +65,13 @@ fn parse_array(inner: &str) -> Box<JSONElement> {
         }
     }
 
-    a.push(*parse(&word));
+    list.push(*parse(&word));
 
-    Box::new(JSONElement::JSONArray(a))
+    Box::new(JSONElement::JSONArray(list))
 }
 
 fn parse_object(inner: &str) -> Box<JSONElement> {
-    let mut a: HashMap<String, JSONElement> = HashMap::new();
+    let mut map: HashMap<String, JSONElement> = HashMap::new();
 
     let mut key = String::new();
     let mut word = String::new();
@@ -88,15 +88,15 @@ fn parse_object(inner: &str) -> Box<JSONElement> {
         } else if count_brackets == 0 && c == ':' {
             //
         } else if count_brackets == 0 && c == ',' {
-            a.insert(key.clone(), *parse(&word));
+            map.insert(key.clone(), *parse(&word));
             key = String::new();
             word = String::new();
             state = State::StartKey;
         } else {
-            if c == '[' || c == '{' {
-                count_brackets += 1;
-            } else if c == ']' || c == '}' {
-                count_brackets -= 1;
+            match c {
+                '[' | '{' => count_brackets += 1,
+                ']' | '}' => count_brackets -= 1,
+                _ => {}
             }
 
             match state {
@@ -114,9 +114,9 @@ fn parse_object(inner: &str) -> Box<JSONElement> {
             }
         }
     }
-    a.insert(key, *parse(&word));
+    map.insert(key, *parse(&word));
 
-    Box::new(JSONElement::JSONObject(a))
+    Box::new(JSONElement::JSONObject(map))
 }
 
 enum State {
@@ -128,10 +128,7 @@ enum State {
 
 impl State {
     fn is_key(&self) -> bool {
-        match self {
-            State::StartKey | State::EndKey => true,
-            _ => false,
-        }
+        matches!(self, State::StartKey | State::EndKey)
     }
 }
 
