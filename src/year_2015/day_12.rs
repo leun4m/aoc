@@ -34,83 +34,81 @@ fn part_two(root: &JSONElement) -> i32 {
 
 fn parse(input: &str) -> Box<JSONElement> {
     let trimmed = input.trim();
-    let regex_number: Regex = Regex::new(r"^-?\d+$").unwrap();
+
+    let regex_number: Regex = Regex::new(r#"^-?\d+$"#).unwrap();
     let regex_string: Regex = Regex::new(r#"^"([^"]*)"$"#).unwrap();
+
     if let Some(capture) = regex_number.captures(trimmed) {
         let value = capture[0].parse::<i32>().unwrap();
-        return Box::new(JSONElement::JSONNumber(value));
+        Box::new(JSONElement::JSONNumber(value))
     } else if let Some(capture) = regex_string.captures(trimmed) {
         let value = capture[1].parse::<String>().unwrap();
-        return Box::new(JSONElement::JSONString(value));
+        Box::new(JSONElement::JSONString(value))
     } else if trimmed.starts_with('[') && trimmed.ends_with(']') {
-        if trimmed == "[]" {
-            return Box::new(JSONElement::JSONArray(Vec::new()));
-        } else {
-            return parse_array(&trimmed[1..trimmed.len() - 1]);
-        }
+        let value = parse_array(&trimmed[1..trimmed.len() - 1]);
+        Box::new(JSONElement::JSONArray(value))
     } else if trimmed.starts_with('{') && trimmed.ends_with('}') {
-        if trimmed == "{}" {
-            return Box::new(JSONElement::JSONObject(HashMap::new()));
-        } else {
-            return parse_object(&input[1..input.len() - 1]);
-        }
+        let value = parse_object(&trimmed[1..trimmed.len() - 1]);
+        Box::new(JSONElement::JSONObject(value))
+    } else {
+        panic!("Unexpected Input: {}", trimmed);
     }
-
-    panic!("Unexpected Input: {}", input);
 }
 
-fn parse_array(inner: &str) -> Box<JSONElement> {
-    let mut list: Vec<JSONElement> = Vec::new();
+fn parse_array(inner: &str) -> Vec<JSONElement> {
+    let mut result: Vec<JSONElement> = Vec::new();
+    let trimmed = inner.trim();
+    
+    if trimmed.is_empty() {
+        return result;
+    }
 
     let mut word = String::new();
     let mut count_brackets = 0;
-    for c in inner.chars() {
+
+    for c in trimmed.chars() {
         if count_brackets == 0 && c == ',' {
-            list.push(*parse(&word));
-            word = String::new();
+            result.push(*parse(&word));
+            word.clear();
         } else {
             word.push(c);
-            match c {
-                '[' | '{' => count_brackets += 1,
-                ']' | '}' => count_brackets -= 1,
-                _ => {}
-            }
+            count_brackets += get_mod_brackets(c);
         }
     }
 
-    list.push(*parse(&word));
+    result.push(*parse(&word));
 
-    Box::new(JSONElement::JSONArray(list))
+    result
 }
 
-fn parse_object(inner: &str) -> Box<JSONElement> {
-    let mut map: HashMap<String, JSONElement> = HashMap::new();
+fn parse_object(inner: &str) -> HashMap<String, JSONElement> {
+    let mut result: HashMap<String, JSONElement> = HashMap::new();
+    let trimmed = inner.trim();
+
+    if trimmed.is_empty() {
+        return result;
+    }
 
     let mut key = String::new();
-    let mut word = String::new();
+    let mut value = String::new();
     let mut count_brackets = 0;
     let mut state = State::StartKey;
 
-    for c in inner.chars() {
-        if count_brackets == 0 && c == '"' && state.is_key() {
-            state = match state {
+    for c in trimmed.chars() {
+        state = if count_brackets == 0 && c == '"' && state.is_key() {
+            match state {
                 State::StartKey => State::EndKey,
                 State::EndKey => State::StartValue,
                 x => x,
             }
-        } else if count_brackets == 0 && c == ':' {
-            //
         } else if count_brackets == 0 && c == ',' {
-            map.insert(key.clone(), *parse(&word));
-            key = String::new();
-            word = String::new();
-            state = State::StartKey;
+            result.insert(key.clone(), *parse(&value));
+            
+            key.clear();
+            value.clear();
+            State::StartKey
         } else {
-            match c {
-                '[' | '{' => count_brackets += 1,
-                ']' | '}' => count_brackets -= 1,
-                _ => {}
-            }
+            count_brackets += get_mod_brackets(c);
 
             match state {
                 State::StartKey => {
@@ -120,16 +118,26 @@ fn parse_object(inner: &str) -> Box<JSONElement> {
                 }
                 State::EndKey => key.push(c),
                 State::StartValue => {
-                    if !c.is_whitespace() {
-                        word.push(c)
+                    if !c.is_whitespace() && c != ':' {
+                        value.push(c)
                     }
                 }
             }
+            state
         }
     }
-    map.insert(key, *parse(&word));
 
-    Box::new(JSONElement::JSONObject(map))
+    result.insert(key, *parse(&value));
+
+    result
+}
+
+fn get_mod_brackets(c: char) -> i32 {
+    match c {
+        '[' | '{' => 1,
+        ']' | '}' => -1,
+        _ => 0,
+    }
 }
 
 enum State {
