@@ -17,7 +17,14 @@ fn parse(input: &str) -> Vec<Cookie> {
 }
 
 fn part_one(cookies: &[Cookie]) -> i64 {
-    0
+    let mut result = 0;
+
+    let ratios = all_ratios(cookies.len(), 100);
+    for ratio in ratios {
+        result = cmp::max(result, test_score(cookies, &ratio));
+    }
+
+    result
 }
 
 fn part_two(cookies: &[Cookie]) -> i64 {
@@ -35,6 +42,26 @@ fn test_score(cookies: &[Cookie], teaspoons: &[i64]) -> i64 {
         let t = sum_properties(cookies, teaspoons, |c| c.texture);
         c * d * f * t
     }
+}
+
+fn all_ratios(count: usize, total: i64) -> Vec<Vec<i64>> {
+    let mut result = Vec::new();
+
+    for i in 0..(total + 1) {
+        let mut line = Vec::new();
+        if count > 1 {
+            for subratio in all_ratios(count - 1, total - i).iter_mut() {
+                line.push(i);
+                line.append(subratio);
+                result.push(line.clone());
+                line.clear();
+            }
+        } else if i == total {
+            result.push(vec![i]);
+        }
+    }
+
+    result
 }
 
 type PropertyOp = fn(&Cookie) -> i64;
@@ -115,12 +142,32 @@ mod test {
     }
 
     #[test]
-    fn part_one_works() {
+    fn test_score_works() {
         let cookies = vec![
             Cookie::new("Butterscotch".into(), -1, -2, 6, 3, 8),
             Cookie::new("Cinnamon".into(), 2, 3, -2, -1, 3),
         ];
 
         assert_eq!(test_score(&cookies, &vec![44, 56]), 62842880);
+    }
+
+    #[test]
+    fn all_ratios_works() {
+        assert_eq!(
+            all_ratios(2, 10),
+            vec![
+                vec![0, 10],
+                vec![1, 9],
+                vec![2, 8],
+                vec![3, 7],
+                vec![4, 6],
+                vec![5, 5],
+                vec![6, 4],
+                vec![7, 3],
+                vec![8, 2],
+                vec![9, 1],
+                vec![10, 0]
+            ]
+        );
     }
 }
