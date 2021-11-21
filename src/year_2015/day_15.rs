@@ -20,25 +20,19 @@ const TEASPOON_TOTAL: i64 = 100;
 const CALORIES_TOTAL: i64 = 500;
 
 fn part_one(cookies: &[Cookie]) -> i64 {
-    let mut result = 0;
-
-    let ratios = all_ratios(cookies.len(), TEASPOON_TOTAL);
-    for ratio in ratios {
-        result = cmp::max(result, test_score(cookies, &ratio));
-    }
-
-    result
+    all_ratios(cookies.len(), TEASPOON_TOTAL)
+        .iter()
+        .map(|ratio| test_score(cookies, ratio))
+        .max()
+        .unwrap_or_default()
 }
 
 fn part_two(cookies: &[Cookie]) -> i64 {
-    let mut result = 0;
-
-    let ratios = all_ratios(cookies.len(), TEASPOON_TOTAL);
-    for ratio in ratios {
-        result = cmp::max(result, test_score_with_calories(cookies, &ratio, CALORIES_TOTAL));
-    }
-
-    result
+    all_ratios(cookies.len(), TEASPOON_TOTAL)
+        .iter()
+        .map(|ratio| test_score_with_calories(cookies, ratio, CALORIES_TOTAL))
+        .max()
+        .unwrap_or_default()
 }
 
 fn test_score(cookies: &[Cookie], teaspoons: &[i64]) -> i64 {
@@ -46,11 +40,7 @@ fn test_score(cookies: &[Cookie], teaspoons: &[i64]) -> i64 {
         println!("Cookies and teaspoons must have the same length");
         0
     } else {
-        let c = sum_properties(cookies, teaspoons, |c| c.capacity);
-        let d = sum_properties(cookies, teaspoons, |c| c.durability);
-        let f = sum_properties(cookies, teaspoons, |c| c.flavor);
-        let t = sum_properties(cookies, teaspoons, |c| c.texture);
-        c * d * f * t
+        sum_all(cookies, teaspoons)
     }
 }
 
@@ -62,15 +52,19 @@ fn test_score_with_calories(cookies: &[Cookie], teaspoons: &[i64], calories_want
         let calories = sum_properties(cookies, teaspoons, |c| c.calories);
 
         if calories == calories_wanted {
-            let c = sum_properties(cookies, teaspoons, |c| c.capacity);
-            let d = sum_properties(cookies, teaspoons, |c| c.durability);
-            let f = sum_properties(cookies, teaspoons, |c| c.flavor);
-            let t = sum_properties(cookies, teaspoons, |c| c.texture);
-            c * d * f * t
+            sum_all(cookies, teaspoons)
         } else {
             0
         }
     }
+}
+
+fn sum_all(cookies: &[Cookie], teaspoons: &[i64]) -> i64 {
+    let c = sum_properties(cookies, teaspoons, |c| c.capacity);
+    let d = sum_properties(cookies, teaspoons, |c| c.durability);
+    let f = sum_properties(cookies, teaspoons, |c| c.flavor);
+    let t = sum_properties(cookies, teaspoons, |c| c.texture);
+    c * d * f * t
 }
 
 fn all_ratios(count: usize, total: i64) -> Vec<Vec<i64>> {
