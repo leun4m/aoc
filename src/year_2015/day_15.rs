@@ -28,7 +28,14 @@ fn part_one(cookies: &[Cookie]) -> i64 {
 }
 
 fn part_two(cookies: &[Cookie]) -> i64 {
-    0
+    let mut result = 0;
+
+    let ratios = all_ratios(cookies.len(), 100);
+    for ratio in ratios {
+        result = cmp::max(result, test_score_with_calories(cookies, &ratio, 500));
+    }
+
+    result
 }
 
 fn test_score(cookies: &[Cookie], teaspoons: &[i64]) -> i64 {
@@ -41,6 +48,25 @@ fn test_score(cookies: &[Cookie], teaspoons: &[i64]) -> i64 {
         let f = sum_properties(cookies, teaspoons, |c| c.flavor);
         let t = sum_properties(cookies, teaspoons, |c| c.texture);
         c * d * f * t
+    }
+}
+
+fn test_score_with_calories(cookies: &[Cookie], teaspoons: &[i64], calories_wanted: i64) -> i64 {
+    if cookies.len() != teaspoons.len() {
+        println!("Cookies and teaspoons must have the same length");
+        0
+    } else {
+        let calories = sum_properties(cookies, teaspoons, |c| c.calories);
+
+        if calories == calories_wanted {
+            let c = sum_properties(cookies, teaspoons, |c| c.capacity);
+            let d = sum_properties(cookies, teaspoons, |c| c.durability);
+            let f = sum_properties(cookies, teaspoons, |c| c.flavor);
+            let t = sum_properties(cookies, teaspoons, |c| c.texture);
+            c * d * f * t
+        } else {
+            0
+        }
     }
 }
 
