@@ -16,10 +16,13 @@ fn parse(input: &str) -> Vec<Cookie> {
         .collect()
 }
 
+const TEASPOON_TOTAL: i64 = 100;
+const CALORIES_TOTAL: i64 = 500;
+
 fn part_one(cookies: &[Cookie]) -> i64 {
     let mut result = 0;
 
-    let ratios = all_ratios(cookies.len(), 100);
+    let ratios = all_ratios(cookies.len(), TEASPOON_TOTAL);
     for ratio in ratios {
         result = cmp::max(result, test_score(cookies, &ratio));
     }
@@ -30,9 +33,9 @@ fn part_one(cookies: &[Cookie]) -> i64 {
 fn part_two(cookies: &[Cookie]) -> i64 {
     let mut result = 0;
 
-    let ratios = all_ratios(cookies.len(), 100);
+    let ratios = all_ratios(cookies.len(), TEASPOON_TOTAL);
     for ratio in ratios {
-        result = cmp::max(result, test_score_with_calories(cookies, &ratio, 500));
+        result = cmp::max(result, test_score_with_calories(cookies, &ratio, CALORIES_TOTAL));
     }
 
     result
