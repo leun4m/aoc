@@ -1,4 +1,5 @@
 use regex::Regex;
+use std::cmp;
 
 pub fn main(input: &str) {
     let cookies = parse(input);
@@ -15,12 +16,39 @@ fn parse(input: &str) -> Vec<Cookie> {
         .collect()
 }
 
-fn part_one(cookies: &[Cookie]) -> i32 {
+fn part_one(cookies: &[Cookie]) -> i64 {
     0
 }
 
-fn part_two(cookies: &[Cookie]) -> i32 {
+fn part_two(cookies: &[Cookie]) -> i64 {
     0
+}
+
+fn test_score(cookies: &[Cookie], teaspoons: &[i64]) -> i64 {
+    if cookies.len() != teaspoons.len() {
+        println!("Cookies and teaspoons must have the same length");
+        0
+    } else {
+        let c = sum_properties(cookies, teaspoons, |c| c.capacity);
+        let d = sum_properties(cookies, teaspoons, |c| c.durability);
+        let f = sum_properties(cookies, teaspoons, |c| c.flavor);
+        let t = sum_properties(cookies, teaspoons, |c| c.texture);
+        c * d * f * t
+    }
+}
+
+type PropertyOp = fn(&Cookie) -> i64;
+
+fn sum_properties(cookies: &[Cookie], teaspoons: &[i64], f: PropertyOp) -> i64 {
+    cmp::max(
+        0,
+        cookies
+            .iter()
+            .map(|cookie| f(cookie))
+            .zip(teaspoons)
+            .map(|(property, teaspoon)| property * teaspoon)
+            .sum(),
+    )
 }
 
 fn parse_cookie(input: &str) -> Cookie {
@@ -29,33 +57,33 @@ fn parse_cookie(input: &str) -> Cookie {
     .captures(input).expect("Looks weird");
 
     let name: String = captures[1].parse().unwrap();
-    let capacity: i32 = captures[2].parse().unwrap();
-    let durability: i32 = captures[3].parse().unwrap();
-    let flavor: i32 = captures[4].parse().unwrap();
-    let texture: i32 = captures[5].parse().unwrap();
-    let calories: i32 = captures[6].parse().unwrap();
+    let capacity: i64 = captures[2].parse().unwrap();
+    let durability: i64 = captures[3].parse().unwrap();
+    let flavor: i64 = captures[4].parse().unwrap();
+    let texture: i64 = captures[5].parse().unwrap();
+    let calories: i64 = captures[6].parse().unwrap();
 
     Cookie::new(name, capacity, durability, flavor, texture, calories)
 }
 
 #[derive(Debug, PartialEq, Eq)]
 struct Cookie {
-    name: String,
-    capacity: i32,
-    durability: i32,
-    flavor: i32,
-    texture: i32,
-    calories: i32,
+    pub name: String,
+    pub capacity: i64,
+    pub durability: i64,
+    pub flavor: i64,
+    pub texture: i64,
+    pub calories: i64,
 }
 
 impl Cookie {
     pub fn new(
         name: String,
-        capacity: i32,
-        durability: i32,
-        flavor: i32,
-        texture: i32,
-        calories: i32,
+        capacity: i64,
+        durability: i64,
+        flavor: i64,
+        texture: i64,
+        calories: i64,
     ) -> Self {
         Self {
             name,
@@ -81,10 +109,18 @@ mod test {
             Cookie::new("Butterscotch".into(), -1, -2, 6, 3, 8)
         );
         assert_eq!(
-            parse_cookie(
-                "Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3"
-            ),
+            parse_cookie("Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3"),
             Cookie::new("Cinnamon".into(), 2, 3, -2, -1, 3)
         );
+    }
+
+    #[test]
+    fn part_one_works() {
+        let cookies = vec![
+            Cookie::new("Butterscotch".into(), -1, -2, 6, 3, 8),
+            Cookie::new("Cinnamon".into(), 2, 3, -2, -1, 3),
+        ];
+
+        assert_eq!(test_score(&cookies, &vec![44, 56]), 62842880);
     }
 }
