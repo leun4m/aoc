@@ -58,7 +58,7 @@ fn parse(input: &str) -> JSONElement {
 fn parse_array(inner: &str) -> Vec<JSONElement> {
     let mut result: Vec<JSONElement> = Vec::new();
     let trimmed = inner.trim();
-    
+
     if trimmed.is_empty() {
         return result;
     }
@@ -103,7 +103,7 @@ fn parse_object(inner: &str) -> HashMap<String, JSONElement> {
             }
         } else if count_brackets == 0 && c == ',' {
             result.insert(key.clone(), parse(&value));
-            
+
             key.clear();
             value.clear();
             State::StartKey
@@ -174,14 +174,8 @@ mod test {
 
     #[test]
     fn parse_string_works() {
-        assert_eq!(
-            parse("\"h\""),
-            JSONElement::JSONString("h".into())
-        );
-        assert_eq!(
-            parse("\"Test\""),
-            JSONElement::JSONString("Test".into())
-        );
+        assert_eq!(parse("\"h\""), JSONElement::JSONString("h".into()));
+        assert_eq!(parse("\"Test\""), JSONElement::JSONString("Test".into()));
         assert_eq!(parse("\"\""), JSONElement::JSONString("".into()));
     }
 
@@ -190,9 +184,7 @@ mod test {
         assert_eq!(parse("[]"), JSONElement::JSONArray(Vec::new()));
         assert_eq!(
             parse("[\"a\"]"),
-            JSONElement::JSONArray(vec![JSONElement::JSONString(
-                "a".into()
-            )])
+            JSONElement::JSONArray(vec![JSONElement::JSONString("a".into())])
         );
 
         assert_eq!(
@@ -207,10 +199,7 @@ mod test {
 
     #[test]
     fn parse_object_works() {
-        assert_eq!(
-            parse("{}"),
-            JSONElement::JSONObject(HashMap::new())
-        );
+        assert_eq!(parse("{}"), JSONElement::JSONObject(HashMap::new()));
         assert_eq!(
             parse("{\"a\":\"abc\"}"),
             JSONElement::JSONObject(HashMap::from([(
