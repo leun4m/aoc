@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashSet;
 
@@ -79,15 +80,11 @@ fn part_one(grid: &[HashSet<u32>]) -> usize {
 }
 
 fn part_two(grid: &[HashSet<u32>]) -> u32 {
-    let singles: HashSet<u32> = grid
-        .iter()
-        .filter(|x| x.len() == 1)
-        .flat_map(|x| x.iter().copied())
-        .collect();
-    *singles
-        .iter()
-        .filter(|x| grid.iter().all(|g| !g.contains(x) || g.len() == 1))
-        .next()
+    grid.iter()
+        .filter(|ids| ids.len() == 1)
+        .flat_map(|ids| ids.iter().copied())
+        .unique()
+        .find(|id| grid.iter().filter(|g| g.contains(id)).all(|g| g.len() == 1))
         .unwrap()
 }
 
