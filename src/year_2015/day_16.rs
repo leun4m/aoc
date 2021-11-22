@@ -57,26 +57,25 @@ fn part_two(aunts: &[Aunt]) -> u32 {
 }
 
 fn matches_aunt(aunt: &Aunt) -> bool {
-    get_searched_for().iter().all(|(key, desired_value)| {
-        let val = aunt.data.get(key);
-        val.is_none() || val.unwrap() == desired_value
-    })
+    get_searched_for()
+        .iter()
+        .all(|(key, desired_value)| match aunt.data.get(key) {
+            None => true,
+            Some(v) => v == desired_value,
+        })
 }
 
 fn matches_aunt_v2(aunt: &Aunt) -> bool {
-    get_searched_for().iter().all(|(key, desired_value)| {
-        let val = aunt.data.get(key);
-
-        if let Some(v) = val {
-            match key.as_str() {
+    get_searched_for()
+        .iter()
+        .all(|(key, desired_value)| match aunt.data.get(key) {
+            None => true,
+            Some(v) => match key.as_str() {
                 "cats" | "trees" => v > desired_value,
                 "pomeranians" | "goldfish" => v < desired_value,
                 _ => v == desired_value,
-            }
-        } else {
-            val.is_none()
-        }
-    })
+            },
+        })
 }
 
 fn get_searched_for() -> AuntData {
