@@ -52,14 +52,30 @@ fn part_one(aunts: &[Aunt]) -> u32 {
     aunts.iter().find(|aunt| matches_aunt(aunt)).unwrap().id
 }
 
-fn part_two(_aunts: &[Aunt]) -> u32 {
-    0
+fn part_two(aunts: &[Aunt]) -> u32 {
+    aunts.iter().find(|aunt| matches_aunt_v2(aunt)).unwrap().id
 }
 
 fn matches_aunt(aunt: &Aunt) -> bool {
-    get_searched_for().iter().all(|(key, value)| {
+    get_searched_for().iter().all(|(key, desired_value)| {
         let val = aunt.data.get(key);
-        val.is_none() || val.unwrap() == value
+        val.is_none() || val.unwrap() == desired_value
+    })
+}
+
+fn matches_aunt_v2(aunt: &Aunt) -> bool {
+    get_searched_for().iter().all(|(key, desired_value)| {
+        let val = aunt.data.get(key);
+
+        if let Some(v) = val {
+            match key.as_str() {
+                "cats" | "trees" => v > desired_value,
+                "pomeranians" | "goldfish" => v < desired_value,
+                _ => v == desired_value,
+            }
+        } else {
+            val.is_none()
+        }
     })
 }
 
