@@ -3,9 +3,9 @@ use std::collections::HashSet;
 
 pub fn main(input: &str) {
     let claims = parse(input);
-    let claimed_fields = calc_all_claimed(&claims);
-    println!("Part 1: {}", part_one(&claimed_fields));
-    println!("Part 2: {}", part_two(&claimed_fields));
+    let grid = build_grid(&claims);
+    println!("Part 1: {}", part_one(&grid));
+    println!("Part 2: {}", part_two(&grid));
 }
 
 fn parse(input: &str) -> Vec<Claim> {
@@ -38,8 +38,24 @@ fn parse_line(line: &str) -> Claim {
     }
 }
 
-fn calc_all_claimed(claims: &[Claim]) -> Vec<HashSet<(u32, u32)>> {
-    claims.iter().map(|claim| calc_claimed(claim)).collect()
+fn build_grid(claims: &[Claim]) -> Vec<HashSet<u32>> {
+    let mut grid: Vec<HashSet<u32>> = Vec::with_capacity(ARRAY_SIZE);
+
+    for _ in 0..ARRAY_SIZE {
+        grid.push(HashSet::new());
+    }
+
+    for claim in claims {
+        for (x, y) in calc_claimed(claim) {
+            grid[get_index(x, y)].insert(claim.id);
+        }
+    }
+
+    grid
+}
+
+fn get_index(x: u32, y: u32) -> usize {
+    (MAX_X * y + x) as usize
 }
 
 fn calc_claimed(claim: &Claim) -> HashSet<(u32, u32)> {
@@ -56,26 +72,13 @@ fn calc_claimed(claim: &Claim) -> HashSet<(u32, u32)> {
 
 const MAX_X: u32 = 1000;
 const MAX_Y: u32 = 1000;
+const ARRAY_SIZE: usize = (MAX_X * MAX_Y) as usize;
 
-fn part_one(claimed_fields: &[HashSet<(u32, u32)>]) -> u32 {
-    let mut result = 0;
-
-    for x in 0..MAX_X {
-        for y in 0..MAX_Y {
-            if claimed_fields
-                .iter()
-                .filter(|m| m.contains(&(x, y)))
-                .count()
-                > 1
-            {
-                result += 1;
-            }
-        }
-    }
-    result
+fn part_one(grid: &[HashSet<u32>]) -> usize {
+    grid.iter().filter(|x| x.len() > 1).count()
 }
 
-fn part_two(claimed_fields: &[HashSet<(u32, u32)>]) -> u32 {
+fn part_two(grid: &[HashSet<u32>]) -> u32 {
     0
 }
 
@@ -176,7 +179,7 @@ mod test {
                 height: 2,
             },
         ];
-        let claimed_fields = calc_all_claimed(&claims);
-        assert_eq!(part_one(&claimed_fields), 4);
+        let grid = build_grid(&claims);
+        assert_eq!(part_one(&grid), 4);
     }
 }
