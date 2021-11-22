@@ -79,7 +79,16 @@ fn part_one(grid: &[HashSet<u32>]) -> usize {
 }
 
 fn part_two(grid: &[HashSet<u32>]) -> u32 {
-    0
+    let singles: HashSet<u32> = grid
+        .iter()
+        .filter(|x| x.len() == 1)
+        .flat_map(|x| x.iter().copied())
+        .collect();
+    *singles
+        .iter()
+        .filter(|x| grid.iter().all(|g| !g.contains(x) || g.len() == 1))
+        .next()
+        .unwrap()
 }
 
 #[derive(Debug, PartialEq, Eq)]
