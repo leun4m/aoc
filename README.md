@@ -8,7 +8,7 @@ Solutions from the various years of [AdventOfCode](https://adventofcode.com) in 
 | ---- | -------: | ------: |
 | 2015 |     68 % | 17 / 25 |
 | 2016 |     24 % |  6 / 25 |
-| 2017 |      0 % |  0 / 25 |
+| 2017 |      4 % |  1 / 25 |
 | 2018 |     12 % |  3 / 25 |
 | 2020 |     64 % | 16 / 25 |
 
