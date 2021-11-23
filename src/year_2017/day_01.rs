@@ -5,34 +5,23 @@ pub fn main(input: &str) {
 }
 
 fn part_one(input: &str) -> u32 {
-    if input.len() < 2 {
-        return 0;
-    }
-
-    let mut sum = 0;
-    let mut last_char = input.chars().last().unwrap();
-
-    for c in input.chars() {
-        if c == last_char {
-            sum += c.to_digit(10).unwrap();
-        }
-        last_char = c;
-    }
-
-    sum
+    internal(input, 1)
 }
 
 fn part_two(input: &str) -> u32 {
+    internal(input, input.len() / 2)
+}
+
+fn internal(input: &str, steps: usize) -> u32 {
     if input.len() < 2 {
         return 0;
     }
 
     let mut sum = 0;
-    let steps = input.len() / 2;
     let chars = input.chars().collect::<Vec<char>>();
     
     for i in 0..input.len() {
-        let a = chars[i % input.len()];
+        let a = chars[i];
         let b = chars[(i + steps) % input.len()];
 
         if a == b {
