@@ -53,9 +53,9 @@ fn find_arrangements(buckets: &[Bucket], goal: BucketSize) -> HashSet<Vec<Bucket
 
 fn find_sub_arrangements(a: &[Bucket], b: &[Bucket], goal: BucketSize) -> HashSet<Vec<Bucket>> {
     let mut result = HashSet::new();
-    
+
     let a_sum = a.iter().map(|x| x.size).sum::<BucketSize>();
-    
+
     if b.is_empty() || a_sum >= goal {
         return result;
     }

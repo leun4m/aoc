@@ -19,7 +19,7 @@ fn internal(input: &str, steps: usize) -> u32 {
 
     let mut sum = 0;
     let chars = input.chars().collect::<Vec<char>>();
-    
+
     for i in 0..input.len() {
         let a = chars[i];
         let b = chars[(i + steps) % input.len()];
