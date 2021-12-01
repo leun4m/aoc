@@ -2,7 +2,7 @@
 name = "aoc"
 version = "0.1.0"
 authors = ["Manuel Krebs <me@leun4m.de>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 structopt = "0.3"
