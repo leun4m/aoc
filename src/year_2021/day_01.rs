@@ -13,20 +13,11 @@ fn parse(input: &str) -> Vec<u32> {
 }
 
 fn part_one(depths: &[u32]) -> usize {
-    depths
-        .iter()
-        .zip(&depths[1..])
-        .filter(|(a, b)| a < b)
-        .count()
+    depths.windows(2).filter(|x| x[0] < x[1]).count()
 }
 
 fn part_two(depths: &[u32]) -> usize {
-    let window_sums: Vec<u32> = depths
-        .iter()
-        .zip(&depths[1..])
-        .zip(&depths[2..])
-        .map(|((a, b), c)| a + b + c)
-        .collect();
+    let window_sums: Vec<_> = depths.windows(3).map(|x| x[0] + x[1] + x[2]).collect();
     part_one(&window_sums)
 }
 
