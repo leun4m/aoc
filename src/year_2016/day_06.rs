@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use std::collections::HashMap;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let matrix = CharMatrix::build(&parse(input));
     println!("Part 1: {}", part_one(&matrix));
     println!("Part 2: {}", part_two(&matrix));

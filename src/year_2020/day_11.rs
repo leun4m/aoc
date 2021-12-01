@@ -1,7 +1,7 @@
 const PART_ONE_SEAT_RULE: usize = 4;
 const PART_TWO_SEAT_RULE: usize = 5;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let start_positions = parse_input(input);
 
     println!("Part 1: {}", part_one(&start_positions));

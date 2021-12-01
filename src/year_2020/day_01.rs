@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let mut numbers = Vec::new();
     for line in input.lines() {
         numbers.push(line.parse::<u32>().expect("line is NaN"));

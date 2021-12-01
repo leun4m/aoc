@@ -9,7 +9,7 @@ struct Aunt {
 
 type AuntData = HashMap<String, u32>;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let aunts = parse(input);
 
     println!("Part 1: {}", part_one(&aunts));

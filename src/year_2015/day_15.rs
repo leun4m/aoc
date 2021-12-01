@@ -1,7 +1,7 @@
 use regex::Regex;
 use std::cmp;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let cookies = parse(input);
 
     println!("Part 1: {}", part_one(&cookies));

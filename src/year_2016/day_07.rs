@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let addresses = parse(input);
     println!("Part 1: {}", part_one(&addresses));
     println!("Part 2: {}", part_two(&addresses));

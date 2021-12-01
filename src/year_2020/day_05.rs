@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let seats: Vec<(u8, u8)> = input.lines().map(|x| parse_line(x)).collect();
     let max = seats.iter().map(|&x| seat_id(x)).max().unwrap();
     let mut all_seats = Vec::new();

@@ -2,7 +2,7 @@ use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashSet;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let claims = parse(input);
     let grid = build_grid(&claims);
     println!("Part 1: {}", part_one(&grid));

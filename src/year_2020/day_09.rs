@@ -1,6 +1,6 @@
 const PREAMBLE: usize = 25;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let numbers = parse_lines(input);
     let part_one = find_wrong_line(&numbers);
     if let Some(number) = part_one {

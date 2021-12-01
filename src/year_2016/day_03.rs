@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     println!("{}", count_triangles(&parse_horizontal(input)));
     println!("{}", count_triangles(&parse_vertical(input)));
 }

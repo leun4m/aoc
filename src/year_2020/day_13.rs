@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let (earliest, times) = parse_input(input);
     let bus = part_one(&times, earliest);
     let timestamp = part_two(&times);

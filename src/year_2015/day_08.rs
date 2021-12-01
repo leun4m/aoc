@@ -2,7 +2,7 @@ use regex::Regex;
 
 const REPLACEMENT_STR: &str = "_";
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let result = count(input);
     let encoded = count(&encode(input));
     println!(

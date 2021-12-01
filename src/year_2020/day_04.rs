@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let mut passports_valid_simple = 0;
     let mut passports_valid_advanced = 0;
     for passport_data in input.split("\n\n") {

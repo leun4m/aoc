@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let groups = parse_input(input);
 
     let sum_1 = part_one(&groups);

@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let year1 = houses_visited(&get_positions(input));
     let year2 = houses_visited(&get_positions_with_robot(input));
     println!("Year 1: {}", year1);

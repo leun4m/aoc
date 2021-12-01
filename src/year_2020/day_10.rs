@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let adapters = parse_input(input);
     let (difference_1, difference_3) = calculate_differences(&adapters);
     let variations = calculate_variations(&adapters);

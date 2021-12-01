@@ -1,6 +1,6 @@
 use regex::Regex;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let regex = Regex::new(r"(\d+)-(\d+) (\w): (\w+)").unwrap();
     let mut valid_1 = 0;
     let mut valid_2 = 0;

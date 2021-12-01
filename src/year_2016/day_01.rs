@@ -1,7 +1,7 @@
 use std::cmp;
 use std::collections::HashSet;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let instructions = parse(input);
     println!("{}", distance(run(&instructions)));
     println!("{}", distance(first_double(&instructions)));

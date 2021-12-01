@@ -12,7 +12,7 @@ struct Bucket {
 
 const GOAL: BucketSize = 150;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let buckets = parse(input);
     let arrangements = find_arrangements(&buckets, GOAL);
 

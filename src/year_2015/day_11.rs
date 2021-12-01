@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let mut new_password = increment(input);
 
     if !input.is_empty() {

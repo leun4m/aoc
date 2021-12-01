@@ -1,6 +1,6 @@
 use std::cmp;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let instructions = parse(input);
     println!("{}", calc_number(&instructions));
     println!("{}", calc_number2(&instructions));

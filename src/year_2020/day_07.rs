@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 const SEARCHED: &str = "shiny gold";
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let rules = parse_file(input);
     let part_one = check(&rules);
     let part_two = bags_to_be_contained(&rules, SEARCHED);

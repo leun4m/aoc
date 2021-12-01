@@ -17,8 +17,8 @@ Solutions from the various years of [AdventOfCode](https://adventofcode.com) in 
 Each year has it's own module and in that each day is a submodule, so each day is a separate file.
 The day modules should in generally not know each other, they are meant to be isolated.
 
-For convenience each day has a `main(input: &str)` function as a starting point.
-This `main`-function is supposed to calculate the solution to the given input and output them.
+For convenience each day has a `solve(input: &str)` function as a starting point.
+This `solve`-function is supposed to calculate the solution to the given input and output them.
 
 ## Testing
 

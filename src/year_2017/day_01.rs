@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let trimmed = input.trim();
     println!("{}", part_one(trimmed));
     println!("{}", part_two(trimmed));

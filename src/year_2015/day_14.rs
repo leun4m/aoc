@@ -2,7 +2,7 @@ use regex::Regex;
 
 const TIME: u32 = 2503;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let mut reindeers = parse(input);
 
     println!("Part 1: {}", part_one(&mut reindeers));

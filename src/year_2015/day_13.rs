@@ -4,7 +4,7 @@ use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashMap;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let rules = parse(input);
     println!("Part 1: {}", part_one(&rules));
     println!("Part 2: {}", part_two(&rules));

@@ -2,7 +2,7 @@ use crate::util;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let result = internal(input);
     println!("Shortest: {}", result.0);
     println!("Longest:  {}", result.1);

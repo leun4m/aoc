@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let mut counter1 = 0;
     let mut counter2 = 0;
     for line in input.lines() {

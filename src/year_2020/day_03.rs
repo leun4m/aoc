@@ -4,7 +4,7 @@ use std::fmt::{Display, Formatter};
 
 const SLOPES: &[(u64, u64)] = &[(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)];
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let world = parse_map(input);
 
     let mut pos = Position::default();

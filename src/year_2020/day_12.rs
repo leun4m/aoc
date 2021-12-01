@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let directions = parse_input(input);
     let (x1, y1) = move_it_one(&directions);
     println!("Part 1: {} ({} / {})", manhattan_distance(x1, y1), x1, y1);

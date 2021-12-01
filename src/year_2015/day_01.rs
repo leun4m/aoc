@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     if !input.is_ascii() {
         panic!("Input is not ascii!");
     }

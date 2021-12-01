@@ -13,7 +13,7 @@ const REGEX_NOT: &str = r"^NOT (\w+)";
 const WIRE_TO_OBSERVE: &str = "a";
 const WIRE_TO_CHANGE: &str = "b";
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let result = internal(input, WIRE_TO_OBSERVE);
     println!("P1 - Wire a: {}", result.0);
     println!("P2 - Wire a: {}", result.1);

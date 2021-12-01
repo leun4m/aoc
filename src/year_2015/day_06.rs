@@ -5,7 +5,7 @@ const HEIGHT: usize = 1000;
 
 type Matrix<T> = Vec<Vec<T>>;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let result = main_internal(input);
     println!("Lights on:  {}", result.0);
     println!("Brightness: {}", result.1);

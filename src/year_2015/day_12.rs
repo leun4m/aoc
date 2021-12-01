@@ -1,7 +1,7 @@
 use regex::Regex;
 use std::collections::HashMap;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let root = parse(input);
     println!("Part 1: {}", part_one(&root));
     println!("Part 2: {}", part_two(&root));

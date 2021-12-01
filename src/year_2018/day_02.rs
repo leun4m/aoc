@@ -1,6 +1,6 @@
 use crate::util;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let multiples = parse(input);
     let lines = input.lines().collect::<Vec<&str>>();
     println!("Part 1: {}", part_one(&multiples));

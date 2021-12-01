@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let mut result_one = input.to_string();
     (0..40).for_each(|_| result_one = look_and_say(&result_one));
     let mut result_two = result_one.clone();

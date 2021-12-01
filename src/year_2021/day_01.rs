@@ -1,4 +1,4 @@
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let depths = parse(input);
     println!("Part 1: {}", part_one(&depths));
     println!("Part 2: {}", part_two(&depths));

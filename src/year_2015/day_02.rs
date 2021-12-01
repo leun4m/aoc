@@ -1,7 +1,7 @@
 use std::cmp::{max, min};
 use std::str::FromStr;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let mut paper = 0;
     let mut ribbon = 0;
     for line in input.lines() {

@@ -2,7 +2,7 @@ use regex::{Captures, Regex};
 use std::collections::{HashMap, HashSet};
 use std::str::Lines;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let (rules, own_ticket, tickets) = parse_input(input);
     let mut possibilities = get_all_possibilities(&rules, &own_ticket);
     let (error_rate, other_numbers) = analyse_tickets(&tickets, &rules);

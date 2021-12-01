@@ -2,7 +2,7 @@ use crate::util;
 use itertools::Itertools;
 use regex::Regex;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let rooms = parse(input);
     println!("Part 1: {}", part_one(&rooms));
     println!("Part 2: {}", part_two(&rooms));

@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use std::fmt::{Debug, Formatter};
 use std::hash::Hash;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let final_state_3d = Grid::<Coordinate3D>::parse(input).run_cycles(6);
     println!("Part 1: {}", final_state_3d.actives_count());
     let final_state_4d = Grid::<Coordinate4D>::parse(input).run_cycles(6);

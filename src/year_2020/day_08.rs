@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     let lines: Vec<Operation> = input.lines().map(|x| Operation::parse(x)).collect();
 
     println!("Part One: {}", run(&lines));

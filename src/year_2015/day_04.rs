@@ -1,7 +1,7 @@
 use crypto::digest::Digest;
 use crypto::md5;
 
-pub fn main(input: &str) {
+pub fn solve(input: &str) {
     println!("5 leading Zeros: {}", find_number(input, 5));
     println!("6 leading Zeros: {}", find_number(input, 6));
 }
