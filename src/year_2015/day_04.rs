@@ -1,5 +1,5 @@
 use crypto::digest::Digest;
-use crypto::md5;
+use crypto::md5::Md5;
 
 pub fn solve(input: &str) {
     println!("5 leading Zeros: {}", find_number(input, 5));
@@ -7,13 +7,13 @@ pub fn solve(input: &str) {
 }
 
 fn find_number(input: &str, leading_zeros: usize) -> u32 {
-    let prefix = &"0".repeat(leading_zeros);
-    let mut md5 = md5::Md5::new();
+    let prefix = "0".repeat(leading_zeros);
+    let mut md5 = Md5::new();
     md5.input_str(input);
     for i in 1..u32::MAX {
         let mut a = md5;
         a.input_str(&i.to_string());
-        if a.result_str().starts_with(prefix) {
+        if a.result_str().starts_with(&prefix) {
             return i;
         }
     }
