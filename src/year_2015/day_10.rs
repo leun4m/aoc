@@ -14,14 +14,14 @@ fn look_and_say(input: &str) -> String {
     let mut previous = NULL_CHAR;
     let mut times = 1;
 
-    for char in input.chars() {
+    for c in input.chars() {
         if previous == NULL_CHAR {
-            previous = char;
-        } else if char == previous {
+            previous = c;
+        } else if c == previous {
             times += 1;
         } else {
             result.push_str(&format!("{}{}", times, previous));
-            previous = char;
+            previous = c;
             times = 1;
         }
     }

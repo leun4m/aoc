@@ -229,12 +229,12 @@ fn parse_input(input: &str) -> Vec<Vec<Position>> {
     for line in input.lines() {
         let mut row = Vec::new();
 
-        for char in line.chars() {
-            row.push(match char {
+        for c in line.chars() {
+            row.push(match c {
                 '.' => Position::Floor,
                 'L' => Position::SeatEmpty,
                 '#' => Position::SeatOccupied,
-                _ => panic!("Unexpected symbol: {}", char),
+                _ => panic!("Unexpected symbol: {}", c),
             })
         }
 

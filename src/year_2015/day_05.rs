@@ -24,12 +24,12 @@ const NULL_CHAR: char = '_';
 fn contains_axa(text: &str) -> bool {
     let mut pre_last_char = NULL_CHAR;
     let mut last_char = NULL_CHAR;
-    for char in text.chars() {
-        if pre_last_char == char {
+    for c in text.chars() {
+        if pre_last_char == c {
             return true;
         } else {
             pre_last_char = last_char;
-            last_char = char;
+            last_char = c;
         }
     }
     false
@@ -39,14 +39,14 @@ fn contains_pair_twice(text: &str) -> bool {
     let mut last_char = NULL_CHAR;
     let mut pairs = HashMap::new();
     let mut i = 0;
-    for char in text.chars() {
-        let pair = format!("{}{}", last_char, char);
+    for c in text.chars() {
+        let pair = format!("{}{}", last_char, c);
         let option = pairs.get(&pair);
         if option.is_some() && *option.unwrap() < (i - 1) {
             return true;
         } else {
             pairs.entry(pair).or_insert(i);
-            last_char = char;
+            last_char = c;
             i += 1;
         }
     }
@@ -64,19 +64,19 @@ fn is_nice_old(text: &str) -> bool {
 
 fn contains_double_letter(text: &str) -> bool {
     let mut last_char = '\0';
-    for char in text.chars() {
-        if char == last_char {
+    for c in text.chars() {
+        if c == last_char {
             return true;
         }
-        last_char = char;
+        last_char = c;
     }
     false
 }
 
 fn contains_vowels(text: &str, min: u8) -> bool {
     let mut counter = 0;
-    for char in text.chars() {
-        if is_vowel(char) {
+    for c in text.chars() {
+        if is_vowel(c) {
             counter += 1;
             if counter >= min {
                 return true;
@@ -86,8 +86,8 @@ fn contains_vowels(text: &str, min: u8) -> bool {
     false
 }
 
-fn is_vowel(char: char) -> bool {
-    char == 'a' || char == 'e' || char == 'i' || char == 'o' || char == 'u'
+fn is_vowel(c: char) -> bool {
+    c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'
 }
 
 #[cfg(test)]

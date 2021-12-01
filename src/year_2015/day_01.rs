@@ -11,11 +11,11 @@ fn count(input: &str) -> (i32, i32) {
     let mut floor = 0;
     let mut index = 1;
     let mut reached_basement = false;
-    for char in input.chars() {
-        match char {
+    for chr in input.chars() {
+        match chr {
             '(' => floor += 1,
             ')' => floor -= 1,
-            _ => panic!("Unexpected char: {}", char),
+            _ => panic!("Unexpected char: {}", chr),
         }
         if floor == -1 {
             reached_basement = true;

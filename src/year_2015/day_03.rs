@@ -20,8 +20,8 @@ fn get_positions(input: &str) -> Vec<(i32, i32)> {
     let mut santa = Position(0, 0);
     let mut houses = vec![santa.into()];
 
-    for char in input.chars() {
-        santa.move_it(char);
+    for chr in input.chars() {
+        santa.move_it(chr);
         houses.push(santa.into());
     }
     houses
@@ -37,12 +37,12 @@ fn get_positions_with_robot(input: &str) -> Vec<(i32, i32)> {
     let mut robot = Position(0, 0);
     let mut houses = vec![(santa.0, santa.0), (robot.0, robot.0)];
 
-    for char in input.chars() {
+    for chr in input.chars() {
         if is_santa {
-            santa.move_it(char);
+            santa.move_it(chr);
             houses.push(santa.into());
         } else {
-            robot.move_it(char);
+            robot.move_it(chr);
             houses.push(robot.into());
         }
         is_santa = !is_santa;
@@ -66,13 +66,13 @@ impl Position {
     fn go_west(&mut self) {
         self.1 -= 1;
     }
-    fn move_it(&mut self, char: char) {
-        match char {
+    fn move_it(&mut self, c: char) {
+        match c {
             '^' => self.go_north(),
             '>' => self.go_east(),
             'v' => self.go_south(),
             '<' => self.go_west(),
-            _ => panic!("Unexpected char: {}", char),
+            _ => panic!("Unexpected char: {}", c),
         };
     }
 }

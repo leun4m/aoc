@@ -14,16 +14,16 @@ fn increment(input: &str) -> String {
     let mut result = String::new();
     let mut has_to_increment = true;
 
-    for char in input.chars().rev() {
+    for c in input.chars().rev() {
         let new_char = if has_to_increment {
-            if char < 'z' {
+            if c < 'z' {
                 has_to_increment = false;
-                (char as u8 + 1) as char
+                (c as u8 + 1) as char
             } else {
                 'a'
             }
         } else {
-            char
+            c
         };
         result = format!("{}{}", new_char, result);
     }
@@ -42,21 +42,21 @@ fn is_valid(input: &str) -> bool {
     let mut pre_previous = chars.next().unwrap();
     let mut previous = chars.next().unwrap();
 
-    for char in chars {
-        if ['i', 'o', 'l'].contains(&char) {
+    for c in chars {
+        if ['i', 'o', 'l'].contains(&c) {
             return false;
         }
 
-        if char as u32 == previous as u32 + 1 && previous as u32 == pre_previous as u32 + 1 {
+        if c as u32 == previous as u32 + 1 && previous as u32 == pre_previous as u32 + 1 {
             contains_street = true;
         }
 
-        if char == previous && previous != pre_previous && !pairs.contains(&char) {
-            pairs.push(char);
+        if c == previous && previous != pre_previous && !pairs.contains(&c) {
+            pairs.push(c);
         }
 
         pre_previous = previous;
-        previous = char;
+        previous = c;
     }
     contains_street && pairs.len() >= 2
 }

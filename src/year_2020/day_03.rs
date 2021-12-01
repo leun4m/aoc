@@ -33,11 +33,11 @@ fn parse_map(input: &str) -> World {
     let mut y = 0;
 
     for line in input.lines() {
-        for char in line.chars() {
-            let square = match char {
+        for chr in line.chars() {
+            let square = match chr {
                 '.' => Square::Open,
                 '#' => Square::Tree,
-                _ => panic!("Unexpected char: {}", char),
+                _ => panic!("Unexpected char: {}", chr),
             };
             map.insert(Position::new(x, y), square);
             x += 1;
