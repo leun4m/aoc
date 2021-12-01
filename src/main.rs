@@ -4,6 +4,7 @@ mod year_2016;
 mod year_2017;
 mod year_2018;
 mod year_2020;
+mod year_2021;
 
 use std::fs::File;
 use std::io::{BufReader, Read};
@@ -51,6 +52,7 @@ fn main() {
         17 | 2017 => year_2017::solve_day(opt.day, &input),
         18 | 2018 => year_2018::solve_day(opt.day, &input),
         20 | 2020 => year_2020::solve_day(opt.day, &input),
+        21 | 2021 => year_2021::solve_day(opt.day, &input),
         _ => println!("{}", util::INVALID_YEAR),
     }
 }
