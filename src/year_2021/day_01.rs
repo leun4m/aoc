@@ -16,19 +16,18 @@ fn part_one(depths: &[u32]) -> usize {
     depths
         .iter()
         .zip(&depths[1..])
-        .map(|(a, b)| a < b)
-        .filter(|x| *x)
+        .filter(|(a, b)| a < b)
         .count()
 }
 
 fn part_two(depths: &[u32]) -> usize {
-    let windows: Vec<u32> = depths
+    let window_sums: Vec<u32> = depths
         .iter()
         .zip(&depths[1..])
         .zip(&depths[2..])
         .map(|((a, b), c)| a + b + c)
         .collect();
-    part_one(&windows)
+    part_one(&window_sums)
 }
 
 #[cfg(test)]
