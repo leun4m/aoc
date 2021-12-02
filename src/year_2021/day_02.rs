@@ -77,7 +77,7 @@ enum Direction {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     const INPUT: &str = "forward 5

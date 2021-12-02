@@ -94,7 +94,7 @@ fn get_searched_for() -> AuntData {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

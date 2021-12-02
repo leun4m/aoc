@@ -130,7 +130,7 @@ fn get_ranking(text: &str) -> Vec<char> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

@@ -75,7 +75,7 @@ fn count_chars(input: &str) -> u32 {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::{count, encode};
 
     #[test]

@@ -84,7 +84,7 @@ fn find_sub_arrangements(a: &[Bucket], b: &[Bucket], goal: BucketSize) -> HashSe
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

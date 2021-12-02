@@ -72,7 +72,7 @@ fn parse_line(line: &str) -> (String, String, u64) {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::internal;
 
     #[test]

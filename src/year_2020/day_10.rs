@@ -65,7 +65,7 @@ fn parse_input(input: &str) -> Vec<u64> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

@@ -84,7 +84,7 @@ impl From<Position> for (i32, i32) {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::{get_positions, get_positions_with_robot, houses_visited};
 
     #[test]

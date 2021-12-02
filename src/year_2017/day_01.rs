@@ -33,7 +33,7 @@ fn internal(input: &str, steps: usize) -> u32 {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

@@ -28,7 +28,7 @@ fn play(start: &[usize], number_of_interest: usize) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use crate::year_2020::day_15::play;
 
     #[test]

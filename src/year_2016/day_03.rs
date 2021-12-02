@@ -57,7 +57,7 @@ fn is_triangle((a, b, c): (u32, u32, u32)) -> bool {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

@@ -91,7 +91,7 @@ fn is_vowel(c: char) -> bool {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::{contains_axa, contains_pair_twice, is_nice, is_nice_old};
 
     #[test]

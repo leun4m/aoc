@@ -22,7 +22,7 @@ fn part_two(depths: &[u32]) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

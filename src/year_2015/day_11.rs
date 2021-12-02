@@ -62,7 +62,7 @@ fn is_valid(input: &str) -> bool {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
 
     #[test]
     fn example() {

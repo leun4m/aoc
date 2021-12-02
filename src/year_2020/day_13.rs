@@ -93,7 +93,7 @@ fn parse_input(input: &str) -> (u64, Vec<BusTime>) {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

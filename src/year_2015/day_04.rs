@@ -21,7 +21,7 @@ fn find_number(input: &str, leading_zeros: usize) -> u32 {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::find_number;
 
     #[test]

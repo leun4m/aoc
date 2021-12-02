@@ -102,7 +102,7 @@ where
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::{main_internal, HEIGHT, WIDTH};
 
     const ALL: u32 = (HEIGHT * WIDTH) as u32;

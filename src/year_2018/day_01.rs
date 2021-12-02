@@ -40,7 +40,7 @@ fn part_two(numbers: &[i32]) -> i32 {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

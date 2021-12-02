@@ -30,7 +30,7 @@ fn look_and_say(input: &str) -> String {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::look_and_say;
 
     #[test]
