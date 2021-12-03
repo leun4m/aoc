@@ -13,7 +13,7 @@ fn parse(input: &str) -> Vec<Direction> {
 }
 
 fn parse_line(input: &str) -> Direction {
-    let parts: Vec<_> = input.trim().split(" ").collect();
+    let parts: Vec<_> = input.trim().split(' ').collect();
     let dir = parts[0];
     let value = parts[1].parse().unwrap();
     match dir {
@@ -47,26 +47,33 @@ fn move_without_aim(directions: &[Direction]) -> (i32, i32) {
 }
 
 fn move_with_aim(directions: &[Direction]) -> (i32, i32) {
-    let mut horizontal = 0;
-    let mut depth = 0;
-    let mut aim = 0;
-
-    for dir in directions {
+    let position = directions.iter().fold(Position::default(), |acc, dir| {
         match dir {
             Direction::Forward(x) => {
-                horizontal += x;
-                depth += aim * x;
+                Position {
+                    horizontal: acc.horizontal + x,
+                    depth: acc.depth + acc.aim * x,
+                    aim: acc.aim,
+                }
             }
             Direction::Up(x) => {
-                aim -= x;
+                Position {
+                    horizontal: acc.horizontal,
+                    depth: acc.depth,
+                    aim: acc.aim - x,
+                }
             }
             Direction::Down(x) => {
-                aim += x;
+                Position {
+                    horizontal: acc.horizontal,
+                    depth: acc.depth,
+                    aim: acc.aim + x,
+                }
             }
         }
-    }
+    });
 
-    (horizontal, depth)
+    (position.horizontal, position.depth)
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
@@ -74,6 +81,13 @@ enum Direction {
     Forward(i32),
     Down(i32),
     Up(i32),
+}
+
+#[derive(Default)]
+struct Position {
+    horizontal: i32,
+    depth: i32,
+    aim: i32,
 }
 
 #[cfg(test)]
