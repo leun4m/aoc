@@ -1,6 +1,7 @@
 pub fn solve(input: &str) {
     let (numbers, bit_size) = parse(input);
     println!("Part 1: {}", part_one(&numbers, bit_size));
+    println!("Part 2: {}", part_two(&numbers, bit_size));
 }
 
 fn parse(input: &str) -> (Vec<u32>, usize) {
@@ -20,10 +21,67 @@ fn part_one(numbers: &[u32], bit_size: usize) -> u32 {
     gamma * epsilon
 }
 
+fn part_two(numbers: &[u32], bit_size: usize) -> u32 {
+    let oxygen = calc_oxygen(numbers, bit_size);
+    let co2 = calc_co2(numbers, bit_size);
+    oxygen * co2
+}
+
+fn calc_oxygen(numbers: &[u32], bit_size: usize) -> u32 {
+    let mut nums: Vec<u32> = numbers.iter().copied().collect();
+    let mut current_size = bit_size + 1;
+
+    while nums.len() > 1 {
+        current_size -= 1;
+        nums = filter_oxygen(&nums, current_size - 1);
+    }
+
+    nums[0]
+}
+
+fn calc_co2(numbers: &[u32], bit_size: usize) -> u32 {
+    let mut nums: Vec<u32> = numbers.iter().copied().collect();
+    let mut current_size = bit_size + 1;
+
+    while nums.len() > 1 {
+        current_size -= 1;
+        nums = filter_co2(&nums, current_size - 1);
+    }
+
+    nums[0]
+}
+
+fn filter_oxygen(numbers: &[u32], position: usize) -> Vec<u32> {
+    let count_zeros = numbers
+        .iter()
+        .filter(|&&x| bit_at(x, position as u32) == 0)
+        .count();
+    let count_ones = numbers.len() - count_zeros;
+    let wanted = if count_zeros <= count_ones { 1 } else { 0 };
+    numbers
+        .iter()
+        .copied()
+        .filter(|&a| bit_at(a, position as u32) == wanted)
+        .collect()
+}
+
+fn filter_co2(numbers: &[u32], position: usize) -> Vec<u32> {
+    let count_zeros = numbers
+        .iter()
+        .filter(|&&x| bit_at(x, position as u32) == 0)
+        .count();
+    let count_ones = numbers.len() - count_zeros;
+    let wanted = if count_zeros > count_ones { 1 } else { 0 };
+    numbers
+        .iter()
+        .copied()
+        .filter(|&x| bit_at(x, position as u32) == wanted)
+        .collect()
+}
+
 fn calc_gamma(numbers: &[u32], bit_size: usize) -> u32 {
     let half = (numbers.len() + 1) / 2;
-    let bit_at = |number: u32, position: u32| number >> position & 1;
-    
+
     (0..(bit_size as u32))
         .collect::<Vec<u32>>()
         .iter()
@@ -35,6 +93,10 @@ fn calc_gamma(numbers: &[u32], bit_size: usize) -> u32 {
             }
         })
         .sum()
+}
+
+fn bit_at(number: u32, position: u32) -> u32 {
+    number >> position & 1
 }
 
 fn invert(number: u32, bit_size: usize) -> u32 {
@@ -74,7 +136,7 @@ mod tests {
             (vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10], 5)
         );
     }
-    
+
     #[test]
     fn calc_most_common_works_simple() {
         assert_eq!(calc_gamma(&[1], 1), 1);
@@ -92,5 +154,26 @@ mod tests {
         let numbers = vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10];
         let bit_size = 5;
         assert_eq!(part_one(&numbers, bit_size), 198);
+    }
+
+    #[test]
+    fn calc_oxygen_works() {
+        let numbers = vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10];
+        let bit_size = 5;
+        assert_eq!(calc_oxygen(&numbers, bit_size), 23);
+    }
+
+    #[test]
+    fn calc_co2_works() {
+        let numbers = vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10];
+        let bit_size = 5;
+        assert_eq!(calc_co2(&numbers, bit_size), 10);
+    }
+
+    #[test]
+    fn part_two_works() {
+        let numbers = vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10];
+        let bit_size = 5;
+        assert_eq!(part_two(&numbers, bit_size), 230);
     }
 }
