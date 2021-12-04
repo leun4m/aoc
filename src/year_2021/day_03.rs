@@ -22,56 +22,39 @@ fn part_one(numbers: &[u32], bit_size: usize) -> u32 {
 }
 
 fn part_two(numbers: &[u32], bit_size: usize) -> u32 {
-    let oxygen = calc_oxygen(numbers, bit_size);
-    let co2 = calc_co2(numbers, bit_size);
+    let f_oxygen = |count_zeros, count_ones| if count_zeros <= count_ones { 1 } else { 0 };
+    let f_co2 = |count_zeros, count_ones| if count_zeros > count_ones { 1 } else { 0 };
+
+    let oxygen = calc_property(numbers, bit_size, &f_oxygen);
+    let co2 = calc_property(numbers, bit_size, &f_co2);
     oxygen * co2
 }
 
-fn calc_oxygen(numbers: &[u32], bit_size: usize) -> u32 {
+fn calc_property<F>(numbers: &[u32], bit_size: usize, f: &F) -> u32
+where
+    F: Fn(usize, usize) -> u32,
+{
     let mut nums: Vec<u32> = numbers.iter().copied().collect();
     let mut current_size = bit_size + 1;
 
     while nums.len() > 1 {
         current_size -= 1;
-        nums = filter_oxygen(&nums, current_size - 1);
+        nums = filter_property(&nums, current_size - 1, f);
     }
 
     nums[0]
 }
 
-fn calc_co2(numbers: &[u32], bit_size: usize) -> u32 {
-    let mut nums: Vec<u32> = numbers.iter().copied().collect();
-    let mut current_size = bit_size + 1;
-
-    while nums.len() > 1 {
-        current_size -= 1;
-        nums = filter_co2(&nums, current_size - 1);
-    }
-
-    nums[0]
-}
-
-fn filter_oxygen(numbers: &[u32], position: usize) -> Vec<u32> {
+fn filter_property<F>(numbers: &[u32], position: usize, f: &F) -> Vec<u32>
+where
+    F: Fn(usize, usize) -> u32,
+{
     let count_zeros = numbers
         .iter()
         .filter(|&&x| bit_at(x, position as u32) == 0)
         .count();
     let count_ones = numbers.len() - count_zeros;
-    let wanted = if count_zeros <= count_ones { 1 } else { 0 };
-    numbers
-        .iter()
-        .copied()
-        .filter(|&a| bit_at(a, position as u32) == wanted)
-        .collect()
-}
-
-fn filter_co2(numbers: &[u32], position: usize) -> Vec<u32> {
-    let count_zeros = numbers
-        .iter()
-        .filter(|&&x| bit_at(x, position as u32) == 0)
-        .count();
-    let count_ones = numbers.len() - count_zeros;
-    let wanted = if count_zeros > count_ones { 1 } else { 0 };
+    let wanted = f(count_zeros, count_ones);
     numbers
         .iter()
         .copied()
@@ -154,20 +137,6 @@ mod tests {
         let numbers = vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10];
         let bit_size = 5;
         assert_eq!(part_one(&numbers, bit_size), 198);
-    }
-
-    #[test]
-    fn calc_oxygen_works() {
-        let numbers = vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10];
-        let bit_size = 5;
-        assert_eq!(calc_oxygen(&numbers, bit_size), 23);
-    }
-
-    #[test]
-    fn calc_co2_works() {
-        let numbers = vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10];
-        let bit_size = 5;
-        assert_eq!(calc_co2(&numbers, bit_size), 10);
     }
 
     #[test]
