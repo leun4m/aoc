@@ -47,31 +47,25 @@ fn move_without_aim(directions: &[Direction]) -> (i32, i32) {
 }
 
 fn move_with_aim(directions: &[Direction]) -> (i32, i32) {
-    let position = directions.iter().fold(Position::default(), |acc, dir| {
-        match dir {
-            Direction::Forward(x) => {
-                Position {
-                    horizontal: acc.horizontal + x,
-                    depth: acc.depth + acc.aim * x,
-                    aim: acc.aim,
-                }
-            }
-            Direction::Up(x) => {
-                Position {
-                    horizontal: acc.horizontal,
-                    depth: acc.depth,
-                    aim: acc.aim - x,
-                }
-            }
-            Direction::Down(x) => {
-                Position {
-                    horizontal: acc.horizontal,
-                    depth: acc.depth,
-                    aim: acc.aim + x,
-                }
-            }
-        }
-    });
+    let position = directions
+        .iter()
+        .fold(Position::default(), |acc, dir| match dir {
+            Direction::Forward(x) => Position {
+                horizontal: acc.horizontal + x,
+                depth: acc.depth + acc.aim * x,
+                aim: acc.aim,
+            },
+            Direction::Up(x) => Position {
+                horizontal: acc.horizontal,
+                depth: acc.depth,
+                aim: acc.aim - x,
+            },
+            Direction::Down(x) => Position {
+                horizontal: acc.horizontal,
+                depth: acc.depth,
+                aim: acc.aim + x,
+            },
+        });
 
     (position.horizontal, position.depth)
 }
