@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub fn solve(input: &str) {
     let fish = parse(input);
     println!("Part 1: {}", simulate(&fish, 80));
@@ -15,22 +17,30 @@ fn parse(input: &str) -> Vec<u8> {
 const FISH_RESET: u8 = 6;
 const FISH_NEW: u8 = 8;
 
-fn simulate(fish: &[u8], days: u32) -> usize {
-    let mut current_fish: Vec<u8> = fish.iter().copied().collect();
+fn simulate(fish: &[u8], days: u64) -> u64 {
+    let mut current_fish = to_hash_map(fish);
     for _ in 0..days {
         pass_day(&mut current_fish);
     }
-    current_fish.len()
+    current_fish.values().sum()
 }
 
-fn pass_day(fish: &mut Vec<u8>) {
-    let count_new_fish = fish.iter().filter(|&&x| x == 0).count();
-    for f in fish.iter_mut() {
-        *f = if *f > 0 { *f - 1 } else { FISH_RESET };
+fn to_hash_map(fish: &[u8]) -> HashMap<u8, u64> {
+    let mut result: HashMap<u8, u64> = HashMap::with_capacity((FISH_NEW + 1) as usize);
+    for f in fish {
+        *result.entry(*f).or_default() += 1;
     }
-    for _ in 0..count_new_fish {
-        fish.push(FISH_NEW);
+    result
+}
+
+fn pass_day(fish: &mut HashMap<u8, u64>) {
+    let zeros = fish.remove(&0).unwrap_or(0);
+    for i in 1..FISH_NEW+1 {
+        let fish_in_state = fish.remove(&i).unwrap_or(0);
+        fish.insert(i - 1, fish_in_state);
     }
+    *fish.entry(FISH_RESET).or_default() += zeros;
+    fish.insert(FISH_NEW, zeros);
 }
 
 #[cfg(test)]
@@ -46,23 +56,11 @@ mod tests {
     }
 
     #[test]
-    fn iterate_works() {
-        let mut a = vec![3, 4, 3, 1, 2];
-        pass_day(&mut a);
-        assert_eq!(a, vec![2, 3, 2, 0, 1]);
-
-        let mut b = vec![2, 3, 2, 0, 1];
-        pass_day(&mut b);
-        assert_eq!(b, vec![1, 2, 1, 6, 0, 8]);
-
-        let mut c = vec![
-            0, 1, 0, 5, 6, 0, 1, 2, 2, 3, 0, 1, 2, 2, 2, 3, 3, 4, 4, 5, 7, 8,
-        ];
-        pass_day(&mut c);
-        assert_eq!(
-            c,
-            vec![6, 0, 6, 4, 5, 6, 0, 1, 1, 2, 6, 0, 1, 1, 1, 2, 2, 3, 3, 4, 6, 7, 8, 8, 8, 8]
-        );
+    fn pass_day_works() {
+        let mut input = HashMap::from([(1, 1), (2, 1), (3, 2), (4, 3)]);
+        let output = HashMap::from([(0, 1), (1, 1), (2, 2), (3, 3), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0)]);
+        pass_day(&mut input);
+        assert_eq!(input, output);
     }
 
     #[test]
