@@ -1,10 +1,17 @@
-use std::collections::HashMap;
-
 pub fn solve(input: &str) {
     let fish = parse(input);
     println!("Part 1: {}", simulate(&fish, 80));
     println!("Part 2: {}", simulate(&fish, 256));
 }
+
+const FISH_TIME_RESET: usize = 6;
+const FISH_TIME_NEW: usize = 8;
+const FISH_ARRAY_SIZE: usize = FISH_TIME_NEW + 1;
+
+/// An array storing currently living fish map-like in their states
+/// - The index represents the state (aka days left for a newborn)
+/// - The value stores the amount of fish in said state.
+type FishArray = [u64; FISH_ARRAY_SIZE];
 
 fn parse(input: &str) -> Vec<u8> {
     input
@@ -14,33 +21,29 @@ fn parse(input: &str) -> Vec<u8> {
         .collect()
 }
 
-const FISH_RESET: u8 = 6;
-const FISH_NEW: u8 = 8;
-
 fn simulate(fish: &[u8], days: u64) -> u64 {
-    let mut current_fish = to_hash_map(fish);
+    let mut living_fish = to_array(fish);
     for _ in 0..days {
-        pass_day(&mut current_fish);
+        pass_day(&mut living_fish);
     }
-    current_fish.values().sum()
+    living_fish.iter().sum()
 }
 
-fn to_hash_map(fish: &[u8]) -> HashMap<u8, u64> {
-    let mut result: HashMap<u8, u64> = HashMap::with_capacity((FISH_NEW + 1) as usize);
+fn to_array(fish: &[u8]) -> FishArray {
+    let mut living_fish = [0; FISH_ARRAY_SIZE];
     for f in fish {
-        *result.entry(*f).or_default() += 1;
+        living_fish[*f as usize] += 1;
     }
-    result
+    living_fish
 }
 
-fn pass_day(fish: &mut HashMap<u8, u64>) {
-    let zeros = fish.remove(&0).unwrap_or(0);
-    for i in 1..FISH_NEW+1 {
-        let fish_in_state = fish.remove(&i).unwrap_or(0);
-        fish.insert(i - 1, fish_in_state);
+fn pass_day(fish: &mut FishArray) {
+    let zeros = fish[0];
+    for i in 1..FISH_ARRAY_SIZE {
+        fish[i - 1] = fish[i];
     }
-    *fish.entry(FISH_RESET).or_default() += zeros;
-    fish.insert(FISH_NEW, zeros);
+    fish[FISH_TIME_RESET] += zeros;
+    fish[FISH_TIME_NEW] = zeros;
 }
 
 #[cfg(test)]
@@ -57,8 +60,8 @@ mod tests {
 
     #[test]
     fn pass_day_works() {
-        let mut input = HashMap::from([(1, 1), (2, 1), (3, 2), (4, 3)]);
-        let output = HashMap::from([(0, 1), (1, 1), (2, 2), (3, 3), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0)]);
+        let mut input = [1, 1, 1, 2, 3, 0, 0, 3, 0];
+        let output = [1, 1, 2, 3, 0, 0, 4, 0, 1];
         pass_day(&mut input);
         assert_eq!(input, output);
     }
@@ -71,7 +74,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn part_two_works() {
         let parsed = parse(INPUT);
         assert_eq!(simulate(&parsed, 256), 26984457539);
