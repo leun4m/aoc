@@ -5,7 +5,7 @@ authors = ["Manuel Krebs <me@leun4m.de>"]
 edition = "2021"
 
 [dependencies]
-structopt = "0.3"
+itertools = "0.10"
 regex = "1.5"
 rust-crypto = "0.2"
-itertools = "0.10"
+structopt = "0.3"
