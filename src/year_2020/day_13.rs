@@ -17,7 +17,7 @@ struct Bus {
     departure: u64,
 }
 
-/// Inspired by https://github.com/azablan/advent-of-code-2020/blob/main/walkthrough/d13/part2.js
+/// Inspired by <https://github.com/azablan/advent-of-code-2020/blob/main/walkthrough/d13/part2.js>
 fn part_two(times: &[BusTime]) -> u64 {
     let indexed_times = times
         .iter()
