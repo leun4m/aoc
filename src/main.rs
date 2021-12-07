@@ -9,6 +9,7 @@ mod year_2021;
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::path::PathBuf;
+use std::time::Instant;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -46,6 +47,8 @@ fn main() {
         return;
     };
 
+    let start = Instant::now();
+
     match opt.year {
         15 | 2015 => year_2015::solve_day(opt.day, &input),
         16 | 2016 => year_2016::solve_day(opt.day, &input),
@@ -55,6 +58,10 @@ fn main() {
         21 | 2021 => year_2021::solve_day(opt.day, &input),
         _ => println!("{}", util::INVALID_YEAR),
     }
+
+    let duration = start.elapsed();
+
+    println!("Time elapsed: {}ms", duration.as_millis());
 }
 
 fn read_file(path: PathBuf) -> String {
