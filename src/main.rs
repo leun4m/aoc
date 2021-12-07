@@ -14,9 +14,10 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
-    name = "Advent of Code",
+    name = "AoC Solver",
     about = "A solver for the Advent of Code riddles.",
-    author
+    author,
+    no_version
 )]
 struct Opt {
     /// Set year (2 or 4 digits)
@@ -27,7 +28,7 @@ struct Opt {
     #[structopt(short, long)]
     day: u8,
 
-    /// Input value
+    /// Input value, requires input-file if not present
     #[structopt(short, long)]
     input: Option<String>,
 
