@@ -73,8 +73,8 @@ fn get_points(line: &Line) -> Vec<Point> {
             (point_b.1, point_a.1)
         };
 
-        for x in x1..(x2 + 1) {
-            for y in y1..(y2 + 1) {
+        for x in x1..=x2 {
+            for y in y1..=y2 {
                 result.push((x, y))
             }
         }

@@ -79,9 +79,9 @@ impl GridTrait<Coordinate3D> for Grid<Coordinate3D> {
 
     fn count_neighbours(&self, coordinate: &Coordinate3D) -> usize {
         let mut count = 0;
-        for x in (coordinate.x - 1)..(coordinate.x + 2) {
-            for y in (coordinate.y - 1)..(coordinate.y + 2) {
-                for z in (coordinate.z - 1)..(coordinate.z + 2) {
+        for x in (coordinate.x - 1)..=(coordinate.x + 1) {
+            for y in (coordinate.y - 1)..=(coordinate.y + 1) {
+                for z in (coordinate.z - 1)..=(coordinate.z + 1) {
                     if self.actives.contains(&Coordinate3D::new(x, y, z)) {
                         count += 1;
                     }
@@ -102,9 +102,9 @@ impl GridTrait<Coordinate3D> for Grid<Coordinate3D> {
         for _ in 0..cycles {
             let mut new_state = Grid::new();
             let (min, max) = current_state.find_new_min_max();
-            for x in min.x..(max.x + 1) {
-                for y in min.y..(max.y + 1) {
-                    for z in min.z..(max.z + 1) {
+            for x in min.x..=max.x {
+                for y in min.y..=max.y {
+                    for z in min.z..=max.z {
                         let coordinate = Coordinate3D::new(x, y, z);
                         let neighbours = current_state.count_neighbours(&coordinate);
 
@@ -168,10 +168,10 @@ impl GridTrait<Coordinate4D> for Grid<Coordinate4D> {
         for _ in 0..cycles {
             let mut new_state = Grid::new();
             let (min, max) = current_state.find_new_min_max();
-            for x in min.x..(max.x + 1) {
-                for y in min.y..(max.y + 1) {
-                    for z in min.z..(max.z + 1) {
-                        for w in min.w..(max.w + 1) {
+            for x in min.x..=max.x {
+                for y in min.y..=max.y {
+                    for z in min.z..=max.z {
+                        for w in min.w..=max.w {
                             let coordinate = Coordinate4D::new(x, y, z, w);
                             let neighbours = current_state.count_neighbours(&coordinate);
 

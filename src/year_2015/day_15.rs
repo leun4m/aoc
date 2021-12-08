@@ -70,7 +70,7 @@ fn sum_all(cookies: &[Cookie], teaspoons: &[i64]) -> i64 {
 fn all_ratios(count: usize, total: i64) -> Vec<Vec<i64>> {
     let mut result = Vec::new();
 
-    for i in 0..(total + 1) {
+    for i in 0..=total {
         let mut line = Vec::new();
         if count > 1 {
             for subratio in all_ratios(count - 1, total - i).iter_mut() {
