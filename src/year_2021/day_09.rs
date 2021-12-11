@@ -36,7 +36,7 @@ fn get_height(x: i32, y: i32, heights: &[Vec<u32>]) -> u32 {
 
 fn is_lowest(x: i32, y: i32, heights: &[Vec<u32>]) -> Option<u32> {
     let this = get_height(x, y, heights);
-    
+
     let left = get_height(x - 1, y, heights);
     let right = get_height(x + 1, y, heights);
     let up = get_height(x, y - 1, heights);
