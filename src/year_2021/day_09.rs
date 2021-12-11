@@ -38,10 +38,10 @@ fn is_lowest(x: i32, y: i32, heights: &[Vec<u32>]) -> Option<u32> {
     let left = get_height(x - 1, y, heights);
     let right = get_height(x + 1, y, heights);
     let up = get_height(x, y - 1, heights);
-    let bottom = get_height(x, y + 1, heights);
+    let down = get_height(x, y + 1, heights);
     let this = get_height(x, y, heights);
 
-    if this < left && this < right && this < up && this < bottom {
+    if this < left && this < right && this < up && this < down {
         Some(this)
     } else {
         None
@@ -67,23 +67,26 @@ fn find_basin(x: i32, y: i32, heights: &[Vec<u32>], basins: &mut HashSet<(usize,
         return;
     }
 
-    basins.insert((x as usize, y as usize));
+    let x_usize = x as usize;
+    let y_usize = y as usize;
+
+    basins.insert((x_usize, y_usize));
 
     let left = get_height(x - 1, y, heights);
     let right = get_height(x + 1, y, heights);
     let up = get_height(x, y - 1, heights);
-    let bottom = get_height(x, y + 1, heights);
+    let down = get_height(x, y + 1, heights);
 
-    if 9 > left && !basins.contains(&(x as usize - 1, y as usize)) {
+    if 9 > left && !basins.contains(&(x_usize - 1, y_usize)) {
         find_basin(x - 1, y, heights, basins);
     }
-    if 9 > up && !basins.contains(&(x as usize, y as usize - 1)) {
+    if 9 > up && !basins.contains(&(x_usize, y_usize - 1)) {
         find_basin(x, y - 1, heights, basins);
     }
-    if 9 > right && !basins.contains(&(x as usize + 1, y as usize)) {
+    if 9 > right && !basins.contains(&(x_usize + 1, y_usize)) {
         find_basin(x + 1, y, heights, basins);
     }
-    if 9 > bottom && !basins.contains(&(x as usize, y as usize + 1)) {
+    if 9 > down && !basins.contains(&(x_usize, y_usize + 1)) {
         find_basin(x, y + 1, heights, basins);
     }
 }
