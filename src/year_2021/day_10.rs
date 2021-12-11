@@ -10,7 +10,7 @@ fn parse(input: &str) -> Vec<String> {
     input.lines().map(|line| line.trim().to_string()).collect()
 }
 
-fn part_one(chars: &[String]) -> u32 {
+fn part_one(chars: &[String]) -> u64 {
     chars
         .iter()
         .map(|line| find_error(line))
@@ -18,8 +18,8 @@ fn part_one(chars: &[String]) -> u32 {
         .sum()
 }
 
-fn part_two(chars: &[String]) -> u32 {
-    let p: Vec<u32> = chars
+fn part_two(chars: &[String]) -> u64 {
+    let p: Vec<u64> = chars
         .iter()
         .filter(|line| find_error(line).is_none())
         .map(|line| find_missing(line))
@@ -79,7 +79,7 @@ fn find_missing(line: &str) -> String {
         .collect()
 }
 
-fn sum_points_from_missing(missing_chars: &str) -> u32 {
+fn sum_points_from_missing(missing_chars: &str) -> u64 {
     missing_chars
         .chars()
         .map(|c| match c {
@@ -106,7 +106,7 @@ fn match_bracket(c: char) -> Option<char> {
     }
 }
 
-fn map_error(char: Option<char>) -> u32 {
+fn map_error(char: Option<char>) -> u64 {
     match char {
         None => 0,
         Some(c) => match c {
