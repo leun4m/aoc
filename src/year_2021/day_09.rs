@@ -35,11 +35,12 @@ fn get_height(x: i32, y: i32, heights: &[Vec<u32>]) -> u32 {
 }
 
 fn is_lowest(x: i32, y: i32, heights: &[Vec<u32>]) -> Option<u32> {
+    let this = get_height(x, y, heights);
+    
     let left = get_height(x - 1, y, heights);
     let right = get_height(x + 1, y, heights);
     let up = get_height(x, y - 1, heights);
     let down = get_height(x, y + 1, heights);
-    let this = get_height(x, y, heights);
 
     if this < left && this < right && this < up && this < down {
         Some(this)
@@ -103,15 +104,15 @@ fn part_one(heights: &[Vec<u32>]) -> u32 {
     sum
 }
 
-fn part_two(heights: &[Vec<u32>]) -> u32 {
-    let basin_lengths: Vec<u32> = find_low_points(heights)
+fn part_two(heights: &[Vec<u32>]) -> usize {
+    let basin_lengths: Vec<usize> = find_low_points(heights)
         .iter()
         .map(|(x, y)| {
             let mut basins = HashSet::new();
             find_basin(*x as i32, *y as i32, heights, &mut basins);
             basins
         })
-        .map(|x| x.len() as u32)
+        .map(|x| x.len())
         .sorted_by(|a, b| Ord::cmp(b, a))
         .collect();
 
