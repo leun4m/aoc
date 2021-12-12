@@ -71,15 +71,13 @@ where
         let mut new_visited = visited.to_owned();
         new_visited.push(start);
 
-        let mut result = Vec::new();
-        for next in graph.get(start).expect("Node not in graph") {
-            if can_be_visited(next, &new_visited) {
-                for ends in endings(graph, &new_visited, next, can_be_visited) {
-                    result.push(ends);
-                }
-            }
-        }
-        result
+        graph
+            .get(start)
+            .unwrap()
+            .iter()
+            .filter(|next| can_be_visited(next, &new_visited))
+            .flat_map(|next| endings(graph, &new_visited, next, can_be_visited))
+            .collect()
     }
 }
 
