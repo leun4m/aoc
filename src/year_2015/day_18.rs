@@ -36,9 +36,7 @@ fn part_one(start: &[LightRow], steps: u32) -> usize {
 fn part_two(start: &[LightRow], steps: u32) -> usize {
     let switch_on = |x: usize, y: usize, lights: &[LightRow]| {
         let neighbours = count_neighbours(lights, x as isize, y as isize);
-        neighbours == 3
-            || (neighbours == 2 && lights[x][y])
-            || is_corner(x, y, lights)
+        neighbours == 3 || (neighbours == 2 && lights[x][y]) || is_corner(x, y, lights)
     };
 
     iterate(start, steps, switch_on)
