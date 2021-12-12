@@ -30,7 +30,7 @@ fn part_one(energie_levels: &mut Vec<Vec<u8>>) -> u64 {
 
 fn part_two(energie_levels: &mut Vec<Vec<u8>>) -> u64 {
     let all_octopus = energie_levels.iter().flatten().count() as u64;
-    
+
     let mut steps = 1;
     while apply_step(energie_levels) < all_octopus {
         steps += 1;
