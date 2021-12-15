@@ -1,4 +1,5 @@
-use crate::util;
+use itertools::Itertools;
+use itertools::MinMaxResult::MinMax;
 use std::collections::HashMap;
 
 pub fn solve(input: &str) {
@@ -12,6 +13,8 @@ const STEPS_PART_ONE: usize = 10;
 const STEPS_PART_TWO: usize = 40;
 
 type InsertionMap = HashMap<(char, char), char>;
+type PatternCount = HashMap<(char, char), u64>;
+type CharCount = HashMap<char, u64>;
 
 fn parse(input: &str) -> (&str, InsertionMap) {
     let origin = input
@@ -42,31 +45,62 @@ fn parse_replacement(line: &str) -> ((char, char), char) {
     )
 }
 
-fn iterate(origin: &str, insertions: &InsertionMap, iterations: usize) -> u32 {
-    let mut result = origin.to_owned();
-    for i in 0..iterations {
-        result = process(&result, insertions);
-        println!("Iteration: {}", i);
+fn iterate(origin: &str, insertions: &InsertionMap, iterations: usize) -> u64 {
+    let mut pattern_count = to_pattern_count(origin);
+
+    for _ in 0..iterations {
+        pattern_count = process(&pattern_count, insertions);
     }
 
-    let char_counts = util::count_chars(&result);
-    let max = char_counts.iter().map(|(_, v)| v).max().unwrap();
-    let min = char_counts.iter().map(|(_, v)| v).min().unwrap();
-    max - min
+    if let MinMax(min, max) = count_chars(&pattern_count, origin)
+        .iter()
+        .map(|(_, v)| v)
+        .minmax()
+    {
+        max - min
+    } else {
+        println!("Found no min-max!");
+        0
+    }
 }
 
-fn process(origin: &str, insertions: &InsertionMap) -> String {
-    let mut new: String = origin
+fn to_pattern_count(origin: &str) -> PatternCount {
+    let mut pattern_count = PatternCount::new();
+
+    for pair in origin
         .chars()
         .collect::<Vec<char>>()
         .windows(2)
-        .map(|c| match insertions.get(&(c[0], c[1])) {
-            Some(x) => format!("{}{}", c[0], x),
-            None => format!("{}", c[0]),
-        })
-        .collect();
-    new.push(origin.chars().last().unwrap());
-    new
+        .map(|c| (c[0], c[1]))
+    {
+        *pattern_count.entry(pair).or_default() += 1;
+    }
+
+    pattern_count
+}
+
+fn count_chars(pattern_count: &PatternCount, origin: &str) -> CharCount {
+    let mut result = CharCount::new();
+
+    for (c, n) in pattern_count.iter().map(|((a, _), n)| (a, n)) {
+        *result.entry(*c).or_default() += n;
+    }
+    *result.entry(origin.chars().last().unwrap()).or_default() += 1;
+
+    result
+}
+
+fn process(pattern_count: &PatternCount, insertions: &InsertionMap) -> PatternCount {
+    let mut result = PatternCount::new();
+
+    for (pair, n) in pattern_count {
+        let (a, b) = (pair.0, pair.1);
+        let c = *insertions.get(&(a, b)).unwrap();
+        *result.entry((a, c)).or_default() += n;
+        *result.entry((c, b)).or_default() += n;
+    }
+
+    result
 }
 
 #[cfg(test)]
@@ -120,19 +154,9 @@ mod tests {
     }
 
     #[test]
-    fn process_works() {
-        let insertions = HashMap::from(INSERTIONS);
-        assert_eq!(process("NNCB", &insertions), "NCNBCHB");
-        assert_eq!(process("NCNBCHB", &insertions), "NBCCNBBBCBHCB");
-        assert_eq!(
-            process("NBCCNBBBCBHCB", &insertions),
-            "NBBBCNCCNBBNBNBBCHBHHBCHB"
-        );
-    }
-
-    #[test]
     fn iterate_works() {
         let (start, insertions) = parse(INPUT);
         assert_eq!(iterate(start, &insertions, 10), 1588);
+        assert_eq!(iterate(start, &insertions, 40), 2188189693529);
     }
 }
