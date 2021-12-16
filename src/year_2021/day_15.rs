@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
+use log;
 
 pub fn solve(input: &str) {
     let graph = parse(input);
@@ -50,9 +51,13 @@ fn parse(input: &str) -> Graph {
 }
 
 fn part_one(graph: &Graph) -> u64 {
-    let predecessors = dijkstra(graph, (0, 0));
+    log::trace!("part_one entered");
     let aim = get_bottom_right(graph);
+    log::trace!("found aim: {:?}", aim);
+    let predecessors = dijkstra(graph, (0, 0), aim);
+    log::trace!("dijkstra finished");
     let path = find_shortest_path(aim, &predecessors);
+    log::trace!("find_shortes_path finished");
 
     path.windows(2)
         .map(|x| graph.get(&(x[0], x[1])).unwrap())
@@ -65,18 +70,24 @@ fn get_bottom_right(graph: &Graph) -> Point {
     (max_x, max_y)
 }
 
-fn dijkstra(graph: &Graph, start: Point) -> Predecessors {
-    let mut distances = Distances::new();
-    let mut predecessors: Predecessors = Predecessors::new();
+fn dijkstra(graph: &Graph, start: Point, aim: Point) -> Predecessors {
+    log::trace!("Start collecting nodes"); 
     let mut nodes: HashSet<Point> = graph.keys().map(|(from, _)| *from).collect();
-
+    log::trace!("Create distance");
+    let mut distances = Distances::new();
+    log::trace!("Create predecessors");
+    let mut predecessors: Predecessors = Predecessors::new();
+    
+    log::trace!("Iterate nodes");
     for node in nodes.iter() {
         distances.insert(*node, RiskLevel::MAX);
     }
 
     distances.insert(start, 0);
 
-    while !nodes.is_empty() {
+    log::trace!("Finished init distances");
+
+    while nodes.contains(&aim) {
         let node = *distances
             .iter()
             .filter(|(p, _)| nodes.contains(p))

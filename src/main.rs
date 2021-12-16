@@ -6,6 +6,7 @@ mod year_2018;
 mod year_2020;
 mod year_2021;
 
+use simple_logger::SimpleLogger;
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::path::PathBuf;
@@ -37,6 +38,8 @@ struct Opt {
     input_file: Option<PathBuf>,
 }
 fn main() {
+    SimpleLogger::new().init().unwrap();
+    
     let opt = Opt::from_args();
 
     let input = if opt.input_file.is_some() {

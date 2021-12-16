@@ -6,12 +6,12 @@ Solutions from the various years of [AdventOfCode](https://adventofcode.com) in 
 
 | Year | Progress |    Days |
 | ---- | -------: | ------: |
-| 2015 |     68 % | 17 / 25 |
+| 2015 |     72 % | 18 / 25 |
 | 2016 |     24 % |  6 / 25 |
 | 2017 |      4 % |  1 / 25 |
 | 2018 |     12 % |  3 / 25 |
 | 2020 |     64 % | 16 / 25 |
-| 2021 |     48 % | 12 / 25 |
+| 2021 |     60 % | 15 / 25 |
 
 ## Structure
 
@@ -35,3 +35,4 @@ Currently, the only packages used are:
 - `regex` (since many puzzles require parsing input)
 - `crypto` [Day 4 in 2015](https://github.com/leun4m/aoc/blob/main/src/year_2015/day_04.rs) required md5 hashing
 - `itertool` (Provides neat functional stuff for iterators like `unique()`, `sorted()` which `std` doesn't provide)
+- `simple_logger` (for logging)
