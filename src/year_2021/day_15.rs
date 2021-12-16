@@ -3,8 +3,9 @@ use std::collections::HashSet;
 use log;
 
 pub fn solve(input: &str) {
-    let graph = parse(input);
-    println!("Part 1: {}", part_one(&graph));
+    let two_dim = parse(input);
+    let graph_one = create_graph(&two_dim);
+    println!("Part 1: {}", part_one(&graph_one));
 }
 
 type Point = (usize, usize);
@@ -15,8 +16,8 @@ type Distances = HashMap<Point, RiskLevel>;
 type Predecessors = HashMap<Point, Point>;
 type Path = Vec<Point>;
 
-fn parse(input: &str) -> Graph {
-    let two_dim: Vec<Vec<RiskLevel>> = input
+fn parse(input: &str) -> Vec<Vec<RiskLevel>> {
+    input
         .lines()
         .filter(|line| !line.is_empty())
         .map(|line| line.trim())
@@ -25,8 +26,10 @@ fn parse(input: &str) -> Graph {
                 .map(|c| c.to_string().parse().unwrap())
                 .collect()
         })
-        .collect();
+        .collect()
+}
 
+fn create_graph(two_dim: &[Vec<RiskLevel>]) -> Graph { 
     let mut graph = Graph::new();
 
     for x in 0..two_dim.len() {
@@ -54,7 +57,7 @@ fn part_one(graph: &Graph) -> u64 {
     log::trace!("part_one entered");
     let aim = get_bottom_right(graph);
     log::trace!("found aim: {:?}", aim);
-    let predecessors = dijkstra(graph, (0, 0), aim);
+    let predecessors = dijkstra(graph, (0, 0));
     log::trace!("dijkstra finished");
     let path = find_shortest_path(aim, &predecessors);
     log::trace!("find_shortes_path finished");
@@ -70,7 +73,7 @@ fn get_bottom_right(graph: &Graph) -> Point {
     (max_x, max_y)
 }
 
-fn dijkstra(graph: &Graph, start: Point, aim: Point) -> Predecessors {
+fn dijkstra(graph: &Graph, start: Point) -> Predecessors {
     log::trace!("Start collecting nodes"); 
     let mut nodes: HashSet<Point> = graph.keys().map(|(from, _)| *from).collect();
     log::trace!("Create distance");
@@ -85,9 +88,11 @@ fn dijkstra(graph: &Graph, start: Point, aim: Point) -> Predecessors {
 
     distances.insert(start, 0);
 
-    log::trace!("Finished init distances");
+    let start_size = nodes.len();
 
-    while nodes.contains(&aim) {
+    log::trace!("Start analyzing nodes: {}", start_size);
+
+    while !nodes.is_empty() {
         let node = *distances
             .iter()
             .filter(|(p, _)| nodes.contains(p))
@@ -105,6 +110,10 @@ fn dijkstra(graph: &Graph, start: Point, aim: Point) -> Predecessors {
             if nodes.contains(neighbor) {
                 distance_update(node, *neighbor, graph, &mut distances, &mut predecessors);
             }
+        }
+
+        if nodes.len() % (start_size / 20) == 0 {
+            log::trace!("Nodes analyzed: {:.2} %", (start_size - nodes.len()) as f64 / start_size as f64 * 100.0)
         }
     }
 
@@ -154,7 +163,6 @@ mod tests {
 
     #[test]
     fn part_one_works() {
-        let graph = parse(INPUT);
-        assert_eq!(part_one(&graph), 40);
+        assert_eq!(part_one(&create_graph(&parse(INPUT))), 40);
     }
 }
