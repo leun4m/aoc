@@ -1,11 +1,18 @@
+use log;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use log;
 
 pub fn solve(input: &str) {
     let two_dim = parse(input);
     let graph_one = create_graph(&two_dim);
     println!("Part 1: {}", part_one(&graph_one));
+    let two_dim_ext = extend(&two_dim);
+    for row in two_dim_ext {
+        for elem in row {
+            print!("{}", elem);
+        }
+        println!();
+    }
 }
 
 type Point = (usize, usize);
@@ -29,7 +36,31 @@ fn parse(input: &str) -> Vec<Vec<RiskLevel>> {
         .collect()
 }
 
-fn create_graph(two_dim: &[Vec<RiskLevel>]) -> Graph { 
+const REPEAT: usize = 5;
+
+fn extend(two_dim: &[Vec<RiskLevel>]) -> Vec<Vec<RiskLevel>> {
+    let mut result = Vec::new();
+
+    for x in 0..two_dim.len() {
+        let mut row = Vec::new();
+        for y in 0..(two_dim[x].len() * REPEAT) {
+            let fac_y = y / two_dim[x].len();
+            let rel_y = y % two_dim[x].len();
+
+            let mut risk_level = two_dim[x][rel_y] + fac_y as u64;
+            if risk_level > 9 {
+                risk_level = 1;
+            }
+
+            row.push(risk_level);
+        }
+        result.push(row);
+    }
+
+    result
+}
+
+fn create_graph(two_dim: &[Vec<RiskLevel>]) -> Graph {
     let mut graph = Graph::new();
 
     for x in 0..two_dim.len() {
@@ -68,19 +99,29 @@ fn part_one(graph: &Graph) -> u64 {
 }
 
 fn get_bottom_right(graph: &Graph) -> Point {
-    let max_x = graph.keys().map(|(from, _)| *from).map(|a| a.0).max().unwrap();
-    let max_y = graph.keys().map(|(from, _)| *from).map(|a| a.1).max().unwrap();
+    let max_x = graph
+        .keys()
+        .map(|(from, _)| *from)
+        .map(|a| a.0)
+        .max()
+        .unwrap();
+    let max_y = graph
+        .keys()
+        .map(|(from, _)| *from)
+        .map(|a| a.1)
+        .max()
+        .unwrap();
     (max_x, max_y)
 }
 
 fn dijkstra(graph: &Graph, start: Point) -> Predecessors {
-    log::trace!("Start collecting nodes"); 
+    log::trace!("Start collecting nodes");
     let mut nodes: HashSet<Point> = graph.keys().map(|(from, _)| *from).collect();
     log::trace!("Create distance");
     let mut distances = Distances::new();
     log::trace!("Create predecessors");
     let mut predecessors: Predecessors = Predecessors::new();
-    
+
     log::trace!("Iterate nodes");
     for node in nodes.iter() {
         distances.insert(*node, RiskLevel::MAX);
@@ -113,7 +154,10 @@ fn dijkstra(graph: &Graph, start: Point) -> Predecessors {
         }
 
         if nodes.len() % (start_size / 20) == 0 {
-            log::trace!("Nodes analyzed: {:.2} %", (start_size - nodes.len()) as f64 / start_size as f64 * 100.0)
+            log::trace!(
+                "Nodes analyzed: {:.2} %",
+                (start_size - nodes.len()) as f64 / start_size as f64 * 100.0
+            )
         }
     }
 

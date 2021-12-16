@@ -39,7 +39,7 @@ struct Opt {
 }
 fn main() {
     SimpleLogger::new().init().unwrap();
-    
+
     let opt = Opt::from_args();
 
     let input = if opt.input_file.is_some() {
