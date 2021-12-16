@@ -7,12 +7,9 @@ pub fn solve(input: &str) {
     let graph_one = create_graph(&two_dim);
     println!("Part 1: {}", part_one(&graph_one));
     let two_dim_ext = extend(&two_dim);
-    for row in two_dim_ext {
-        for elem in row {
-            print!("{}", elem);
-        }
-        println!();
-    }
+    let graph_two = create_graph(&two_dim_ext);
+    println!("Part 2: {}", part_one(&graph_two));
+
 }
 
 type Point = (usize, usize);
@@ -41,15 +38,18 @@ const REPEAT: usize = 5;
 fn extend(two_dim: &[Vec<RiskLevel>]) -> Vec<Vec<RiskLevel>> {
     let mut result = Vec::new();
 
-    for x in 0..two_dim.len() {
-        let mut row = Vec::new();
-        for y in 0..(two_dim[x].len() * REPEAT) {
-            let fac_y = y / two_dim[x].len();
-            let rel_y = y % two_dim[x].len();
+    for ry in 0..(two_dim.len() * REPEAT) {
+        let fac_y = (ry / two_dim.len()) as u64;
+        let y = ry % two_dim.len();
 
-            let mut risk_level = two_dim[x][rel_y] + fac_y as u64;
+        let mut row = Vec::new();
+        for rx in 0..(two_dim[y].len() * REPEAT) {
+            let fac_x = (rx / two_dim[y].len()) as u64;
+            let x = rx % two_dim[y].len();
+
+            let mut risk_level = two_dim[y][x] + (fac_x + fac_y);
             if risk_level > 9 {
-                risk_level = 1;
+                risk_level = risk_level % 10 + 1;
             }
 
             row.push(risk_level);
@@ -63,9 +63,9 @@ fn extend(two_dim: &[Vec<RiskLevel>]) -> Vec<Vec<RiskLevel>> {
 fn create_graph(two_dim: &[Vec<RiskLevel>]) -> Graph {
     let mut graph = Graph::new();
 
-    for x in 0..two_dim.len() {
-        for y in 0..two_dim[x].len() {
-            let risk_level = two_dim[x][y];
+    for y in 0..two_dim.len() {
+        for x in 0..two_dim[y].len() {
+            let risk_level = two_dim[y][x];
             if 0 < x {
                 graph.insert(((x - 1, y), (x, y)), risk_level);
             }
@@ -153,7 +153,7 @@ fn dijkstra(graph: &Graph, start: Point) -> Predecessors {
             }
         }
 
-        if nodes.len() % (start_size / 20) == 0 {
+        if nodes.len() % (start_size / 1000) == 0 {
             log::trace!(
                 "Nodes analyzed: {:.2} %",
                 (start_size - nodes.len()) as f64 / start_size as f64 * 100.0
@@ -206,7 +206,26 @@ mod tests {
     2311944581";
 
     #[test]
+    fn extend_works() {
+        let input = vec![vec![8]];
+        let output = vec![
+            vec![8, 9, 1, 2, 3],
+            vec![9, 1, 2, 3, 4],
+            vec![1, 2, 3, 4, 5],
+            vec![2, 3, 4, 5, 6],
+            vec![3, 4, 5, 6, 7],
+        ];
+        assert_eq!(extend(&input), output);
+    }
+
+    #[test]
     fn part_one_works() {
         assert_eq!(part_one(&create_graph(&parse(INPUT))), 40);
+    }
+
+
+    #[test]
+    fn part_two_works() {
+        assert_eq!(part_one(&create_graph(&extend(&parse(INPUT)))), 315);
     }
 }
