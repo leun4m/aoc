@@ -28,6 +28,10 @@ where
     fn is_empty(&self) -> bool {
         self.edges.is_empty()
     }
+
+    fn all_nodes(&self) -> Vec<T> {
+        self.edges.keys().cloned().collect()
+    }
 }
 
 impl<T> SimpleGraph<T>

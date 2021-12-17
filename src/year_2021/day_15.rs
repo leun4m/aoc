@@ -1,6 +1,7 @@
+use crate::graph::{Graph, WeightedGraph};
+use std::cmp;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::cmp;
 
 pub fn solve(input: &str) {
     let two_dim = parse(input);
@@ -12,9 +13,7 @@ pub fn solve(input: &str) {
 }
 
 type Point = (usize, usize);
-type Edge = (Point, Point);
 type RiskLevel = u64;
-type Graph = HashMap<Edge, RiskLevel>;
 type Distances = HashMap<Point, RiskLevel>;
 type Predecessors = HashMap<Point, Point>;
 type Path = Vec<Point>;
@@ -59,23 +58,23 @@ fn extend(two_dim: &[Vec<RiskLevel>]) -> Vec<Vec<RiskLevel>> {
     result
 }
 
-fn create_graph(two_dim: &[Vec<RiskLevel>]) -> Graph {
-    let mut graph = Graph::new();
+fn create_graph(two_dim: &[Vec<RiskLevel>]) -> WeightedGraph<Point, RiskLevel> {
+    let mut graph = WeightedGraph::new();
 
     for y in 0..two_dim.len() {
         for x in 0..two_dim[y].len() {
             let risk_level = two_dim[y][x];
             if 0 < x {
-                graph.insert(((x - 1, y), (x, y)), risk_level);
+                graph.add_edge((x - 1, y), (x, y), risk_level);
             }
             if 0 < y {
-                graph.insert(((x, y - 1), (x, y)), risk_level);
+                graph.add_edge((x, y - 1), (x, y), risk_level);
             }
             if x + 1 < two_dim.len() {
-                graph.insert(((x + 1, y), (x, y)), risk_level);
+                graph.add_edge((x + 1, y), (x, y), risk_level);
             }
             if y + 1 < two_dim[x].len() {
-                graph.insert(((x, y + 1), (x, y)), risk_level);
+                graph.add_edge((x, y + 1), (x, y), risk_level);
             }
         }
     }
@@ -83,7 +82,7 @@ fn create_graph(two_dim: &[Vec<RiskLevel>]) -> Graph {
     graph
 }
 
-fn part_one(graph: &Graph) -> u64 {
+fn part_one(graph: &WeightedGraph<Point, RiskLevel>) -> u64 {
     log::trace!("part_one entered");
     let aim = get_bottom_right(graph);
     log::trace!("found aim: {:?}", aim);
@@ -93,29 +92,29 @@ fn part_one(graph: &Graph) -> u64 {
     log::trace!("find_shortes_path finished");
 
     path.windows(2)
-        .map(|x| graph.get(&(x[0], x[1])).unwrap())
+        .map(|x| graph.get_weight(&x[0], &x[1]).unwrap())
         .sum()
 }
 
-fn get_bottom_right(graph: &Graph) -> Point {
+fn get_bottom_right(graph: &WeightedGraph<Point, RiskLevel>) -> Point {
     let max_x = graph
-        .keys()
-        .map(|(from, _)| *from)
+        .all_nodes()
+        .iter()
         .map(|a| a.0)
         .max()
         .unwrap();
     let max_y = graph
-        .keys()
-        .map(|(from, _)| *from)
+        .all_nodes()
+        .iter()
         .map(|a| a.1)
         .max()
         .unwrap();
     (max_x, max_y)
 }
 
-fn dijkstra(graph: &Graph, start: Point) -> Predecessors {
+fn dijkstra(graph: &WeightedGraph<Point, RiskLevel>, start: Point) -> Predecessors {
     log::trace!("Start collecting nodes");
-    let mut nodes: HashSet<Point> = graph.keys().map(|(from, _)| *from).collect();
+    let mut nodes: HashSet<Point> = HashSet::from_iter(graph.all_nodes());
     log::trace!("Create distance");
     let mut distances = Distances::new();
     log::trace!("Create predecessors");
@@ -141,14 +140,10 @@ fn dijkstra(graph: &Graph, start: Point) -> Predecessors {
             .0;
         nodes.remove(&node);
 
-        for neighbor in graph
-            .iter()
-            .map(|(edge, _)| edge)
-            .filter(|(from, _)| *from == node)
-            .map(|(_, to)| to)
+        for neighbor in graph.get_neighbours(&node)
         {
-            if nodes.contains(neighbor) {
-                distance_update(node, *neighbor, graph, &mut distances, &mut predecessors);
+            if nodes.contains(&neighbor) {
+                distance_update(node, neighbor, graph, &mut distances, &mut predecessors);
             }
         }
 
@@ -166,11 +161,11 @@ fn dijkstra(graph: &Graph, start: Point) -> Predecessors {
 fn distance_update(
     u: Point,
     v: Point,
-    graph: &Graph,
+    graph: &WeightedGraph<Point, RiskLevel>,
     distances: &mut Distances,
     predecessors: &mut Predecessors,
 ) {
-    let alternative = distances.get(&u).unwrap() + graph.get(&(u, v)).unwrap();
+    let alternative = distances.get(&u).unwrap() + graph.get_weight(&u, &v).unwrap();
     if alternative < *distances.get(&v).unwrap() {
         distances.insert(v, alternative);
         predecessors.insert(v, u);
