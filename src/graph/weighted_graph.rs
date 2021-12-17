@@ -4,26 +4,27 @@ use std::collections::BinaryHeap;
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::hash::Hash;
+use std::ops::Add;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub struct WeightedEdge<T>
+pub struct WeightedEdge<T, W>
 where
     T: Debug + Eq + Hash,
 {
     node: T,
-    weight: usize,
+    weight: W,
 }
 
 /// An unweighted graph with unidirectional edges.
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct WeightedGraph<T>
+pub struct WeightedGraph<T, W>
 where
     T: Debug + Eq + Hash + Clone,
 {
-    edges: HashMap<T, Vec<WeightedEdge<T>>>,
+    edges: HashMap<T, Vec<WeightedEdge<T, W>>>,
 }
 
-impl<T> Graph<T> for WeightedGraph<T>
+impl<T, W> Graph<T> for WeightedGraph<T, W>
 where
     T: Debug + Eq + Hash + Clone,
 {
@@ -51,31 +52,33 @@ where
     }
 }
 
-impl<T> WeightedGraph<T>
+impl<T, W> WeightedGraph<T, W>
 where
     T: Debug + Eq + Hash + Clone + Ord + Copy,
+    W: Copy + Clone + Default + Ord + Add<Output = W>,
 {
-    pub fn add_edge(&mut self, from: T, to: T, weight: usize) {
+    pub fn add_edge(&mut self, from: T, to: T, weight: W) {
         (*self.edges.entry(from).or_default()).push(WeightedEdge { node: to, weight });
     }
 
-    pub fn get_edges(&self, from: &T) -> Vec<WeightedEdge<T>> {
-        self.edges
-            .get(from)
-            .unwrap_or(&Vec::new())
-            .to_vec()
+    pub fn get_edges(&self, from: &T) -> Vec<WeightedEdge<T, W>> {
+        self.edges.get(from).unwrap_or(&Vec::new()).to_vec()
     }
 
     /// Dijkstra's shortest path algorithm.
     ///
     /// Based on the [documentation for `std::collections::binary_heap`](https://doc.rust-lang.org/std/collections/binary_heap/index.html)
-    pub fn shortest_path(&self, start: T, goal: T) -> Option<usize> {
-        let mut dist: HashMap<T, usize> = self.edges.keys().map(|x| (*x, usize::MAX)).collect();
+    pub fn shortest_path(&self, start: T, goal: T) -> Option<W> {
+        let mut dist: HashMap<T, Distance<W>> = self
+            .edges
+            .keys()
+            .map(|x| (*x, Distance::Infinite))
+            .collect();
         let mut heap = BinaryHeap::new();
 
-        *dist.entry(start).or_default() = 0;
+        *dist.entry(start).or_default() = Distance::Some(W::default());
         heap.push(State {
-            cost: 0,
+            cost: W::default(),
             node: start,
         });
 
@@ -84,19 +87,20 @@ where
                 return Some(cost);
             }
 
-            if cost > *dist.get(&node).unwrap() {
+            if *dist.get(&node).unwrap() < cost {
                 continue;
             }
 
             for edge in self.get_edges(&node) {
+                let c: W = edge.weight + cost;
                 let next = State {
-                    cost: edge.weight + cost,
+                    cost: c,
                     node: edge.node,
                 };
 
-                if next.cost < *dist.get(&next.node).unwrap() {
+                if *dist.get(&next.node).unwrap() > next.cost {
                     heap.push(next);
-                    *dist.entry(next.node).or_default() = next.cost;
+                    *dist.entry(next.node).or_default() = Distance::Some(next.cost);
                 }
             }
         }
@@ -131,5 +135,46 @@ where
 {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
+    }
+}
+
+enum Distance<W>
+where
+    W: Ord,
+{
+    Some(W),
+    Infinite,
+}
+
+impl<W> Default for Distance<W>
+where
+    W: Ord,
+{
+    fn default() -> Self {
+        Self::Infinite
+    }
+}
+
+impl<W> PartialOrd<W> for Distance<W>
+where
+    W: Ord,
+{
+    fn partial_cmp(&self, other: &W) -> Option<Ordering> {
+        match self {
+            Distance::Some(w) => Some(w.cmp(other)),
+            Distance::Infinite => Some(Ordering::Greater),
+        }
+    }
+}
+
+impl<W> PartialEq<W> for Distance<W>
+where
+    W: Ord,
+{
+    fn eq(&self, other: &W) -> bool {
+        match self {
+            Distance::Some(w) => w == other,
+            Distance::Infinite => false,
+        }
     }
 }

@@ -30,16 +30,14 @@ fn part_one(matrix: &[Vec<RiskLevel>]) -> RiskLevel {
     graph.shortest_path((0, 0), aim).unwrap()
 }
 
-
-fn part_two(matrix : &[Vec<RiskLevel>]) -> RiskLevel {
+fn part_two(matrix: &[Vec<RiskLevel>]) -> RiskLevel {
     let matrix_extended = extend(matrix);
     let graph = create_graph(&matrix_extended);
     let aim = get_bottom_right(&graph);
     graph.shortest_path((0, 0), aim).unwrap()
 }
 
-
-fn get_bottom_right(graph: &WeightedGraph<Point>) -> Point {
+fn get_bottom_right(graph: &WeightedGraph<Point, RiskLevel>) -> Point {
     let max_x = graph.all_nodes().iter().map(|a| a.0).max().unwrap();
     let max_y = graph.all_nodes().iter().map(|a| a.1).max().unwrap();
     (max_x, max_y)
@@ -70,7 +68,7 @@ fn extend(two_dim: &[Vec<RiskLevel>]) -> Vec<Vec<RiskLevel>> {
     result
 }
 
-fn create_graph(two_dim: &[Vec<RiskLevel>]) -> WeightedGraph<Point> {
+fn create_graph(two_dim: &[Vec<RiskLevel>]) -> WeightedGraph<Point, RiskLevel> {
     let mut graph = WeightedGraph::new();
 
     for y in 0..two_dim.len() {
