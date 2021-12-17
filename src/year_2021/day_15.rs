@@ -1,16 +1,15 @@
 use crate::graph::{Graph, WeightedGraph};
 
 pub fn solve(input: &str) {
-    let two_dim = parse(input);
-    let graph_one = create_graph(&two_dim);
-    println!("Part 1: {}", part_one(&graph_one));
-    let two_dim_ext = extend(&two_dim);
-    let graph_two = create_graph(&two_dim_ext);
-    println!("Part 2: {}", part_one(&graph_two));
+    let matrix = parse(input);
+    println!("Part 1: {}", part_one(&matrix));
+    println!("Part 2: {}", part_two(&matrix));
 }
 
 type Point = (usize, usize);
 type RiskLevel = usize;
+
+const EXTEND_REPEAT: usize = 5;
 
 fn parse(input: &str) -> Vec<Vec<RiskLevel>> {
     input
@@ -25,17 +24,36 @@ fn parse(input: &str) -> Vec<Vec<RiskLevel>> {
         .collect()
 }
 
-const REPEAT: usize = 5;
+fn part_one(matrix: &[Vec<RiskLevel>]) -> RiskLevel {
+    let graph = create_graph(matrix);
+    let aim = get_bottom_right(&graph);
+    graph.shortest_path((0, 0), aim).unwrap()
+}
+
+
+fn part_two(matrix : &[Vec<RiskLevel>]) -> RiskLevel {
+    let matrix_extended = extend(matrix);
+    let graph = create_graph(&matrix_extended);
+    let aim = get_bottom_right(&graph);
+    graph.shortest_path((0, 0), aim).unwrap()
+}
+
+
+fn get_bottom_right(graph: &WeightedGraph<Point>) -> Point {
+    let max_x = graph.all_nodes().iter().map(|a| a.0).max().unwrap();
+    let max_y = graph.all_nodes().iter().map(|a| a.1).max().unwrap();
+    (max_x, max_y)
+}
 
 fn extend(two_dim: &[Vec<RiskLevel>]) -> Vec<Vec<RiskLevel>> {
     let mut result = Vec::new();
 
-    for ry in 0..(two_dim.len() * REPEAT) {
+    for ry in 0..(two_dim.len() * EXTEND_REPEAT) {
         let fac_y = (ry / two_dim.len()) as RiskLevel;
         let y = ry % two_dim.len();
 
         let mut row = Vec::new();
-        for rx in 0..(two_dim[y].len() * REPEAT) {
+        for rx in 0..(two_dim[y].len() * EXTEND_REPEAT) {
             let fac_x = (rx / two_dim[y].len()) as RiskLevel;
             let x = rx % two_dim[y].len();
 
@@ -76,18 +94,6 @@ fn create_graph(two_dim: &[Vec<RiskLevel>]) -> WeightedGraph<Point> {
     graph
 }
 
-fn part_one(graph: &WeightedGraph<Point>) -> RiskLevel {
-    log::trace!("part_one entered");
-    let aim = get_bottom_right(graph);
-    graph.shortest_path((0, 0), aim).unwrap()
-}
-
-fn get_bottom_right(graph: &WeightedGraph<Point>) -> Point {
-    let max_x = graph.all_nodes().iter().map(|a| a.0).max().unwrap();
-    let max_y = graph.all_nodes().iter().map(|a| a.1).max().unwrap();
-    (max_x, max_y)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -119,11 +125,11 @@ mod tests {
 
     #[test]
     fn part_one_works() {
-        assert_eq!(part_one(&create_graph(&parse(INPUT))), 40);
+        assert_eq!(part_one(&parse(INPUT)), 40);
     }
 
     #[test]
     fn part_two_works() {
-        assert_eq!(part_one(&create_graph(&extend(&parse(INPUT)))), 315);
+        assert_eq!(part_two(&parse(INPUT)), 315);
     }
 }
