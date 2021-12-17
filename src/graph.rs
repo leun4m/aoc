@@ -1,30 +1,52 @@
 use std::collections::HashMap;
 use std::hash::Hash;
 
+/// A Graph
+pub trait Graph<T> {
+    /// Creates a new, empty graph
+    fn new() -> Self;
+
+    /// Returns all neighbours
+    fn get_neighbours(&self, from: &T) -> Vec<T>;
+
+    /// Returns true if graph has no edges 
+    fn is_empty(&self) -> bool;
+}
+
+/// An unweighted graph with unidirectional edges.
 #[derive(Debug, PartialEq, Eq)]
-pub struct SimpleGraph<Node>
+pub struct SimpleGraph<T>
 where
-    Node: Eq + Hash + Clone,
+    T: Eq + Hash + Clone,
 {
-    edges: HashMap<Node, Vec<Node>>,
+    edges: HashMap<T, Vec<T>>,
+}
+
+impl<T> Graph<T> for SimpleGraph<T>
+where
+    T: Eq + Hash + Clone,
+{
+    fn new() -> Self {
+        SimpleGraph {
+            edges: HashMap::new(),
+        }
+    }
+
+    fn get_neighbours(&self, from: &T) -> Vec<T> {
+        self.edges.get(from).unwrap().to_vec()
+    }
+
+    fn is_empty(&self) -> bool {
+        self.edges.is_empty()
+    }
 }
 
 impl<T> SimpleGraph<T>
 where
     T: Eq + Hash + Clone,
 {
-    pub fn new() -> Self {
-        SimpleGraph {
-            edges: HashMap::new(),
-        }
-    }
-
     pub fn add_edge(&mut self, from: T, to: T) {
         (*self.edges.entry(from).or_default()).push(to);
-    }
-
-    pub fn get_neighbour(&self, from: &T) -> Vec<T> {
-        self.edges.get(from).unwrap().to_vec()
     }
 }
 

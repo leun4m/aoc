@@ -1,4 +1,4 @@
-use crate::graph::SimpleGraph;
+use crate::graph::{Graph, SimpleGraph};
 use itertools::Itertools;
 
 pub fn solve(input: &str) {
@@ -71,7 +71,7 @@ where
         new_visited.push(start);
 
         graph
-            .get_neighbour(&start)
+            .get_neighbours(&start)
             .iter()
             .filter(|next| can_be_visited(next, &new_visited))
             .flat_map(|next| endings(graph, &new_visited, next, can_be_visited))
