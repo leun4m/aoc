@@ -1,4 +1,4 @@
-use crate::graph::Graph;
+use crate::graph::SimpleGraph;
 use itertools::Itertools;
 
 pub fn solve(input: &str) {
@@ -12,8 +12,8 @@ type Cave<'a> = &'a str;
 const START: &str = "start";
 const END: &str = "end";
 
-fn parse(input: &str) -> Graph<Cave> {
-    let mut graph = Graph::new();
+fn parse(input: &str) -> SimpleGraph<Cave> {
+    let mut graph = SimpleGraph::new();
 
     for (a, b) in input
         .lines()
@@ -32,11 +32,11 @@ fn parse_pair(input: &str) -> (Cave, Cave) {
     (words[0], words[1])
 }
 
-fn part_one(graph: &Graph<Cave>) -> usize {
+fn part_one(graph: &SimpleGraph<Cave>) -> usize {
     endings(graph, &[], START, can_been_visited_again_one).len()
 }
 
-fn part_two(graph: &Graph<Cave>) -> usize {
+fn part_two(graph: &SimpleGraph<Cave>) -> usize {
     endings(graph, &[], START, can_been_visited_again_two).len()
 }
 
@@ -56,7 +56,7 @@ fn can_been_visited_again_two(cave: Cave, visited: &[Cave]) -> bool {
 }
 
 fn endings<'a, F>(
-    graph: &'a Graph<Cave>,
+    graph: &'a SimpleGraph<Cave>,
     visited: &[Cave],
     start: Cave,
     can_be_visited: F,
@@ -102,7 +102,7 @@ mod tests {
                 "start-A
             start-b"
             ),
-            Graph::from([
+            SimpleGraph::from([
                 ("start", vec!["A", "b"]),
                 ("A", vec!["start"]),
                 ("b", vec!["start"])

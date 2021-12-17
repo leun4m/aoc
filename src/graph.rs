@@ -2,19 +2,19 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Graph<Node>
+pub struct SimpleGraph<Node>
 where
     Node: Eq + Hash + Clone,
 {
     edges: HashMap<Node, Vec<Node>>,
 }
 
-impl<T> Graph<T>
+impl<T> SimpleGraph<T>
 where
     T: Eq + Hash + Clone,
 {
     pub fn new() -> Self {
-        Graph {
+        SimpleGraph {
             edges: HashMap::new(),
         }
     }
@@ -28,12 +28,12 @@ where
     }
 }
 
-impl<T, const N: usize> From<[(T, Vec<T>); N]> for Graph<T>
+impl<T, const N: usize> From<[(T, Vec<T>); N]> for SimpleGraph<T>
 where
     T: Eq + Hash + Clone,
 {
     fn from(arr: [(T, Vec<T>); N]) -> Self {
-        Graph {
+        SimpleGraph {
             edges: HashMap::from(arr),
         }
     }
