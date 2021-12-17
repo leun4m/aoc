@@ -1,6 +1,6 @@
-use log;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::cmp;
 
 pub fn solve(input: &str) {
     let two_dim = parse(input);
@@ -152,7 +152,7 @@ fn dijkstra(graph: &Graph, start: Point) -> Predecessors {
             }
         }
 
-        if nodes.len() % (start_size / 1000) == 0 {
+        if nodes.len() % cmp::max(start_size / 1000, 1) == 0 {
             log::trace!(
                 "Nodes analyzed: {:.2} %",
                 (start_size - nodes.len()) as f64 / start_size as f64 * 100.0
