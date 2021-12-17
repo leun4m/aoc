@@ -9,7 +9,6 @@ pub fn solve(input: &str) {
     let two_dim_ext = extend(&two_dim);
     let graph_two = create_graph(&two_dim_ext);
     println!("Part 2: {}", part_one(&graph_two));
-
 }
 
 type Point = (usize, usize);
@@ -222,7 +221,6 @@ mod tests {
     fn part_one_works() {
         assert_eq!(part_one(&create_graph(&parse(INPUT))), 40);
     }
-
 
     #[test]
     fn part_two_works() {

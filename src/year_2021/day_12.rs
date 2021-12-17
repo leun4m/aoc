@@ -1,5 +1,5 @@
+use crate::graph::Graph;
 use itertools::Itertools;
-use std::collections::HashMap;
 
 pub fn solve(input: &str) {
     let graph = parse(input);
@@ -8,21 +8,20 @@ pub fn solve(input: &str) {
 }
 
 type Cave<'a> = &'a str;
-type Graph<'a> = HashMap<Cave<'a>, Vec<Cave<'a>>>;
 
 const START: &str = "start";
 const END: &str = "end";
 
-fn parse(input: &str) -> Graph {
-    let mut graph: Graph = HashMap::new();
+fn parse(input: &str) -> Graph<Cave> {
+    let mut graph = Graph::new();
 
     for (a, b) in input
         .lines()
         .filter(|line| !line.trim().is_empty())
         .map(|line| parse_pair(line))
     {
-        (*graph.entry(a).or_default()).push(b);
-        (*graph.entry(b).or_default()).push(a);
+        graph.add_edge(a, b);
+        graph.add_edge(b, a);
     }
 
     graph
@@ -33,11 +32,11 @@ fn parse_pair(input: &str) -> (Cave, Cave) {
     (words[0], words[1])
 }
 
-fn part_one(graph: &Graph) -> usize {
+fn part_one(graph: &Graph<Cave>) -> usize {
     endings(graph, &[], START, can_been_visited_again_one).len()
 }
 
-fn part_two(graph: &Graph) -> usize {
+fn part_two(graph: &Graph<Cave>) -> usize {
     endings(graph, &[], START, can_been_visited_again_two).len()
 }
 
@@ -57,7 +56,7 @@ fn can_been_visited_again_two(cave: Cave, visited: &[Cave]) -> bool {
 }
 
 fn endings<'a, F>(
-    graph: &'a Graph,
+    graph: &'a Graph<Cave>,
     visited: &[Cave],
     start: Cave,
     can_be_visited: F,
@@ -72,8 +71,7 @@ where
         new_visited.push(start);
 
         graph
-            .get(start)
-            .unwrap()
+            .get_neighbour(&start)
             .iter()
             .filter(|next| can_be_visited(next, &new_visited))
             .flat_map(|next| endings(graph, &new_visited, next, can_be_visited))
@@ -104,7 +102,7 @@ mod tests {
                 "start-A
             start-b"
             ),
-            HashMap::from([
+            Graph::from([
                 ("start", vec!["A", "b"]),
                 ("A", vec!["start"]),
                 ("b", vec!["start"])

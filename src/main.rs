@@ -1,3 +1,4 @@
+mod graph;
 mod util;
 mod year_2015;
 mod year_2016;
