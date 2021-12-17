@@ -71,7 +71,7 @@ where
         new_visited.push(start);
 
         graph
-            .get_neighbours(&start)
+            .neighbours(&start)
             .iter()
             .filter(|next| can_be_visited(next, &new_visited))
             .flat_map(|next| endings(graph, &new_visited, next, can_be_visited))

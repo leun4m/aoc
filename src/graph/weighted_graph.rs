@@ -15,7 +15,7 @@ where
     weight: W,
 }
 
-/// An unweighted graph with unidirectional edges.
+/// A graph with weighted, unidirectional edges.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct WeightedGraph<T, W>
 where
@@ -34,9 +34,9 @@ where
         }
     }
 
-    fn get_neighbours(&self, from: &T) -> Vec<T> {
+    fn neighbours(&self, node: &T) -> Vec<T> {
         self.edges
-            .get(from)
+            .get(node)
             .unwrap()
             .iter()
             .map(|x| x.node.clone())
@@ -92,9 +92,8 @@ where
             }
 
             for edge in self.get_edges(&node) {
-                let c: W = edge.weight + cost;
                 let next = State {
-                    cost: c,
+                    cost: edge.weight + cost,
                     node: edge.node,
                 };
 

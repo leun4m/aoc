@@ -21,8 +21,8 @@ where
         }
     }
 
-    fn get_neighbours(&self, from: &T) -> Vec<T> {
-        self.edges.get(from).unwrap().to_vec()
+    fn neighbours(&self, node: &T) -> Vec<T> {
+        self.edges.get(node).unwrap().to_vec()
     }
 
     fn is_empty(&self) -> bool {
