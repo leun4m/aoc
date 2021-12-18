@@ -1,6 +1,10 @@
+use std::cmp::max;
+use std::cmp::min;
+
 pub fn solve(input: &str) {
     let packet = parse(input);
     println!("Part 1: {}", part_one(&packet));
+    println!("Part 2: {}", part_two(&packet));
 }
 
 fn decode_4bit(input: char) -> String {
@@ -8,7 +12,6 @@ fn decode_4bit(input: char) -> String {
 }
 
 fn bin_to_u8(input: &str) -> u8 {
-    log::trace!("bin_to_u8 / input: {}", input);
     if input.is_empty() {
         0
     } else {
@@ -21,7 +24,7 @@ const ID_LENGTH: usize = 3;
 
 fn parse(input: &str) -> Packet {
     let mut bin_iter = BinaryIter::new(input);
-    parse_continue(&mut bin_iter)
+    parse_continue(&mut bin_iter).unwrap()
 }
 
 fn bit(chars: &[char]) -> String {
@@ -37,22 +40,25 @@ fn parse_bin(binary: &mut BinaryIter, length: usize) -> Vec<Packet> {
     let substr = binary.take(length).collect::<Vec<char>>();
     let sub_hex = bitstream(&substr);
 
-    log::trace!("parse_bin substr: {:?}", substr);
-    log::trace!("parse_bin subhex: {:?}", sub_hex);
     let mut sub_iter = BinaryIter::new(&sub_hex);
     parse_list(&mut sub_iter)
 }
 
-fn parse_continue(bin_iter: &mut BinaryIter) -> Packet {
+fn parse_continue(bin_iter: &mut BinaryIter) -> Option<Packet> {
     // log::trace!("iter #1: {:?}", bin_iter);
     let version = bin_to_u8(&bin_iter.take(VERSION_LENGTH).collect::<String>());
     // log::trace!("iter #2: {:?}", bin_iter);
     let id = bin_to_u8(&bin_iter.take(ID_LENGTH).collect::<String>());
     // log::trace!("iter #3: {:?}", bin_iter);
 
-    match id {
-        4 => Packet::Literal(LiteralPacket::new(version, id, bin_iter)),
-        _ => Packet::Operator(OperatorPacket::new(version, id, bin_iter)),
+    if bin_iter.has_next() {
+        let packet = match id {
+            4 => Packet::Literal(LiteralPacket::new(version, id, bin_iter)),
+            _ => Packet::Operator(OperatorPacket::new(version, id, bin_iter)),
+        };
+        Some(packet)
+    } else {
+        None
     }
 }
 
@@ -61,7 +67,9 @@ fn parse_list(bin_iter: &mut BinaryIter) -> Vec<Packet> {
     // log::trace!("iter: {:?} / {}", bin_iter, bin_iter.has_next());
     while bin_iter.has_next() {
         // log::trace!("parse_list: {:?}", result);
-        result.push(parse_continue(bin_iter));
+        if let Some(p) = parse_continue(bin_iter) {
+            result.push(p);
+        }
     }
     result
 }
@@ -142,6 +150,13 @@ impl Packet {
             }
         }
     }
+
+    fn value(&self) -> u64 {
+        match self {
+            Packet::Literal(packet) => packet.value as u64,
+            Packet::Operator(packet) => packet.value(),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -160,15 +175,12 @@ struct OperatorPacket {
 
 impl LiteralPacket {
     fn new(version: u8, id: u8, binary: &mut BinaryIter) -> Self {
-        log::trace!("Literal iter #1: {:?}", binary);
         let mut repeat = true;
         let mut value_str = String::new();
         while repeat {
             let mut first = true;
             let a = binary.chunks(5);
-            log::trace!("{:?}", a);
             for c in a {
-                log::trace!("c: {} / f: {} / i: {:?}", c, first, binary);
                 if first {
                     if c == '0' {
                         repeat = false;
@@ -180,7 +192,6 @@ impl LiteralPacket {
             }
         }
 
-        log::trace!("value: {}", value_str);
         let value = u64::from_str_radix(&value_str, 2).unwrap();
 
         Self { version, id, value }
@@ -212,7 +223,9 @@ impl OperatorPacket {
 
         let mut subpackets = Vec::new();
         for _ in 0..num_packets {
-            subpackets.push(parse_continue(binary));
+            if let Some(p) = parse_continue(binary) {
+                subpackets.push(p);
+            }
         }
 
         subpackets
@@ -234,10 +247,35 @@ impl OperatorPacket {
             subpackets,
         }
     }
+
+    fn value(&self) -> u64 {
+        let f = match self.id {
+            0 => |a: u64, b: u64| a + b,
+            1 => |a: u64, b: u64| a * b,
+            2 => |a: u64, b: u64| min(a, b),
+            3 => |a: u64, b: u64| max(a, b),
+            5 => |a: u64, b: u64| if a > b { 1 } else { 0 },
+            6 => |a: u64, b: u64| if a < b { 1 } else { 0 },
+            7 => |a: u64, b: u64| if a == b { 1 } else { 0 },
+            x => panic!("Unexpected id: {}", x),
+        };
+
+        println!("subpackets: {:?}", self.subpackets);
+
+        self.subpackets
+            .iter()
+            .map(|a| a.value())
+            .reduce(|a, b| f(a, b))
+            .unwrap_or(0)
+    }
 }
 
 fn part_one(packet: &Packet) -> u64 {
     packet.sum_version()
+}
+
+fn part_two(packet: &Packet) -> u64 {
+    packet.value()
 }
 
 #[cfg(test)]
@@ -301,5 +339,18 @@ mod tests {
         assert_eq!(part_one(&parse("620080001611562C8802118E34")), 12);
         assert_eq!(part_one(&parse("C0015000016115A2E0802F182340")), 23);
         assert_eq!(part_one(&parse("A0016C880162017C3686B18A3D4780")), 31);
+    }
+
+    #[test]
+    fn part_two_works() {
+        assert_eq!(part_two(&parse("C200B40A82")), 3);
+        println!("=========");
+        assert_eq!(part_two(&parse("04005AC33890")), 54);
+        assert_eq!(part_two(&parse("880086C3E88112")), 7);
+        assert_eq!(part_two(&parse("CE00C43D881120")), 9);
+        assert_eq!(part_two(&parse("D8005AC2A8F0")), 1);
+        assert_eq!(part_two(&parse("F600BC2D8F")), 0);
+        assert_eq!(part_two(&parse("9C005AC2F8F0")), 0);
+        assert_eq!(part_two(&parse("9C0141080250320F1802104A08")), 1);
     }
 }
