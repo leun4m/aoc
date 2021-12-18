@@ -8,7 +8,7 @@ pub use simple_graph::SimpleGraph;
 pub use weighted_graph::WeightedEdge;
 pub use weighted_graph::WeightedGraph;
 
-/// A Graph with nodes of Type `T` 
+/// A Graph with nodes of Type `T`
 pub trait Graph<T> {
     /// Creates a new, empty graph
     fn new() -> Self;
