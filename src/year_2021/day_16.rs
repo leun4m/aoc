@@ -7,54 +7,54 @@ pub fn solve(input: &str) {
     println!("Part 2: {}", part_two(&packet));
 }
 
-fn decode_4bit(input: char) -> String {
-    format!("{:04b}", input.to_digit(16).unwrap())
+fn parse(input: &str) -> Packet {
+    let mut bin_iter = BinaryIter::new(input);
+    try_parse(&mut bin_iter).unwrap()
 }
 
-fn bin_to_u8(input: &str) -> u8 {
+fn part_one(packet: &Packet) -> u64 {
+    packet.sum_version()
+}
+
+fn part_two(packet: &Packet) -> u64 {
+    packet.value()
+}
+
+fn decode_hex_to_nibble(hex: char) -> String {
+    format!("{:04b}", hex.to_digit(16).unwrap())
+}
+
+fn decode_binary_to_hex(bits: &[char]) -> String {
+    // to ensure zeros at the ending
+    let bits = format!("{}0000", &bits.iter().collect::<String>());
+    format!("{:01x}", bin_to_num(&bits[..4]))
+}
+
+fn decode_nibbles_to_hex(bits: &[char]) -> String {
+    bits.chunks(4)
+        .map(|bits| decode_binary_to_hex(bits))
+        .collect::<String>()
+}
+
+fn bin_to_num(input: &str) -> u64 {
     if input.is_empty() {
         0
     } else {
-        u8::from_str_radix(input, 2).unwrap()
+        u64::from_str_radix(input, 2).unwrap()
     }
 }
 
 const VERSION_LENGTH: usize = 3;
 const ID_LENGTH: usize = 3;
 
-fn parse(input: &str) -> Packet {
-    let mut bin_iter = BinaryIter::new(input);
-    parse_continue(&mut bin_iter).unwrap()
-}
+fn try_parse(iter: &mut BinaryIter) -> Option<Packet> {
+    let version = iter.take_and_convert(VERSION_LENGTH) as u8;
+    let id = iter.take_and_convert(ID_LENGTH) as u8;
 
-fn bit(chars: &[char]) -> String {
-    let bits = format!("{}0000", &chars.iter().collect::<String>());
-    format!("{:01x}", bin_to_u8(&bits[..4]))
-}
-
-fn bitstream(chars: &[char]) -> String {
-    chars.chunks(4).map(|bits| bit(bits)).collect::<String>()
-}
-
-fn parse_bin(binary: &mut BinaryIter, length: usize) -> Vec<Packet> {
-    let substr = binary.take(length).collect::<Vec<char>>();
-    let sub_hex = bitstream(&substr);
-
-    let mut sub_iter = BinaryIter::new(&sub_hex);
-    parse_list(&mut sub_iter)
-}
-
-fn parse_continue(bin_iter: &mut BinaryIter) -> Option<Packet> {
-    // log::trace!("iter #1: {:?}", bin_iter);
-    let version = bin_to_u8(&bin_iter.take(VERSION_LENGTH).collect::<String>());
-    // log::trace!("iter #2: {:?}", bin_iter);
-    let id = bin_to_u8(&bin_iter.take(ID_LENGTH).collect::<String>());
-    // log::trace!("iter #3: {:?}", bin_iter);
-
-    if bin_iter.has_next() {
+    if iter.has_next() {
         let packet = match id {
-            4 => Packet::Literal(LiteralPacket::new(version, id, bin_iter)),
-            _ => Packet::Operator(OperatorPacket::new(version, id, bin_iter)),
+            4 => Packet::Literal(LiteralPacket::new(version, id, iter)),
+            _ => Packet::Operator(OperatorPacket::new(version, id, iter)),
         };
         Some(packet)
     } else {
@@ -62,45 +62,52 @@ fn parse_continue(bin_iter: &mut BinaryIter) -> Option<Packet> {
     }
 }
 
-fn parse_list(bin_iter: &mut BinaryIter) -> Vec<Packet> {
+fn parse_packets_by_length(iter: &mut BinaryIter, length: usize) -> Vec<Packet> {
+    let sub_bin = iter.take(length).collect::<Vec<char>>();
+    let sub_hex = decode_nibbles_to_hex(&sub_bin);
+
+    parse_packets(&mut BinaryIter::new(&sub_hex))
+}
+
+fn parse_packets(iter: &mut BinaryIter) -> Vec<Packet> {
     let mut result = Vec::new();
-    // log::trace!("iter: {:?} / {}", bin_iter, bin_iter.has_next());
-    while bin_iter.has_next() {
-        // log::trace!("parse_list: {:?}", result);
-        if let Some(p) = parse_continue(bin_iter) {
-            result.push(p);
-        }
+    while let Some(p) = try_parse(iter) {
+        result.push(p);
     }
     result
 }
 
 #[derive(Debug)]
 struct BinaryIter<'a> {
-    hex_str: &'a str,
-    current_idx: usize,
-    current_bin: String,
-    ptr_bin: usize,
+    /// The HEX string as a base
+    hex: &'a str,
+    /// The index of the current HEX-Chars
+    hex_idx: usize,
+    /// The current HEX-char as binary representation
+    bin: String,
+    /// The index of the current binary char
+    bin_idx: usize,
 }
 
 impl<'a> BinaryIter<'a> {
-    fn new(hex_str: &'a str) -> Self {
-        let current_bin = if let Some(first_char) = hex_str.chars().nth(0) {
-            decode_4bit(first_char)
+    fn new(hex: &'a str) -> Self {
+        let bin = if let Some(first_char) = hex.chars().next() {
+            decode_hex_to_nibble(first_char)
         } else {
             String::new()
         };
 
         Self {
-            hex_str,
-            current_idx: 0,
-            current_bin,
-            ptr_bin: 0,
+            hex,
+            hex_idx: 0,
+            bin,
+            bin_idx: 0,
         }
     }
 
-    fn chunks(&mut self, size: usize) -> Vec<char> {
+    fn chunks(&mut self, length: usize) -> Vec<char> {
         let mut result = Vec::new();
-        for _ in 0..size {
+        for _ in 0..length {
             if let Some(c) = self.next() {
                 result.push(c);
             }
@@ -108,8 +115,12 @@ impl<'a> BinaryIter<'a> {
         result
     }
 
+    fn take_and_convert(&mut self, length: usize) -> u64 {
+        bin_to_num(&self.take(length).collect::<String>())
+    }
+
     fn has_next(&self) -> bool {
-        self.ptr_bin + 1 < self.current_bin.len() || self.current_idx + 1 < self.hex_str.len()
+        self.bin_idx + 1 < self.bin.len() || self.hex_idx + 1 < self.hex.len()
     }
 }
 
@@ -117,14 +128,14 @@ impl<'a> Iterator for BinaryIter<'a> {
     type Item = char;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.ptr_bin < 4 {
-            self.ptr_bin += 1;
-            self.current_bin.chars().nth(self.ptr_bin - 1)
+        if self.bin_idx < 4 {
+            self.bin_idx += 1;
+            self.bin.chars().nth(self.bin_idx - 1)
         } else {
-            self.current_idx += 1;
-            if let Some(c) = self.hex_str.chars().nth(self.current_idx) {
-                self.current_bin = decode_4bit(c);
-                self.ptr_bin = 0;
+            self.hex_idx += 1;
+            if let Some(c) = self.hex.chars().nth(self.hex_idx) {
+                self.bin = decode_hex_to_nibble(c);
+                self.bin_idx = 0;
                 self.next()
             } else {
                 None
@@ -176,23 +187,23 @@ struct OperatorPacket {
 impl LiteralPacket {
     fn new(version: u8, id: u8, binary: &mut BinaryIter) -> Self {
         let mut repeat = true;
-        let mut value_str = String::new();
+        let mut digits = String::new();
+
         while repeat {
             let mut first = true;
-            let a = binary.chunks(5);
-            for c in a {
+            for digit in binary.chunks(5) {
                 if first {
-                    if c == '0' {
+                    if digit == '0' {
                         repeat = false;
                     }
                     first = false
                 } else {
-                    value_str.push(c);
+                    digits.push(digit);
                 }
             }
         }
 
-        let value = u64::from_str_radix(&value_str, 2).unwrap();
+        let value = bin_to_num(&digits);
 
         Self { version, id, value }
     }
@@ -202,41 +213,22 @@ const LENGTH_SUB_PACKETS: usize = 15;
 const NUMBER_SUB_PACKETS: usize = 11;
 
 impl OperatorPacket {
-    fn subpackets_length(binary: &mut BinaryIter) -> Vec<Packet> {
-        let s = binary.chunks(LENGTH_SUB_PACKETS).iter().collect::<String>();
-        let length = usize::from_str_radix(&s, 2).unwrap();
+    fn subpackets_by_length(binary: &mut BinaryIter) -> Vec<Packet> {
+        let length = binary.take_and_convert(LENGTH_SUB_PACKETS) as usize;
 
-        // log::trace!("S: {}", s);
-        // log::trace!("LENGTH: {}", length);
-
-        parse_bin(binary, length)
+        parse_packets_by_length(binary, length)
     }
 
-    fn subpackets_dyn(binary: &mut BinaryIter) -> Vec<Packet> {
-        let num_packets = usize::from_str_radix(
-            &binary.chunks(NUMBER_SUB_PACKETS).iter().collect::<String>(),
-            2,
-        )
-        .unwrap();
+    fn subpackets_by_number(binary: &mut BinaryIter) -> Vec<Packet> {
+        let number = binary.take_and_convert(NUMBER_SUB_PACKETS);
 
-        // log::trace!("NUM_PACKETS: {}", num_packets);
-
-        let mut subpackets = Vec::new();
-        for _ in 0..num_packets {
-            if let Some(p) = parse_continue(binary) {
-                subpackets.push(p);
-            }
-        }
-
-        subpackets
+        (0..number).map(|_| try_parse(binary)).flatten().collect()
     }
 
     fn new(version: u8, id: u8, binary: &mut BinaryIter) -> Self {
-        log::trace!("Operator iter #1: {:?}", binary);
-        // log::trace!("Operator: {}", binary.hex_str);
         let subpackets = match binary.next() {
-            Some('0') => OperatorPacket::subpackets_length(binary),
-            Some('1') => OperatorPacket::subpackets_dyn(binary),
+            Some('0') => OperatorPacket::subpackets_by_length(binary),
+            Some('1') => OperatorPacket::subpackets_by_number(binary),
             Some(x) => panic!("Unexpected digit: {}", x),
             None => Vec::new(),
         };
@@ -249,33 +241,23 @@ impl OperatorPacket {
     }
 
     fn value(&self) -> u64 {
-        let f = match self.id {
-            0 => |a: u64, b: u64| a + b,
-            1 => |a: u64, b: u64| a * b,
-            2 => |a: u64, b: u64| min(a, b),
-            3 => |a: u64, b: u64| max(a, b),
-            5 => |a: u64, b: u64| if a > b { 1 } else { 0 },
-            6 => |a: u64, b: u64| if a < b { 1 } else { 0 },
-            7 => |a: u64, b: u64| if a == b { 1 } else { 0 },
+        let operation = match self.id {
+            0 => |a, b| a + b,
+            1 => |a, b| a * b,
+            2 => |a, b| min(a, b),
+            3 => |a, b| max(a, b),
+            5 => |a, b| if a > b { 1 } else { 0 },
+            6 => |a, b| if a < b { 1 } else { 0 },
+            7 => |a, b| if a == b { 1 } else { 0 },
             x => panic!("Unexpected id: {}", x),
         };
 
-        println!("subpackets: {:?}", self.subpackets);
-
         self.subpackets
             .iter()
-            .map(|a| a.value())
-            .reduce(|a, b| f(a, b))
+            .map(|p| p.value())
+            .reduce(operation)
             .unwrap_or(0)
     }
-}
-
-fn part_one(packet: &Packet) -> u64 {
-    packet.sum_version()
-}
-
-fn part_two(packet: &Packet) -> u64 {
-    packet.value()
 }
 
 #[cfg(test)]
@@ -283,7 +265,7 @@ mod tests {
 
     use super::*;
     #[test]
-    fn parse_literal_works() {
+    fn parse_with_literal_works() {
         assert_eq!(
             parse("D2FE28"),
             Packet::Literal(LiteralPacket {
@@ -295,7 +277,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_operator_length_works() {
+    fn parse_with_operator_works() {
         assert_eq!(
             parse("38006F45291200"),
             Packet::Operator(OperatorPacket {
@@ -318,14 +300,17 @@ mod tests {
     }
 
     #[test]
-    fn bit_works() {
-        assert_eq!(bit(&['1', '0', '1', '0']), String::from("a"));
+    fn decode_binary_to_hex_works() {
+        assert_eq!(
+            decode_binary_to_hex(&['1', '0', '1', '0']),
+            String::from("a")
+        );
     }
 
     #[test]
-    fn bitstream_works() {
+    fn decode_nibbles_to_hex_works() {
         assert_eq!(
-            bitstream(&[
+            decode_nibbles_to_hex(&[
                 '1', '1', '0', '1', '0', '0', '0', '1', '0', '1', '0', '0', '1', '0', '1', '0',
                 '0', '1', '0', '0', '0', '1', '0', '0', '1', '0', '0'
             ]),
@@ -344,7 +329,6 @@ mod tests {
     #[test]
     fn part_two_works() {
         assert_eq!(part_two(&parse("C200B40A82")), 3);
-        println!("=========");
         assert_eq!(part_two(&parse("04005AC33890")), 54);
         assert_eq!(part_two(&parse("880086C3E88112")), 7);
         assert_eq!(part_two(&parse("CE00C43D881120")), 9);
