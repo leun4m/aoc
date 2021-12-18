@@ -5,9 +5,9 @@ authors = ["Manuel Krebs <me@leun4m.de>"]
 edition = "2021"
 
 [dependencies]
+env_logger = "0.9"
 itertools = "0.10"
 log = "0.4"
 regex = "1.5"
 rust-crypto = "0.2"
-simple_logger = "1.16.0"
 structopt = "0.3"
