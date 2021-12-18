@@ -31,7 +31,7 @@ fn count(input: &str) -> (i32, i32) {
 
 #[cfg(test)]
 mod tests {
-    use crate::year_2015::day_01::count;
+    use super::*;
 
     fn count_floor(input: &str) -> i32 {
         count(input).0

@@ -40,7 +40,7 @@ fn calc_ribbon((a, b, c): (u32, u32, u32)) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use crate::year_2015::day_02::{calc_paper, extra_paper, parse_line};
+    use super::*;
 
     #[test]
     fn example() {
