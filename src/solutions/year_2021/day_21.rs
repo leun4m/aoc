@@ -1,22 +1,27 @@
 use std::cmp::max;
 
 pub fn solve(input: &str) {
-    let (player_1, player_2) = parse(input);
+    let player_pos = parse(input);
     println!(
         "Part 1: {}",
-        part_one(Player::create_at(player_1), Player::create_at(player_2))
+        part_one(
+            Player::create_at(player_pos.0),
+            Player::create_at(player_pos.1)
+        )
     );
     println!(
         "Part 2: {}",
-        part_two(Player::create_at(player_1), Player::create_at(player_2))
+        part_two(
+            Player::create_at(player_pos.0),
+            Player::create_at(player_pos.1)
+        )
     );
 }
 
 type Position = u64;
-const WIN_SCORE: u64 = 1000;
-const WIN_SCORE_2: u64 = 21;
+const WIN_SCORE_PART_1: u64 = 1000;
+const WIN_SCORE_PART_2: u64 = 21;
 const DICE_MAX: u64 = 100;
-const BOARD_MIN: Position = 1;
 const BOARD_MAX: Position = 10;
 
 fn parse(input: &str) -> (Position, Position) {
@@ -40,37 +45,46 @@ fn parse_line(input: &str) -> Position {
 
 fn part_one(player_1: Player, player_2: Player) -> u64 {
     let mut dice = Dice::new();
-    let mut current_player_idx = 0;
+
+    let mut last_idx = 1;
+    let mut current_idx = 0;
+
     let mut players = [player_1, player_2];
-    while !players[(players.len() + current_player_idx - 1) % players.len()].has_won() {
+
+    while !players[last_idx].has_reached(WIN_SCORE_PART_1) {
         let rolled = dice.roll() + dice.roll() + dice.roll();
-        players[current_player_idx].add_score(rolled);
+        players[current_idx].add_score(rolled);
 
-        current_player_idx += 1;
-        current_player_idx %= players.len();
+        last_idx = current_idx;
+        current_idx += 1;
+        current_idx %= players.len();
     }
-    let lost_player = players.iter().find(|p| !p.has_won()).unwrap();
 
-    dice.counter * lost_player.score()
+    let lost_player = players
+        .iter()
+        .find(|p| !p.has_reached(WIN_SCORE_PART_1))
+        .unwrap();
+
+    dice.counter * lost_player.score
 }
 
 fn part_two(player_1: Player, player_2: Player) -> u64 {
-    let (p1, p2) = play_quantum(player_1, player_2, true);
-    max(p1, p2)
+    let (player_1_wins, player_2_wins) = play_quantum(player_1, player_2, true);
+    max(player_1_wins, player_2_wins)
 }
 
-const QUANTUM_DICE_RESULT_FREQUENCY: [(u64, u64); 7] = [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)];
+const QUANTUM_DICE_RESULT_FREQUENCY: [(u64, u64); 7] =
+    [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)];
 
 fn play_quantum(p1: Player, p2: Player, p1_turn: bool) -> (u64, u64) {
     let mut result_1 = 0;
     let mut result_2 = 0;
-    
+
     if p1_turn {
         for (dice_result, freq) in QUANTUM_DICE_RESULT_FREQUENCY {
-            let mut p1_clone = p1.clone();
-            p1_clone.add_score(dice_result);
+            let p1_clone = p1.clone_add_score(dice_result);
 
-            if p1_clone.has_won2() {
+            if p1_clone.has_reached(WIN_SCORE_PART_2) {
                 result_1 += freq;
             } else {
                 let (x1, x2) = play_quantum(p1_clone, p2.clone(), false);
@@ -122,25 +136,23 @@ impl Player {
     }
 
     fn add_score(&mut self, score: u64) {
-        for _ in 0..score {
-            self.position += 1;
-            if self.position > BOARD_MAX {
-                self.position = BOARD_MIN;
-            }
+        self.position += score;
+        if self.position % BOARD_MAX == 0 {
+            self.position = BOARD_MAX
+        } else {
+            self.position %= BOARD_MAX
         }
         self.score += self.position;
     }
 
-    fn score(&self) -> u64 {
-        self.score
+    fn has_reached(&self, value: u64) -> bool {
+        value <= self.score
     }
 
-    fn has_won(&self) -> bool {
-        WIN_SCORE <= self.score
-    }
-
-    fn has_won2(&self) -> bool {
-        WIN_SCORE_2 <= self.score
+    fn clone_add_score(&self, score: u64) -> Self {
+        let mut clone = self.clone();
+        clone.add_score(score);
+        clone
     }
 }
 
