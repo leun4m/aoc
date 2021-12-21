@@ -1,13 +1,20 @@
+use std::cmp::max;
+
 pub fn solve(input: &str) {
     let (player_1, player_2) = parse(input);
     println!(
         "Part 1: {}",
-        play(Player::create_at(player_1), Player::create_at(player_2))
+        part_one(Player::create_at(player_1), Player::create_at(player_2))
+    );
+    println!(
+        "Part 2: {}",
+        part_two(Player::create_at(player_1), Player::create_at(player_2))
     );
 }
 
 type Position = u64;
 const WIN_SCORE: u64 = 1000;
+const WIN_SCORE_2: u64 = 21;
 const DICE_MAX: u64 = 100;
 const BOARD_MIN: Position = 1;
 const BOARD_MAX: Position = 10;
@@ -31,29 +38,53 @@ fn parse_line(input: &str) -> Position {
         .unwrap()
 }
 
-fn play(player_1: Player, player_2: Player) -> u64 {
+fn part_one(player_1: Player, player_2: Player) -> u64 {
     let mut dice = Dice::new();
     let mut current_player_idx = 0;
     let mut players = [player_1, player_2];
     while !players[(players.len() + current_player_idx - 1) % players.len()].has_won() {
         let rolled = dice.roll() + dice.roll() + dice.roll();
         players[current_player_idx].add_score(rolled);
-        
-        // println!(
-        //     "Player {}\trolled: {}\tnow_at: {}\tscore: {}",
-        //     current_player_idx,
-        //     rolled,
-        //     players[current_player_idx].position,
-        //     players[current_player_idx].score
-        // );
 
         current_player_idx += 1;
         current_player_idx %= players.len();
     }
     let lost_player = players.iter().find(|p| !p.has_won()).unwrap();
 
-    println!("{} / {}", dice.counter, lost_player.score());
     dice.counter * lost_player.score()
+}
+
+fn part_two(player_1: Player, player_2: Player) -> u64 {
+    let (p1, p2) = play_quantum(player_1, player_2, true);
+    max(p1, p2)
+}
+
+const QUANTUM_DICE_RESULT_FREQUENCY: [(u64, u64); 7] = [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)];
+
+fn play_quantum(p1: Player, p2: Player, p1_turn: bool) -> (u64, u64) {
+    let mut result_1 = 0;
+    let mut result_2 = 0;
+    
+    if p1_turn {
+        for (dice_result, freq) in QUANTUM_DICE_RESULT_FREQUENCY {
+            let mut p1_clone = p1.clone();
+            p1_clone.add_score(dice_result);
+
+            if p1_clone.has_won2() {
+                result_1 += freq;
+            } else {
+                let (x1, x2) = play_quantum(p1_clone, p2.clone(), false);
+                result_1 += x1 * freq;
+                result_2 += x2 * freq;
+            }
+        }
+    } else {
+        let (x1, x2) = play_quantum(p2, p1, true);
+        result_1 = x2;
+        result_2 = x1;
+    }
+
+    (result_1, result_2)
 }
 
 struct Dice {
@@ -79,6 +110,7 @@ impl Dice {
     }
 }
 
+#[derive(Clone)]
 struct Player {
     position: Position,
     score: u64,
@@ -106,6 +138,10 @@ impl Player {
     fn has_won(&self) -> bool {
         WIN_SCORE <= self.score
     }
+
+    fn has_won2(&self) -> bool {
+        WIN_SCORE_2 <= self.score
+    }
 }
 
 #[cfg(test)]
@@ -114,7 +150,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn play_works() {
-        assert_eq!(play(Player::create_at(4), Player::create_at(8)), 739785);
+    fn part_one_works() {
+        assert_eq!(part_one(Player::create_at(4), Player::create_at(8)), 739785);
+    }
+
+    #[test]
+    fn part_two_works() {
+        assert_eq!(
+            part_two(Player::create_at(4), Player::create_at(8)),
+            444356092776315
+        );
     }
 }
