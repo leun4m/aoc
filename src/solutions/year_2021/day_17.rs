@@ -24,19 +24,15 @@ fn parse(input: &str) -> TargetArea {
 fn find_best(target: &TargetArea) -> (i32, usize) {
     let mut y_best = -1;
     let mut count = 0;
-    
     // Yeah, uses bruteforce and some random GUESSED_Y_FACTOR_RANGE ...
     let y_min = GUESSED_Y_FACTOR_RANGE * target.y_max;
     let y_max = GUESSED_Y_FACTOR_RANGE * target.y_max.abs();
 
     for y in y_min..y_max {
         for x in 1..=target.x_max {
-            match check_hit_target((x, y), target) {
-                Outcome::Hit(y_reached) => {
-                    y_best = max(y_best, y_reached);
-                    count += 1;
-                }
-                _ => {}
+            if let Outcome::Hit(y_reached) = check_hit_target((x, y), target) {
+                y_best = max(y_best, y_reached);
+                count += 1;
             }
         }
     }
