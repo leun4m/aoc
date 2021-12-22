@@ -17,6 +17,7 @@ mod day_14;
 mod day_15;
 mod day_16;
 mod day_17;
+mod day_20;
 mod day_21;
 
 pub fn solve_day(day: u8, input: &str) {
@@ -38,6 +39,7 @@ pub fn solve_day(day: u8, input: &str) {
         15 => day_15::solve(input),
         16 => day_16::solve(input),
         17 => day_17::solve(input),
+        20 => day_20::solve(input),
         21 => day_21::solve(input),
         _ => println!("{}", INVALID_DAY),
     };
