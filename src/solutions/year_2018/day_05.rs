@@ -2,10 +2,25 @@ use itertools::Itertools;
 
 pub fn solve(input: &str) {
     println!("Part 1: {}", part_one(input));
+    println!("Part 2: {}", part_two(input));
 }
 
 pub fn part_one(input: &str) -> usize {
     apply_reactions(input).chars().count()
+}
+
+pub fn part_two(input: &str) -> usize {
+    input
+        .to_ascii_lowercase()
+        .chars()
+        .unique()
+        .map(|c| {
+            apply_reactions(&input.replace(|k: char| k.eq_ignore_ascii_case(&c), ""))
+                .chars()
+                .count()
+        })
+        .min()
+        .unwrap_or(0)
 }
 
 pub fn apply_reactions(input: &str) -> String {
@@ -24,7 +39,7 @@ pub fn apply_reactions(input: &str) -> String {
             i += 1;
         }
     }
-    
+
     new_string
 }
 
@@ -34,13 +49,20 @@ fn has_reaction(a: char, b: char) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{apply_reactions, has_reaction, part_one};
+    use super::{apply_reactions, has_reaction, part_one, part_two};
 
     #[test]
     fn part_one_works() {
         assert_eq!(part_one("aA"), 0);
         assert_eq!(part_one("abBA"), 0);
         assert_eq!(part_one("dabAcCaCBAcCcaDA"), 10);
+    }
+
+    #[test]
+    fn part_two_works() {
+        assert_eq!(part_one("aA"), 0);
+        assert_eq!(part_one("abBA"), 0);
+        assert_eq!(part_two("dabAcCaCBAcCcaDA"), 4);
     }
 
     #[test]
