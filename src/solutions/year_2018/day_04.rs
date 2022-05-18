@@ -10,6 +10,7 @@ pub fn solve(input: &str) {
     let guards = sum_minutes_asleep(&mut log_lines);
 
     println!("Part 1: {}", part_one(&guards));
+    println!("Part 2: {}", part_two(&guards));
 }
 
 fn part_one(guards: &[Guard]) -> u32 {
@@ -19,7 +20,24 @@ fn part_one(guards: &[Guard]) -> u32 {
         .last()
         .unwrap();
 
-    guard.id * guard.get_most_asleep().minute()
+    guard.id * guard.get_most_asleep().unwrap().0.minute()
+}
+
+fn part_two(guards: &[Guard]) -> u32 {
+    let result = guards
+        .iter()
+        .map(|g| (g, g.get_most_asleep()))
+        .sorted_by_key(|x| {
+            if let Some(a) = x.1 {
+                a.1
+            } else {
+                0
+            }
+        })
+        .last()
+        .unwrap();
+
+    result.0.id * result.1.unwrap().0.minute()
 }
 
 fn sum_minutes_asleep(log_lines: &mut [Log]) -> Vec<Guard> {
@@ -65,9 +83,9 @@ impl Guard {
             .sum()
     }
 
-    fn get_most_asleep(&self) -> NaiveTime {
+    fn get_most_asleep(&self) -> Option<(NaiveTime, usize)> {
         let mut minutes: HashMap<NaiveTime, usize> = HashMap::new();
-       
+
         for span in self.asleep.iter() {
             let mut current = span.0.time();
             while current < span.1.time() {
@@ -76,14 +94,11 @@ impl Guard {
                 current += Duration::minutes(1);
             }
         }
-
-        minutes
-            .iter()
-            .sorted_by_key(|x| x.1)
-            .last()
-            .unwrap()
-            .0
-            .to_owned()
+        if let Some(a) = minutes.iter().sorted_by_key(|x| x.1).last() {
+            Some((*a.0, *a.1))
+        } else {
+            None
+        }
     }
 }
 
@@ -204,5 +219,11 @@ mod tests {
     fn part_one_works() {
         let result = part_one(&sum_minutes_asleep(&mut parse(INPUT)));
         assert_eq!(240, result);
+    }
+
+    #[test]
+    fn part_two_works() {
+        let result = part_two(&sum_minutes_asleep(&mut parse(INPUT)));
+        assert_eq!(4455, result);
     }
 }
