@@ -112,11 +112,11 @@ mod tests {
 
     #[test]
     fn part_one_works() {
-        assert_eq!(part_one(&mut parse(&INPUT)), 1656);
+        assert_eq!(part_one(&mut parse(INPUT)), 1656);
     }
 
     #[test]
     fn part_two_works() {
-        assert_eq!(part_two(&mut parse(&INPUT)), 195);
+        assert_eq!(part_two(&mut parse(INPUT)), 195);
     }
 }

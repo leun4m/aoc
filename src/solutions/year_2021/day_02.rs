@@ -8,7 +8,7 @@ fn parse(input: &str) -> Vec<Direction> {
     input
         .lines()
         .filter(|x| !x.is_empty())
-        .map(|x| parse_line(x))
+        .map(parse_line)
         .collect()
 }
 
@@ -111,21 +111,21 @@ forward 2";
 
     #[test]
     fn move_without_aim_works() {
-        assert_eq!(move_without_aim(&DIRECTIONS), (15, 10));
+        assert_eq!(move_without_aim(DIRECTIONS), (15, 10));
     }
 
     #[test]
     fn move_with_aim_works() {
-        assert_eq!(move_with_aim(&DIRECTIONS), (15, 60));
+        assert_eq!(move_with_aim(DIRECTIONS), (15, 60));
     }
 
     #[test]
     fn part_one_works() {
-        assert_eq!(part_one(&DIRECTIONS), 150);
+        assert_eq!(part_one(DIRECTIONS), 150);
     }
 
     #[test]
     fn part_two_works() {
-        assert_eq!(part_two(&DIRECTIONS), 900);
+        assert_eq!(part_two(DIRECTIONS), 900);
     }
 }

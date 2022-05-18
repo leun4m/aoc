@@ -11,7 +11,7 @@ fn parse(input: &str) -> Vec<Line> {
     input
         .lines()
         .filter(|line| !line.is_empty())
-        .map(|line| parse_line(line))
+        .map(parse_line)
         .collect()
 }
 
@@ -46,7 +46,7 @@ fn part_one(lines: &[Line]) -> usize {
 }
 
 fn part_two(lines: &[Line]) -> u32 {
-    lines.iter().map(|line| reconstruct_line(line)).sum()
+    lines.iter().map(reconstruct_line).sum()
 }
 
 fn reconstruct_line(line: &Line) -> u32 {

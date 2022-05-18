@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 pub fn solve(input: &str) {
-    let lines: Vec<Operation> = input.lines().map(|x| Operation::parse(x)).collect();
+    let lines: Vec<Operation> = input.lines().map(Operation::parse).collect();
 
     println!("Part One: {}", run(&lines));
     println!("Part Two: {}", find_bug_line(&lines).unwrap());

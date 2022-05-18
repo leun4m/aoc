@@ -13,7 +13,7 @@ fn parse(input: &str) -> Vec<u32> {
 }
 
 fn part_one(heights: &[u32]) -> u32 {
-    let fuel_cost = |a: u32, b: u32| abs_diff(a, b);
+    let fuel_cost = abs_diff;
     find_best_position(heights, fuel_cost)
 }
 

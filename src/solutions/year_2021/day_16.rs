@@ -32,7 +32,7 @@ fn decode_binary_to_hex(bits: &[char]) -> String {
 
 fn decode_nibbles_to_hex(bits: &[char]) -> String {
     bits.chunks(4)
-        .map(|bits| decode_binary_to_hex(bits))
+        .map(decode_binary_to_hex)
         .collect::<String>()
 }
 
@@ -244,8 +244,8 @@ impl OperatorPacket {
         let operation = match self.id {
             0 => |a, b| a + b,
             1 => |a, b| a * b,
-            2 => |a, b| min(a, b),
-            3 => |a, b| max(a, b),
+            2 => min,
+            3 => max,
             5 => |a, b| if a > b { 1 } else { 0 },
             6 => |a, b| if a < b { 1 } else { 0 },
             7 => |a, b| if a == b { 1 } else { 0 },

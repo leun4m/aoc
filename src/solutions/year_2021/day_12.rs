@@ -18,7 +18,7 @@ fn parse(input: &str) -> SimpleGraph<Cave> {
     for (a, b) in input
         .lines()
         .filter(|line| !line.trim().is_empty())
-        .map(|line| parse_pair(line))
+        .map(parse_pair)
     {
         graph.add_edge(a, b);
         graph.add_edge(b, a);

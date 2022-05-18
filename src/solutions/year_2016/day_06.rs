@@ -38,14 +38,14 @@ impl CharMatrix {
     pub fn least_common(&self) -> String {
         self.field
             .iter()
-            .map(|x| Self::calc_least_common(x))
+            .map(Self::calc_least_common)
             .collect()
     }
 
     pub fn most_common(&self) -> String {
         self.field
             .iter()
-            .map(|x| Self::calc_most_common(x))
+            .map(Self::calc_most_common)
             .collect()
     }
 

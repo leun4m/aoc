@@ -11,8 +11,8 @@ fn part_one(root: &JSONElement) -> i32 {
     match root {
         JSONElement::JSONString(_) => 0,
         JSONElement::JSONNumber(x) => *x,
-        JSONElement::JSONArray(v) => v.iter().map(|x| part_one(x)).sum(),
-        JSONElement::JSONObject(m) => m.values().map(|x| part_one(x)).sum(),
+        JSONElement::JSONArray(v) => v.iter().map(part_one).sum(),
+        JSONElement::JSONObject(m) => m.values().map(part_one).sum(),
     }
 }
 
@@ -21,12 +21,12 @@ fn part_two(root: &JSONElement) -> i32 {
     match root {
         JSONElement::JSONString(_) => 0,
         JSONElement::JSONNumber(x) => *x,
-        JSONElement::JSONArray(v) => v.iter().map(|x| part_two(x)).sum(),
+        JSONElement::JSONArray(v) => v.iter().map(part_two).sum(),
         JSONElement::JSONObject(m) => {
             if m.values().any(|x| x == &red_value) {
                 0
             } else {
-                m.values().map(|x| part_two(x)).sum()
+                m.values().map(part_two).sum()
             }
         }
     }

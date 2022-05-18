@@ -11,7 +11,7 @@ pub fn solve(input: &str) {
 fn parse(input: &str) -> Vec<Room> {
     input
         .lines()
-        .map(|line| parse_line(line))
+        .map(parse_line)
         .collect::<Vec<Room>>()
 }
 

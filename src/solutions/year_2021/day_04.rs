@@ -40,7 +40,7 @@ fn parse_boards(input: &str) -> Vec<BingoBoard> {
         .filter(|x| !x.trim().is_empty())
         .collect::<Vec<&str>>()
         .chunks_exact(BOARD_SIZE)
-        .map(|lines| parse_board(lines))
+        .map(parse_board)
         .collect()
 }
 
@@ -80,7 +80,7 @@ fn to_marked_board(board: &BingoBoard) -> MarkedBingoBoard {
 
 fn part_one(drafts: &[BingoNumber], boards: &[BingoBoard]) -> BingoNumber {
     let mut marked_boards: Vec<MarkedBingoBoard> =
-        boards.iter().map(|board| to_marked_board(board)).collect();
+        boards.iter().map(to_marked_board).collect();
 
     for draft in drafts {
         for board in marked_boards.iter_mut() {
@@ -96,7 +96,7 @@ fn part_one(drafts: &[BingoNumber], boards: &[BingoBoard]) -> BingoNumber {
 
 fn part_two(drafts: &[BingoNumber], boards: &[BingoBoard]) -> BingoNumber {
     let mut marked_boards: Vec<MarkedBingoBoard> =
-        boards.iter().map(|board| to_marked_board(board)).collect();
+        boards.iter().map(to_marked_board).collect();
 
     for draft in drafts {
         for board in marked_boards.iter_mut() {

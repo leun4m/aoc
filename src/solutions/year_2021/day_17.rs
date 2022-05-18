@@ -16,7 +16,7 @@ fn parse(input: &str) -> TargetArea {
     input
         .lines()
         .filter(|line| line.trim().starts_with(TARGET_AREA_KEY))
-        .map(|line| parse_target(line))
+        .map(parse_target)
         .next()
         .unwrap()
 }

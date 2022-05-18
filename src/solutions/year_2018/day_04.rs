@@ -44,7 +44,7 @@ fn sum_minutes_asleep(log_lines: &mut [Log]) -> Vec<Guard> {
 
     for line in log_lines {
         match line.instruction {
-            Instruction::Begins(x) => current = guards.entry(x).or_insert(Guard::new(x)),
+            Instruction::Begins(x) => current = guards.entry(x).or_insert_with(|| Guard::new(x)),
             Instruction::FallsAsleep => asleep = line.time,
             Instruction::WakesUp => current.asleep.push((asleep, line.time)),
         }
@@ -72,8 +72,8 @@ impl Guard {
             .iter()
             .map(|(from, to)| {
                 let duration_in_sec = to.timestamp() - from.timestamp();
-                let duration_in_min = duration_in_sec / 60;
-                duration_in_min
+                
+                duration_in_sec / 60
             })
             .sum()
     }
@@ -135,7 +135,7 @@ fn parse(input: &str) -> Vec<Log> {
         .lines()
         .map(|line| line.trim())
         .filter(|line| !line.is_empty())
-        .map(|line| parse_line(line))
+        .map(parse_line)
         .collect()
 }
 

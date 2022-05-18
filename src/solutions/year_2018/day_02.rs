@@ -11,7 +11,7 @@ fn parse(input: &str) -> Vec<Multiples> {
     input
         .lines()
         .filter(|line| !line.is_empty())
-        .map(|line| parse_line(line))
+        .map(parse_line)
         .collect()
 }
 

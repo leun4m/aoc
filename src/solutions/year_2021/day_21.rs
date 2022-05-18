@@ -29,7 +29,7 @@ fn parse(input: &str) -> (Position, Position) {
         .lines()
         .filter(|line| line.contains("starting position"))
         .map(|line| line.trim())
-        .map(|line| parse_line(line))
+        .map(parse_line)
         .collect();
     (players[0], players[1])
 }

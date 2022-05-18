@@ -10,7 +10,7 @@ fn parse(input: &str) -> Vec<i32> {
     input
         .lines()
         .filter(|line| !line.is_empty())
-        .map(|line| parse_line(line))
+        .map(parse_line)
         .collect()
 }
 

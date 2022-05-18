@@ -21,7 +21,7 @@ fn parse(input: &str) -> (Paper, Vec<FoldInstruction>) {
         .map(|line| line.trim())
         .filter(|line| !line.is_empty())
         .filter(|line| !line.starts_with("fold"))
-        .map(|line| parse_pair(line))
+        .map(parse_pair)
         .collect();
 
     let instructions = input
@@ -29,7 +29,7 @@ fn parse(input: &str) -> (Paper, Vec<FoldInstruction>) {
         .map(|line| line.trim())
         .filter(|line| !line.is_empty())
         .filter(|line| line.starts_with("fold"))
-        .map(|line| parse_fold(line))
+        .map(parse_fold)
         .collect();
 
     (paper, instructions)

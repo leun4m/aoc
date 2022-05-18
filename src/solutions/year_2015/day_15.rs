@@ -94,7 +94,7 @@ fn sum_properties(cookies: &[Cookie], teaspoons: &[i64], f: PropertyOp) -> i64 {
         0,
         cookies
             .iter()
-            .map(|cookie| f(cookie))
+            .map(f)
             .zip(teaspoons)
             .map(|(property, teaspoon)| property * teaspoon)
             .sum(),
@@ -171,7 +171,7 @@ mod tests {
             Cookie::new("Cinnamon".into(), 2, 3, -2, -1, 3),
         ];
 
-        assert_eq!(test_score(&cookies, &vec![44, 56]), 62842880);
+        assert_eq!(test_score(&cookies, &[44, 56]), 62842880);
     }
 
     #[test]

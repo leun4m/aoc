@@ -14,7 +14,7 @@ fn parse(input: &str) -> Vec<Line> {
     input
         .lines()
         .filter(|x| !x.trim().is_empty())
-        .map(|x| parse_line(x))
+        .map(parse_line)
         .collect()
 }
 

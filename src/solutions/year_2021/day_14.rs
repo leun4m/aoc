@@ -28,7 +28,7 @@ fn parse(input: &str) -> (&str, InsertionMap) {
         .map(|line| line.trim())
         .filter(|line| !line.is_empty())
         .filter(|line| line.contains(ARROW))
-        .map(|line| parse_replacement(line))
+        .map(parse_replacement)
         .collect();
 
     (origin, insertions)

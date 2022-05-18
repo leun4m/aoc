@@ -27,14 +27,14 @@ mod tests {
 
     #[test]
     fn part_one_works() {
-        assert_eq!(part_one(&vec![1]), 0);
-        assert_eq!(part_one(&vec![1, 0]), 0);
-        assert_eq!(part_one(&vec![1, 4]), 1);
-        assert_eq!(part_one(&vec![1, 2, 3]), 2);
-        assert_eq!(part_one(&vec![1, 2, 3, 2, 5]), 3);
+        assert_eq!(part_one(&[1]), 0);
+        assert_eq!(part_one(&[1, 0]), 0);
+        assert_eq!(part_one(&[1, 4]), 1);
+        assert_eq!(part_one(&[1, 2, 3]), 2);
+        assert_eq!(part_one(&[1, 2, 3, 2, 5]), 3);
 
         assert_eq!(
-            part_one(&vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263]),
+            part_one(&[199, 200, 208, 210, 200, 207, 240, 269, 260, 263]),
             7
         );
     }
@@ -42,7 +42,7 @@ mod tests {
     #[test]
     fn part_two_works() {
         assert_eq!(
-            part_two(&vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263]),
+            part_two(&[199, 200, 208, 210, 200, 207, 240, 269, 260, 263]),
             5
         );
     }
