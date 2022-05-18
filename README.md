@@ -9,9 +9,9 @@ Solutions from the various years of [AdventOfCode](https://adventofcode.com) in 
 | 2015 |     72 % | 18 / 25 |
 | 2016 |     24 % |  6 / 25 |
 | 2017 |      4 % |  1 / 25 |
-| 2018 |     12 % |  3 / 25 |
+| 2018 |     20 % |  5 / 25 |
 | 2020 |     64 % | 16 / 25 |
-| 2021 |     60 % | 15 / 25 |
+| 2021 |     72 % | 18 / 25 |
 
 ## Structure
 
