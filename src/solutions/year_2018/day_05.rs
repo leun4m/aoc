@@ -26,14 +26,14 @@ pub fn part_two(input: &str) -> usize {
 pub fn apply_reactions(input: &str) -> String {
     let mut new_string = input.trim().to_string();
 
-    let mut chars = input.chars().collect_vec();
     let mut i = 0;
 
-    while !chars.is_empty() && i < chars.len() - 1 {
-        if has_reaction(chars[i], chars[i + 1]) {
-            new_string.remove(i);
-            new_string.remove(i);
-            chars = new_string.chars().collect_vec();
+    while !new_string.is_empty() && i < new_string.len() - 1 {
+        if has_reaction(
+            new_string.chars().nth(i).unwrap(),
+            new_string.chars().nth(i + 1).unwrap(),
+        ) {
+            new_string.replace_range(i..i + 2, "");
             i = if i < 2 { 0 } else { i - 1 };
         } else {
             i += 1;
