@@ -20,24 +20,19 @@ fn part_one(guards: &[Guard]) -> u32 {
         .last()
         .unwrap();
 
-    guard.id * guard.get_most_asleep().unwrap().0.minute()
+    guard.id * guard.get_minute_most_asleep().minutes()
 }
 
 fn part_two(guards: &[Guard]) -> u32 {
     let result = guards
         .iter()
-        .map(|g| (g, g.get_most_asleep()))
-        .sorted_by_key(|x| {
-            if let Some(a) = x.1 {
-                a.1
-            } else {
-                0
-            }
-        })
+        .map(|g| (g, g.get_minute_most_asleep()))
+        .sorted_by_key(|x| x.1.times())
+        .map(|x| (x.0, x.1.minutes()))
         .last()
         .unwrap();
 
-    result.0.id * result.1.unwrap().0.minute()
+    result.0.id * result.1
 }
 
 fn sum_minutes_asleep(log_lines: &mut [Log]) -> Vec<Guard> {
@@ -83,7 +78,7 @@ impl Guard {
             .sum()
     }
 
-    fn get_most_asleep(&self) -> Option<(NaiveTime, usize)> {
+    fn get_minute_most_asleep(&self) -> MostAsleep {
         let mut minutes: HashMap<NaiveTime, usize> = HashMap::new();
 
         for span in self.asleep.iter() {
@@ -94,10 +89,35 @@ impl Guard {
                 current += Duration::minutes(1);
             }
         }
+
         if let Some(a) = minutes.iter().sorted_by_key(|x| x.1).last() {
-            Some((*a.0, *a.1))
+            MostAsleep::MinuteTimes(a.0.minute(), 0)
         } else {
-            None
+            MostAsleep::None
+        }
+    }
+}
+
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
+enum MostAsleep {
+    None,
+    MinuteTimes(u32, usize),
+}
+
+impl MostAsleep {
+    fn minutes(&self) -> u32 {
+        if let MostAsleep::MinuteTimes(m, _) = self {
+            *m
+        } else {
+            0
+        }
+    }
+
+    fn times(&self) -> usize {
+        if let MostAsleep::MinuteTimes(_, t) = self {
+            *t
+        } else {
+            0
         }
     }
 }
