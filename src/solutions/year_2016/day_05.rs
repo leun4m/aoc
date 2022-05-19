@@ -9,18 +9,19 @@ pub fn solve(input: &str) {
 const SEARCH_PREFIX: &str = "00000";
 const INDEX_OF_INTEREST: usize = 5;
 const CHARS_PASSWORD: usize = 8;
+const BLANK_SPACE: char = '_';
 
 fn part_one(input: &str) -> String {
     let trimmed_input = input.trim();
 
-    let mut password = String::with_capacity(CHARS_PASSWORD);
+    let mut password = BLANK_SPACE.to_string().repeat(CHARS_PASSWORD);
     let mut start = 0;
 
-    for x in 0..CHARS_PASSWORD {
+    for i in 0..CHARS_PASSWORD {
         let (character, new_start) = find_next(trimmed_input, start);
-        password.push(character);
+        password = replace_char(&password, i, character);
         start = new_start;
-        println!("Progress: {:.2} %", (x + 1) as f64 / CHARS_PASSWORD as f64 * 100.0)
+        print_progress(&password);
     }
 
     password
@@ -29,21 +30,29 @@ fn part_one(input: &str) -> String {
 fn part_two(input: &str) -> String {
     let trimmed_input = input.trim();
 
-    let mut password = "_".repeat(CHARS_PASSWORD);
+    let mut password = BLANK_SPACE.to_string().repeat(CHARS_PASSWORD);
     let mut start = 0;
     let mut positions = Vec::new();
 
-    while password.contains('_') {
+    while password.contains(BLANK_SPACE) {
         let (character, position, new_start) = find_next2(trimmed_input, start, &positions);
-        if password.chars().nth(position) == Some('_') {
+        if password.chars().nth(position) == Some(BLANK_SPACE) {
             password = replace_char(&password, position, character);
             start = new_start;
             positions.push(position);
-            println!("Progress: {:.2}% {}", (password.chars().filter(|c| *c != '_').count() + 1) as f64 / CHARS_PASSWORD as f64 * 100.0, password);
+            print_progress(&password);
         }
     }
 
     password
+}
+
+fn print_progress(password: &str) {
+    println!(
+        "Progress: {:.2}% [{}]",
+        (password.chars().filter(|c| *c != BLANK_SPACE).count()) as f64 / CHARS_PASSWORD as f64 * 100.0,
+        password
+    );
 }
 
 fn find_next(input: &str, start: usize) -> (char, usize) {
@@ -73,7 +82,12 @@ fn find_next2(input: &str, start: usize, positions: &[usize]) -> (char, usize, u
 
         let result = md5.result_str();
         if result.starts_with(SEARCH_PREFIX) {
-            let pos = result.chars().nth(INDEX_OF_INTEREST).unwrap().to_digit(16).unwrap() as usize;
+            let pos = result
+                .chars()
+                .nth(INDEX_OF_INTEREST)
+                .unwrap()
+                .to_digit(16)
+                .unwrap() as usize;
             if pos < CHARS_PASSWORD && !positions.contains(&pos) {
                 return (result.chars().nth(INDEX_OF_INTEREST + 1).unwrap(), pos, i);
             }
@@ -100,7 +114,7 @@ mod tests {
     }
 
     #[test]
-    // #[ignore]
+    #[ignore]
     fn part_two_works() {
         assert_eq!("05ace8e3", &part_two("abc"));
     }
