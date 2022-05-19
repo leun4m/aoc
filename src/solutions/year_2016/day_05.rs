@@ -50,7 +50,8 @@ fn part_two(input: &str) -> String {
 fn print_progress(password: &str) {
     println!(
         "Progress: {:.2}% [{}]",
-        (password.chars().filter(|c| *c != BLANK_SPACE).count()) as f64 / CHARS_PASSWORD as f64 * 100.0,
+        (password.chars().filter(|c| *c != BLANK_SPACE).count()) as f64 / CHARS_PASSWORD as f64
+            * 100.0,
         password
     );
 }

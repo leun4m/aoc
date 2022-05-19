@@ -79,8 +79,7 @@ fn to_marked_board(board: &BingoBoard) -> MarkedBingoBoard {
 }
 
 fn part_one(drafts: &[BingoNumber], boards: &[BingoBoard]) -> BingoNumber {
-    let mut marked_boards: Vec<MarkedBingoBoard> =
-        boards.iter().map(to_marked_board).collect();
+    let mut marked_boards: Vec<MarkedBingoBoard> = boards.iter().map(to_marked_board).collect();
 
     for draft in drafts {
         for board in marked_boards.iter_mut() {
@@ -95,8 +94,7 @@ fn part_one(drafts: &[BingoNumber], boards: &[BingoBoard]) -> BingoNumber {
 }
 
 fn part_two(drafts: &[BingoNumber], boards: &[BingoBoard]) -> BingoNumber {
-    let mut marked_boards: Vec<MarkedBingoBoard> =
-        boards.iter().map(to_marked_board).collect();
+    let mut marked_boards: Vec<MarkedBingoBoard> = boards.iter().map(to_marked_board).collect();
 
     for draft in drafts {
         for board in marked_boards.iter_mut() {

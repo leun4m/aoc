@@ -72,7 +72,7 @@ impl Guard {
             .iter()
             .map(|(from, to)| {
                 let duration_in_sec = to.timestamp() - from.timestamp();
-                
+
                 duration_in_sec / 60
             })
             .sum()

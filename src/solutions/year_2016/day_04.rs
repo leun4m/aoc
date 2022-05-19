@@ -9,10 +9,7 @@ pub fn solve(input: &str) {
 }
 
 fn parse(input: &str) -> Vec<Room> {
-    input
-        .lines()
-        .map(parse_line)
-        .collect::<Vec<Room>>()
+    input.lines().map(parse_line).collect::<Vec<Room>>()
 }
 
 fn part_one(rooms: &[Room]) -> u32 {

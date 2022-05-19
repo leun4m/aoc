@@ -36,17 +36,11 @@ impl CharMatrix {
     }
 
     pub fn least_common(&self) -> String {
-        self.field
-            .iter()
-            .map(Self::calc_least_common)
-            .collect()
+        self.field.iter().map(Self::calc_least_common).collect()
     }
 
     pub fn most_common(&self) -> String {
-        self.field
-            .iter()
-            .map(Self::calc_most_common)
-            .collect()
+        self.field.iter().map(Self::calc_most_common).collect()
     }
 
     fn new(size: usize) -> Self {

@@ -31,9 +31,7 @@ fn decode_binary_to_hex(bits: &[char]) -> String {
 }
 
 fn decode_nibbles_to_hex(bits: &[char]) -> String {
-    bits.chunks(4)
-        .map(decode_binary_to_hex)
-        .collect::<String>()
+    bits.chunks(4).map(decode_binary_to_hex).collect::<String>()
 }
 
 fn bin_to_num(input: &str) -> u64 {
