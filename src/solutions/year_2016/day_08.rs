@@ -18,7 +18,7 @@ pub fn solve(input: &str) {
     }
 
     println!("Part 1: {}", screen.lit_pixels());
-    println!("Part 2: {}", screen.print());
+    println!("Part 2:\n{}", screen.print());
 }
 
 const SCREEN_WIDTH: usize = 50;
@@ -70,22 +70,16 @@ impl Screen {
     }
 
     fn rotate_col(&mut self, arg: &RotationArg) {
-        let mut new_col = [false; SCREEN_HEIGHT];
-
-        for i in 0..new_col.len() {
-            new_col[i] = self.pixels[i][arg.id];
-        }
-
+        let mut new_col = self.pixels.iter().map(|row| row[arg.id]).collect_vec();
         new_col.rotate_right(arg.by % SCREEN_HEIGHT);
 
-        for i in 0..new_col.len() {
-            self.pixels[i][arg.id] = new_col[i];
+        for (i, cell) in new_col.iter().enumerate() {
+            self.pixels[i][arg.id] = *cell;
         }
     }
 
     fn print(&self) -> String {
-        "\n".to_owned() + &self
-            .pixels
+        self.pixels
             .iter()
             .map(|col| col.iter().map(|x| if *x { '#' } else { ' ' }).collect())
             .map(|x: String| {
