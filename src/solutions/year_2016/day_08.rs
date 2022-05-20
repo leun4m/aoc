@@ -1,6 +1,6 @@
-use std::cmp::min;
 use itertools::Itertools;
 use regex::Regex;
+use std::cmp::min;
 
 pub fn solve(input: &str) {
     let operations = input
@@ -10,7 +10,15 @@ pub fn solve(input: &str) {
         .filter(|line| !line.is_empty())
         .map(parse_line)
         .collect_vec();
-    println!("Part 1: {}", part_one(&operations))
+
+    let mut screen = Screen::new();
+
+    for op in operations {
+        screen.apply(&op);
+    }
+
+    println!("Part 1: {}", screen.lit_pixels());
+    println!("Part 2: {}", screen.print());
 }
 
 const SCREEN_WIDTH: usize = 50;
@@ -73,13 +81,14 @@ impl Screen {
         }
     }
 
-    // fn print(&self) -> String {
-    //     self.pixels
-    //         .iter()
-    //         .map(|col| col.iter().map(|x| if *x { '#' } else { '.' }).collect())
-    //         .map(|x: String| x + "\n")
-    //         .collect::<String>()
-    // }
+    fn print(&self) -> String {
+        "\n".to_owned() + &self
+            .pixels
+            .iter()
+            .map(|col| col.iter().map(|x| if *x { '#' } else { ' ' }).collect())
+            .map(|x: String| x + "\n")
+            .collect::<String>()
+    }
 }
 
 #[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
@@ -114,18 +123,6 @@ fn parse_line(line: &str) -> Operation {
 
         Operation::Rect(a, b)
     }
-}
-
-fn part_one(operations: &[Operation]) -> usize {
-    let mut screen = Screen::new();
-
-    for op in operations {
-        screen.apply(op);
-        // println!("{:?}", op);
-        // println!("{}", &screen.print());
-    }
-
-    screen.lit_pixels()
 }
 
 #[cfg(test)]
