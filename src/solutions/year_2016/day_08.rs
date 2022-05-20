@@ -24,6 +24,8 @@ pub fn solve(input: &str) {
 const SCREEN_WIDTH: usize = 50;
 const SCREEN_HEIGHT: usize = 6;
 
+const CHAR_WIDTH: usize = 5;
+
 lazy_static! {
     static ref ROTATION_REGEX: Regex = Regex::new(r#"=(\d+) by (\d+)"#).unwrap();
     static ref RECT_REGEX: Regex = Regex::new(r#"(\d+)x(\d+)"#).unwrap();
@@ -86,6 +88,14 @@ impl Screen {
             .pixels
             .iter()
             .map(|col| col.iter().map(|x| if *x { '#' } else { ' ' }).collect())
+            .map(|x: String| {
+                let mut result = String::new();
+                for chunk in &x.chars().into_iter().chunks(CHAR_WIDTH) {
+                    result.push_str(&chunk.into_iter().collect::<String>());
+                    result.push_str("   ");
+                }
+                result
+            })
             .map(|x: String| x + "\n")
             .collect::<String>()
     }
