@@ -23,7 +23,7 @@ fn encode(input: &str) -> String {
     let mut result = String::new();
 
     for line in input.lines() {
-        let line_enc = line.replace("\\", "\\\\").replace("\"", "\\\"");
+        let line_enc = line.replace('\\', "\\\\").replace('\"', "\\\"");
         result.push_str(&format!("\"{}\"\n", line_enc));
     }
 
@@ -71,7 +71,7 @@ fn count(input: &str) -> RiddleResult {
 }
 
 fn count_chars(input: &str) -> u32 {
-    input.replace("\n", "").chars().count() as u32
+    input.replace('\n', "").chars().count() as u32
 }
 
 #[cfg(test)]

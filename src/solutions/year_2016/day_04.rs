@@ -100,7 +100,7 @@ impl Room {
 }
 
 fn get_ranking(text: &str) -> Vec<char> {
-    let text_pure = text.replace("-", "");
+    let text_pure = text.replace('-', "");
     let map = util::count_chars(&text_pure);
 
     let chars = text_pure.chars().unique().sorted().collect::<Vec<char>>();

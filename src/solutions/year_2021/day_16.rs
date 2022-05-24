@@ -220,7 +220,7 @@ impl OperatorPacket {
     fn subpackets_by_number(binary: &mut BinaryIter) -> Vec<Packet> {
         let number = binary.take_and_convert(NUMBER_SUB_PACKETS);
 
-        (0..number).map(|_| try_parse(binary)).flatten().collect()
+        (0..number).filter_map(|_| try_parse(binary)).collect()
     }
 
     fn new(version: u8, id: u8, binary: &mut BinaryIter) -> Self {

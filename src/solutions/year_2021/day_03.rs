@@ -34,7 +34,7 @@ fn calc_property<F>(numbers: &[u32], bit_size: usize, f: &F) -> u32
 where
     F: Fn(usize, usize) -> u32,
 {
-    let mut nums: Vec<u32> = numbers.iter().copied().collect();
+    let mut nums: Vec<u32> = numbers.to_vec();
     let mut current_size = bit_size + 1;
 
     while nums.len() > 1 {

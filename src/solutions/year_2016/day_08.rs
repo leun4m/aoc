@@ -165,5 +165,4 @@ mod tests {
 
         assert_eq!(screen.lit_pixels(), 6);
     }
-    
 }

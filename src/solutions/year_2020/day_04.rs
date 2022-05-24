@@ -94,7 +94,7 @@ impl<'a> Passport<'a> {
     }
 
     fn is_valid_hair_color(&self) -> bool {
-        self.hcl.starts_with('#') && u64::from_str_radix(&self.hcl.replace("#", ""), 16).is_ok()
+        self.hcl.starts_with('#') && u64::from_str_radix(&self.hcl.replace('#', ""), 16).is_ok()
     }
 
     fn is_valid_eye_color(&self) -> bool {
