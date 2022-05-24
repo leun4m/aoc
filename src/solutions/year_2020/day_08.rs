@@ -25,16 +25,15 @@ fn run_modified(lines: &[Operation], change_idx: usize) -> Option<i32> {
     while !visited_lines.contains(&current) && current != lines.len() {
         visited_lines.insert(current);
 
-        let line;
-        if current == change_idx {
-            line = match lines[current] {
+        let line = if current == change_idx {
+            match lines[current] {
                 Operation::Nop(x) => Operation::Jmp(x),
                 Operation::Jmp(x) => Operation::Nop(x),
                 Operation::Acc(x) => Operation::Acc(x),
             }
         } else {
-            line = lines[current];
-        }
+            lines[current]
+        };
 
         let result = do_operation(&line, current, global);
         current = result.0;

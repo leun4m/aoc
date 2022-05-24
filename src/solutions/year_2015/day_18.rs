@@ -102,10 +102,7 @@ fn is_corner(x: usize, y: usize, lights: &[LightRow]) -> bool {
     let max_x = lights.len() - 1;
     let max_y = lights[0].len() - 1;
 
-    (x == 0 && y == 0)
-        || (x == 0 && y == max_y)
-        || (x == max_x && y == 0)
-        || (x == max_y && y == max_y)
+    (x == 0 || x == max_x) && (y == 0 || y == max_y)
 }
 
 #[cfg(test)]

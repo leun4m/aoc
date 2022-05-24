@@ -9,20 +9,20 @@ pub fn solve(input: &str) {
 
 fn part_one(root: &JSONElement) -> i32 {
     match root {
-        JSONElement::JSONString(_) => 0,
-        JSONElement::JSONNumber(x) => *x,
-        JSONElement::JSONArray(v) => v.iter().map(part_one).sum(),
-        JSONElement::JSONObject(m) => m.values().map(part_one).sum(),
+        JSONElement::Text(_) => 0,
+        JSONElement::Number(x) => *x,
+        JSONElement::Array(v) => v.iter().map(part_one).sum(),
+        JSONElement::Object(m) => m.values().map(part_one).sum(),
     }
 }
 
 fn part_two(root: &JSONElement) -> i32 {
-    let red_value: JSONElement = JSONElement::JSONString("red".into());
+    let red_value: JSONElement = JSONElement::Text("red".into());
     match root {
-        JSONElement::JSONString(_) => 0,
-        JSONElement::JSONNumber(x) => *x,
-        JSONElement::JSONArray(v) => v.iter().map(part_two).sum(),
-        JSONElement::JSONObject(m) => {
+        JSONElement::Text(_) => 0,
+        JSONElement::Number(x) => *x,
+        JSONElement::Array(v) => v.iter().map(part_two).sum(),
+        JSONElement::Object(m) => {
             if m.values().any(|x| x == &red_value) {
                 0
             } else {
@@ -40,16 +40,16 @@ fn parse(input: &str) -> JSONElement {
 
     if let Some(capture) = regex_number.captures(trimmed) {
         let value = capture[0].parse::<i32>().unwrap();
-        JSONElement::JSONNumber(value)
+        JSONElement::Number(value)
     } else if let Some(capture) = regex_string.captures(trimmed) {
         let value = capture[1].parse::<String>().unwrap();
-        JSONElement::JSONString(value)
+        JSONElement::Text(value)
     } else if trimmed.starts_with('[') && trimmed.ends_with(']') {
         let value = parse_array(&trimmed[1..trimmed.len() - 1]);
-        JSONElement::JSONArray(value)
+        JSONElement::Array(value)
     } else if trimmed.starts_with('{') && trimmed.ends_with('}') {
         let value = parse_object(&trimmed[1..trimmed.len() - 1]);
-        JSONElement::JSONObject(value)
+        JSONElement::Object(value)
     } else {
         panic!("Unexpected Input: {}", trimmed);
     }
@@ -155,10 +155,10 @@ impl State {
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 enum JSONElement {
-    JSONObject(HashMap<String, JSONElement>),
-    JSONArray(Vec<JSONElement>),
-    JSONNumber(i32),
-    JSONString(String),
+    Object(HashMap<String, JSONElement>),
+    Array(Vec<JSONElement>),
+    Number(i32),
+    Text(String),
 }
 
 #[cfg(test)]
@@ -167,51 +167,51 @@ mod tests {
 
     #[test]
     fn parse_number_works() {
-        assert_eq!(parse("1"), JSONElement::JSONNumber(1));
-        assert_eq!(parse("-10"), JSONElement::JSONNumber(-10));
-        assert_eq!(parse("12345"), JSONElement::JSONNumber(12345));
+        assert_eq!(parse("1"), JSONElement::Number(1));
+        assert_eq!(parse("-10"), JSONElement::Number(-10));
+        assert_eq!(parse("12345"), JSONElement::Number(12345));
     }
 
     #[test]
     fn parse_string_works() {
-        assert_eq!(parse("\"h\""), JSONElement::JSONString("h".into()));
-        assert_eq!(parse("\"Test\""), JSONElement::JSONString("Test".into()));
-        assert_eq!(parse("\"\""), JSONElement::JSONString("".into()));
+        assert_eq!(parse("\"h\""), JSONElement::Text("h".into()));
+        assert_eq!(parse("\"Test\""), JSONElement::Text("Test".into()));
+        assert_eq!(parse("\"\""), JSONElement::Text("".into()));
     }
 
     #[test]
     fn parse_array_works() {
-        assert_eq!(parse("[]"), JSONElement::JSONArray(Vec::new()));
+        assert_eq!(parse("[]"), JSONElement::Array(Vec::new()));
         assert_eq!(
             parse("[\"a\"]"),
-            JSONElement::JSONArray(vec![JSONElement::JSONString("a".into())])
+            JSONElement::Array(vec![JSONElement::Text("a".into())])
         );
 
         assert_eq!(
             parse("[1,2,3]"),
-            JSONElement::JSONArray(vec![
-                JSONElement::JSONNumber(1),
-                JSONElement::JSONNumber(2),
-                JSONElement::JSONNumber(3),
+            JSONElement::Array(vec![
+                JSONElement::Number(1),
+                JSONElement::Number(2),
+                JSONElement::Number(3),
             ])
         );
     }
 
     #[test]
     fn parse_object_works() {
-        assert_eq!(parse("{}"), JSONElement::JSONObject(HashMap::new()));
+        assert_eq!(parse("{}"), JSONElement::Object(HashMap::new()));
         assert_eq!(
             parse("{\"a\":\"abc\"}"),
-            JSONElement::JSONObject(HashMap::from([(
+            JSONElement::Object(HashMap::from([(
                 "a".into(),
-                JSONElement::JSONString("abc".into())
+                JSONElement::Text("abc".into())
             )]))
         );
         assert_eq!(
             parse("{\"a\":\"abc\", \"b\":123}"),
-            JSONElement::JSONObject(HashMap::from([
-                ("a".into(), JSONElement::JSONString("abc".into())),
-                ("b".into(), JSONElement::JSONNumber(123))
+            JSONElement::Object(HashMap::from([
+                ("a".into(), JSONElement::Text("abc".into())),
+                ("b".into(), JSONElement::Number(123))
             ]))
         );
     }
