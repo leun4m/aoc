@@ -4,19 +4,30 @@ pub fn solve(input: &str) {
     println!("Part 2: {}", part_two(&sanatized_input));
 }
 
-fn calc_decompressed_len<F>(input: &str, parser: F) -> usize
+fn calc_decompressed_len<F>(input: &str, parse_repeat: F) -> usize
 where
-    F: Fn(char, &mut std::str::Chars) -> Token,
+    F: Fn(String, usize) -> Token,
 {
-    parse(input, parser).iter().map(Token::size).sum::<usize>()
+    parse(input, parse_repeat)
+        .iter()
+        .map(Token::size)
+        .sum::<usize>()
 }
 
 fn part_one(input: &str) -> usize {
-    calc_decompressed_len(input, parse_token_v1)
+    fn parser(following: String, times: usize) -> Token {
+        Token::RepeatV1(following, times)
+    }
+
+    calc_decompressed_len(input, parser)
 }
 
 fn part_two(input: &str) -> usize {
-    calc_decompressed_len(input, parse_token_v2)
+    fn parser(following: String, times: usize) -> Token {
+        Token::RepeatV2(parse(&following, parser), times)
+    }
+
+    calc_decompressed_len(input, parser)
 }
 
 fn sanatize(input: &str) -> String {
@@ -40,52 +51,35 @@ impl Token {
     }
 }
 
-fn parse<F>(input: &str, parse_token: F) -> Vec<Token>
+fn parse<F>(input: &str, parse_repeat: F) -> Vec<Token>
 where
-    F: Fn(char, &mut std::str::Chars) -> Token,
+    F: Fn(String, usize) -> Token,
 {
     let mut result = Vec::new();
     let mut chars = input.chars();
 
-    while let Some(x) = chars.next() {
-        result.push(parse_token(x, &mut chars));
+    while let Some(x) = &mut chars.next() {
+        result.push(match x {
+            '(' => {
+                let count = read_next_num(&mut chars);
+                let times = read_next_num(&mut chars);
+                let following = (&mut chars).take(count).collect();
+
+                parse_repeat(following, times)
+            }
+            c => Token::Char(*c),
+        });
     }
 
     result
 }
 
-fn parse_token_v1(x: char, chars: &mut std::str::Chars) -> Token {
-    match x {
-        '(' => {
-            let count = read_next_num(chars);
-            let times = read_next_num(chars);
-            let next = chars.take(count).collect::<String>();
-
-            Token::RepeatV1(next, times)
-        }
-        c => Token::Char(c),
-    }
-}
-
-fn parse_token_v2(x: char, chars: &mut std::str::Chars) -> Token {
-    match x {
-        '(' => {
-            let count = read_next_num(chars);
-            let times = read_next_num(chars);
-            let next = chars.take(count).collect::<String>();
-
-            Token::RepeatV2(parse(&next, parse_token_v2), times)
-        }
-        c => Token::Char(c),
-    }
-}
-
 fn read_next_num(chars: &mut std::str::Chars) -> usize {
     let mut num = String::new();
 
-    while let Some(x) = chars.next() {
-        if x.is_digit(10) {
-            num.push(x);
+    for c in chars.by_ref() {
+        if c.is_digit(10) {
+            num.push(c);
         } else {
             break;
         }
