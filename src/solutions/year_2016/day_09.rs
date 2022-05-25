@@ -4,12 +4,7 @@ pub fn solve(input: &str) {
 }
 
 fn sanatize(input: &str) -> String {
-    let mut result = input.to_string();
-    result = result.replace('\n', "");
-    result = result.replace('\r', "");
-    result = result.replace('\t', "");
-    result = result.replace(' ', "");
-    result
+    input.replace(|c: char| c.is_ascii_whitespace(), "")
 }
 
 fn decompress(input: &str) -> String {
@@ -20,47 +15,43 @@ fn decompress(input: &str) -> String {
     while let Some(x) = chars.next() {
         match x {
             '(' => {
-                let mut num = String::new();
-                let mut run = true;
-                while run {
-                    if let Some(x) = chars.next() {
-                        if x.is_digit(10) {
-                            num.push(x);
-                        } else {
-                            run = false;
-                        }
-                    }
-                }
+                let count = read_next_num(&mut chars);
+                let times = read_next_num(&mut chars);
 
-                let mut num2 = String::new();
-                run = true;
-                while run {
-                    if let Some(x) = chars.next() {
-                        if x.is_digit(10) {
-                            num2.push(x);
-                        } else {
-                            run = false;
-                        }
-                    }
-                }
-
-                let count = num.parse().unwrap();
-                let times = num2.parse().unwrap();
-
-                let mut substr = String::new();
-                for _ in 0..count {
-                    substr.push(chars.next().expect("Unexpected ending of input"));
-                }
-
-                for _ in 0..times {
-                    result.push_str(&substr);
-                }
+                result.push_str(&extract_chars(&mut chars, count).repeat(times));
             }
             c => result.push(c),
         };
     }
 
     result
+}
+
+fn extract_chars(chars: &mut std::str::Chars, count: usize) -> String {
+    let mut result = String::new();
+    
+    for c in chars.take(count) {
+        result.push(c);
+    }
+
+    result
+}
+
+fn read_next_num(chars: &mut std::str::Chars) -> usize {
+    let mut num = String::new();
+    let mut found_end = true;
+
+    while found_end {
+        if let Some(x) = chars.next() {
+            if x.is_digit(10) {
+                num.push(x);
+            } else {
+                found_end = false;
+            }
+        }
+    }
+    
+    num.parse().unwrap()
 }
 
 #[cfg(test)]
