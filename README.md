@@ -6,8 +6,8 @@ Solutions from the various years of [AdventOfCode](https://adventofcode.com) in 
 
 | Year | Progress |    Days |
 | ---- |---------:|--------:|
-| 2015 |     72 % | 18 / 25 |
-| 2016 |     32 % |  8 / 25 |
+| 2015 |     76 % | 19 / 25 |
+| 2016 |     36 % |  9 / 25 |
 | 2017 |      8 % |  2 / 25 |
 | 2018 |     20 % |  5 / 25 |
 | 2020 |     64 % | 16 / 25 |
