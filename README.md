@@ -34,6 +34,6 @@ Currently, the only packages used are:
 
 - `structopt` (to not worry about the CLI stuff)
 - `regex` (since many puzzles require parsing input)
-- `md5` [Day 4 in 2015](https://github.com/leun4m/aoc/blob/main/src/year_2015/day_04.rs) required md5 hashing
+- `md5` [Day 4 in 2015](https://github.com/leun4m/aoc/blob/main/src/solutions/year_2015/day_04.rs) and [Day 5 in 2016](https://github.com/leun4m/aoc/blob/main/src/solutions/year_2016/day_05.rs) required md5 hashing
 - `itertool` (Provides neat functional stuff for iterators like `unique()`, `sorted()` which `std` doesn't provide)
 - `simple_logger` (for logging)
