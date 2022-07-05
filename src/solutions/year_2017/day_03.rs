@@ -13,7 +13,7 @@ fn part_one(aim: u32) -> i32 {
 
     for _ in 1..aim {
         point = point.move_this(&direction);
-        direction = change_dir(&point, &direction, &mut boundaries);
+        direction = change_dir(&point, direction, &mut boundaries);
     }
 
     manhatten_distance(&point)
@@ -31,7 +31,7 @@ fn part_two(aim: u32) -> u32 {
         cache.insert(point, sum);
 
         point = point.move_this(&direction);
-        direction = change_dir(&point, &direction, &mut boundaries);
+        direction = change_dir(&point, direction, &mut boundaries);
 
         sum = sum_neighbours(point, &cache);
     }
@@ -55,40 +55,21 @@ fn sum_neighbours(point: Point, cache: &HashMap<Point, u32>) -> u32 {
     .sum()
 }
 
-fn change_dir(point: &Point, direction: &Direction, boundaries: &mut Boundaries) -> Direction {
-    match *direction {
-        Direction::Left => {
-            if boundaries.has_reached_left(point) {
-                boundaries.set_min(boundaries.min().left());
-                Direction::Down
-            } else {
-                *direction
-            }
-        }
-        Direction::Right => {
-            if boundaries.has_reached_right(point) {
-                boundaries.set_max(boundaries.max().right());
-                Direction::Up
-            } else {
-                *direction
-            }
-        }
-        Direction::Down => {
-            if boundaries.has_reached_bottom(point) {
-                boundaries.set_max(boundaries.max().bottom());
-                Direction::Right
-            } else {
-                *direction
-            }
-        }
-        Direction::Up => {
-            if boundaries.has_reached_top(point) {
-                boundaries.set_min(boundaries.min().top());
-                Direction::Left
-            } else {
-                *direction
-            }
-        }
+fn change_dir(point: &Point, direction: Direction, boundaries: &mut Boundaries) -> Direction {
+    if direction == Direction::Left && boundaries.has_reached_left(point) {
+        boundaries.set_min(boundaries.min().left());
+        Direction::Down
+    } else if direction == Direction::Right && boundaries.has_reached_right(point) {
+        boundaries.set_max(boundaries.max().right());
+        Direction::Up
+    } else if direction == Direction::Down && boundaries.has_reached_bottom(point) {
+        boundaries.set_max(boundaries.max().bottom());
+        Direction::Right
+    } else if direction == Direction::Up && boundaries.has_reached_top(point) {
+        boundaries.set_min(boundaries.min().top());
+        Direction::Left
+    } else {
+        direction
     }
 }
 
@@ -96,7 +77,7 @@ fn manhatten_distance(point: &Point) -> i32 {
     point.x.abs() + point.y.abs()
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 enum Direction {
     Right,
     Up,
