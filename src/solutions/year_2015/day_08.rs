@@ -1,3 +1,5 @@
+use std::fmt::Write;
+
 use regex::Regex;
 
 const REPLACEMENT_STR: &str = "_";
@@ -24,7 +26,7 @@ fn encode(input: &str) -> String {
 
     for line in input.lines() {
         let line_enc = line.replace('\\', "\\\\").replace('\"', "\\\"");
-        result.push_str(&format!("\"{}\"\n", line_enc));
+        let _ = writeln!(result, "\"{}\"", line_enc);
     }
 
     result

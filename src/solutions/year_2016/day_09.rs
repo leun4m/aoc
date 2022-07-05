@@ -78,7 +78,7 @@ fn read_next_num(chars: &mut std::str::Chars) -> usize {
     let mut num = String::new();
 
     for c in chars.by_ref() {
-        if c.is_digit(10) {
+        if c.is_ascii_digit() {
             num.push(c);
         } else {
             break;

@@ -1,3 +1,5 @@
+use std::fmt::Write;
+
 pub fn solve(input: &str) {
     let mut result_one = input.to_string();
     (0..40).for_each(|_| result_one = look_and_say(&result_one));
@@ -20,12 +22,12 @@ fn look_and_say(input: &str) -> String {
         } else if c == previous {
             times += 1;
         } else {
-            result.push_str(&format!("{}{}", times, previous));
+            let _ = write!(result, "{}{}", times, previous);
             previous = c;
             times = 1;
         }
     }
-    result.push_str(&format!("{}{}", times, previous));
+    let _ = write!(result, "{}{}", times, previous);
     result
 }
 
