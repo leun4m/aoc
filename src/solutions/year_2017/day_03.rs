@@ -12,8 +12,8 @@ fn part_one(aim: u32) -> i32 {
     let mut boundaries = Boundaries::default();
 
     for _ in 1..aim {
-        point = point.move_this(&direction);
-        direction = change_dir(&point, direction, &mut boundaries);
+        point = point.move_in(&direction);
+        direction = boundaries.change_dir(&point, direction);
     }
 
     manhatten_distance(&point)
@@ -30,8 +30,8 @@ fn part_two(aim: u32) -> u32 {
     while sum <= aim {
         cache.insert(point, sum);
 
-        point = point.move_this(&direction);
-        direction = change_dir(&point, direction, &mut boundaries);
+        point = point.move_in(&direction);
+        direction = boundaries.change_dir(&point, direction);
 
         sum = sum_neighbours(point, &cache);
     }
@@ -53,24 +53,6 @@ fn sum_neighbours(point: Point, cache: &HashMap<Point, u32>) -> u32 {
     .iter()
     .map(|x| cache.get(x).unwrap_or(&0))
     .sum()
-}
-
-fn change_dir(point: &Point, direction: Direction, boundaries: &mut Boundaries) -> Direction {
-    if direction == Direction::Left && boundaries.has_reached_left(point) {
-        boundaries.set_min(boundaries.min().left());
-        Direction::Down
-    } else if direction == Direction::Right && boundaries.has_reached_right(point) {
-        boundaries.set_max(boundaries.max().right());
-        Direction::Up
-    } else if direction == Direction::Down && boundaries.has_reached_bottom(point) {
-        boundaries.set_max(boundaries.max().bottom());
-        Direction::Right
-    } else if direction == Direction::Up && boundaries.has_reached_top(point) {
-        boundaries.set_min(boundaries.min().top());
-        Direction::Left
-    } else {
-        direction
-    }
 }
 
 fn manhatten_distance(point: &Point) -> i32 {
@@ -98,31 +80,48 @@ struct Boundaries {
 }
 
 impl Boundaries {
-    fn min(&self) -> &Point {
-        &self.min
-    }
-    fn set_min(&mut self, min: Point) {
-        self.min = min;
-    }
-
-    fn max(&self) -> &Point {
-        &self.max
-    }
-    fn set_max(&mut self, max: Point) {
-        self.max = max;
-    }
-
     fn has_reached_left(&self, point: &Point) -> bool {
-        point.x() < self.min().x()
+        point.x() < self.min.x()
     }
     fn has_reached_right(&self, point: &Point) -> bool {
-        point.x() > self.max().x()
+        point.x() > self.max.x()
     }
     fn has_reached_top(&self, point: &Point) -> bool {
-        point.y() < self.min().y()
+        point.y() < self.min.y()
     }
     fn has_reached_bottom(&self, point: &Point) -> bool {
-        point.y() > self.max().y()
+        point.y() > self.max.y()
+    }
+
+    fn extend_left(&mut self) {
+        self.min = self.min.left();
+    }
+    fn extend_right(&mut self) {
+        self.max = self.max.right();
+    }
+    fn extend_bottom(&mut self) {
+        self.max = self.max.bottom();
+    }
+    fn extend_top(&mut self) {
+        self.min = self.min.top();
+    }
+
+    fn change_dir(&mut self, point: &Point, direction: Direction) -> Direction {
+        if direction == Direction::Left && self.has_reached_left(point) {
+            self.extend_left();
+            Direction::Down
+        } else if direction == Direction::Right && self.has_reached_right(point) {
+            self.extend_right();
+            Direction::Up
+        } else if direction == Direction::Down && self.has_reached_bottom(point) {
+            self.extend_bottom();
+            Direction::Right
+        } else if direction == Direction::Up && self.has_reached_top(point) {
+            self.extend_top();
+            Direction::Left
+        } else {
+            direction
+        }
     }
 }
 
@@ -165,7 +164,7 @@ impl Point {
         }
     }
 
-    fn move_this(&self, direction: &Direction) -> Point {
+    fn move_in(&self, direction: &Direction) -> Point {
         match direction {
             Direction::Left => self.left(),
             Direction::Right => self.right(),
