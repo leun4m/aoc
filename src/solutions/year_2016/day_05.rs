@@ -1,6 +1,3 @@
-use crypto::digest::Digest;
-use crypto::md5::Md5;
-
 pub fn solve(input: &str) {
     println!("Part 1: {}", part_one(input));
     println!("Part 2: {}", part_two(input));
@@ -57,31 +54,19 @@ fn print_progress(password: &str) {
 }
 
 fn find_next(input: &str, start: usize) -> (char, usize) {
-    let mut md5 = Md5::new();
-    md5.input_str(input);
-
-    for i in start..usize::MAX {
-        md5.input_str(&format!("{}{}", input, i));
-
-        let result = md5.result_str();
+    for i in start..{
+        let result = format!("{:x}", md5::compute(format!("{}{}", input, i)));
         if result.starts_with(SEARCH_PREFIX) {
-            return (result.chars().nth(INDEX_OF_INTEREST).unwrap(), i);
+            return (result.chars().nth(INDEX_OF_INTEREST).unwrap(), i + 1);
         }
-
-        md5.reset();
     }
 
     panic!("Could not find anything!");
 }
 
 fn find_next2(input: &str, start: usize, positions: &[usize]) -> (char, usize, usize) {
-    let mut md5 = Md5::new();
-    md5.input_str(input);
-
-    for i in start..usize::MAX {
-        md5.input_str(&format!("{}{}", input, i));
-
-        let result = md5.result_str();
+    for i in start.. {
+        let result = format!("{:x}", md5::compute(format!("{}{}", input, i)));
         if result.starts_with(SEARCH_PREFIX) {
             let pos = result
                 .chars()
@@ -90,11 +75,9 @@ fn find_next2(input: &str, start: usize, positions: &[usize]) -> (char, usize, u
                 .to_digit(16)
                 .unwrap() as usize;
             if pos < CHARS_PASSWORD && !positions.contains(&pos) {
-                return (result.chars().nth(INDEX_OF_INTEREST + 1).unwrap(), pos, i);
+                return (result.chars().nth(INDEX_OF_INTEREST + 1).unwrap(), pos, i + 1);
             }
         }
-
-        md5.reset();
     }
 
     panic!("Could not find anything!");
