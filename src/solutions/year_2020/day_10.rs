@@ -1,3 +1,5 @@
+use crate::parser;
+
 pub fn solve(input: &str) {
     let adapters = parse_input(input);
     let (difference_1, difference_3) = calculate_differences(&adapters);
@@ -56,10 +58,7 @@ fn calculate_differences(adapters: &[u64]) -> (i32, i32) {
 }
 
 fn parse_input(input: &str) -> Vec<u64> {
-    let mut adapters = input
-        .lines()
-        .map(|x| x.parse().unwrap())
-        .collect::<Vec<u64>>();
+    let mut adapters = parser::parse_numbers(input);
     adapters.sort_unstable();
     adapters
 }

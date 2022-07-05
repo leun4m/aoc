@@ -1,21 +1,11 @@
 use std::collections::HashSet;
 
+use crate::parser;
+
 pub fn solve(input: &str) {
-    let numbers = parse(input);
+    let numbers = parser::parse_numbers(input);
     println!("Part 1: {}", part_one(&numbers));
     println!("Part 2: {}", part_two(&numbers));
-}
-
-fn parse(input: &str) -> Vec<i32> {
-    input
-        .lines()
-        .filter(|line| !line.is_empty())
-        .map(parse_line)
-        .collect()
-}
-
-fn parse_line(line: &str) -> i32 {
-    line.parse().unwrap()
 }
 
 fn part_one(numbers: &[i32]) -> i32 {
@@ -42,18 +32,6 @@ fn part_two(numbers: &[i32]) -> i32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn parse_line_works() {
-        assert_eq!(parse_line("0"), 0);
-        assert_eq!(parse_line("+1"), 1);
-        assert_eq!(parse_line("-1"), -1);
-    }
-
-    #[test]
-    fn parse_works() {
-        assert_eq!(parse("0\n+1\n-3"), vec![0, 1, -3]);
-    }
 
     #[test]
     fn part_one_works() {

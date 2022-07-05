@@ -2,6 +2,7 @@
 extern crate lazy_static;
 
 mod graph;
+mod parser;
 mod solutions;
 mod util;
 

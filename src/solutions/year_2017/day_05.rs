@@ -1,15 +1,9 @@
+use crate::parser;
+
 pub fn solve(input: &str) {
-    let jumps: Vec<i32> = parse(input);
+    let jumps: Vec<i32> = parser::parse_numbers(input);
     println!("Part 1: {}", part_one(&jumps));
     println!("Part 2: {}", part_two(&jumps));
-}
-
-fn parse(input: &str) -> Vec<i32> {
-    input
-        .lines()
-        .filter(|line| !line.is_empty())
-        .map(|line| line.parse().unwrap())
-        .collect()
 }
 
 fn part_one(offsets: &[i32]) -> u32 {

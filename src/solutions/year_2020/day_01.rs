@@ -1,8 +1,8 @@
+use crate::parser;
+
 pub fn solve(input: &str) {
-    let mut numbers = Vec::new();
-    for line in input.lines() {
-        numbers.push(line.parse::<u32>().expect("line is NaN"));
-    }
+    let numbers = parser::parse_numbers(input);
+
     match find_2_numbers(&numbers) {
         None => println!("Result for Part 1 could not be found!"),
         Some(x) => println!("Result Part 1: {}", x),

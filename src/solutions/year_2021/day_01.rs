@@ -1,15 +1,9 @@
+use crate::parser;
+
 pub fn solve(input: &str) {
-    let depths = parse(input);
+    let depths = parser::parse_numbers(input);
     println!("Part 1: {}", part_one(&depths));
     println!("Part 2: {}", part_two(&depths));
-}
-
-fn parse(input: &str) -> Vec<u32> {
-    input
-        .lines()
-        .filter(|x| !x.is_empty())
-        .map(|x| x.parse().unwrap())
-        .collect()
 }
 
 fn part_one(depths: &[u32]) -> usize {

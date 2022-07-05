@@ -54,7 +54,7 @@ fn print_progress(password: &str) {
 }
 
 fn find_next(input: &str, start: usize) -> (char, usize) {
-    for i in start..{
+    for i in start.. {
         let result = format!("{:x}", md5::compute(format!("{}{}", input, i)));
         if result.starts_with(SEARCH_PREFIX) {
             return (result.chars().nth(INDEX_OF_INTEREST).unwrap(), i + 1);
@@ -75,7 +75,11 @@ fn find_next2(input: &str, start: usize, positions: &[usize]) -> (char, usize, u
                 .to_digit(16)
                 .unwrap() as usize;
             if pos < CHARS_PASSWORD && !positions.contains(&pos) {
-                return (result.chars().nth(INDEX_OF_INTEREST + 1).unwrap(), pos, i + 1);
+                return (
+                    result.chars().nth(INDEX_OF_INTEREST + 1).unwrap(),
+                    pos,
+                    i + 1,
+                );
             }
         }
     }

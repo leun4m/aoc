@@ -1,7 +1,9 @@
+use crate::parser;
+
 const PREAMBLE: usize = 25;
 
 pub fn solve(input: &str) {
-    let numbers = parse_lines(input);
+    let numbers = parser::parse_numbers(input);
     let part_one = find_wrong_line(&numbers);
     if let Some(number) = part_one {
         println!("PART ONE: {}", number);
@@ -9,10 +11,6 @@ pub fn solve(input: &str) {
             println!("PART TWO: {}", part_two);
         }
     }
-}
-
-fn parse_lines(input: &str) -> Vec<u64> {
-    input.lines().map(|x| x.parse().unwrap()).collect()
 }
 
 fn find_wrong_line(numbers: &[u64]) -> Option<u64> {

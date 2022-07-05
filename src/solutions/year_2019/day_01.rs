@@ -1,16 +1,9 @@
+use crate::parser;
+
 pub fn solve(input: &str) {
-    let numbers = parse(input);
+    let numbers = parser::parse_numbers(input);
     println!("Part 1: {}", part_one(&numbers));
     println!("Part 2: {}", part_two(&numbers));
-}
-
-fn parse(input: &str) -> Vec<i32> {
-    input
-        .lines()
-        .map(|line| line.trim())
-        .filter(|line| !line.is_empty())
-        .map(|line| line.parse().unwrap())
-        .collect()
 }
 
 fn part_one(masses: &[i32]) -> i32 {
