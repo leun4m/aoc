@@ -14,6 +14,27 @@ where
         .collect()
 }
 
+/// Interprets each non-empty line as independent string
+pub fn parse_strings(input: &str) -> Vec<&str>
+{
+    input
+        .lines()
+        .map(|line| line.trim())
+        .filter(|line| !line.is_empty())
+        .collect()
+}
+
+/// Performs mapping on each non-empty line 
+pub fn parse_custom<T, F>(input: &str, map: F) -> Vec<T>
+where F: Fn(&str) -> T
+{
+    input
+        .lines()
+        .map(|line| line.trim())
+        .filter(|line| !line.is_empty())
+        .map(|line| map(line))
+        .collect()
+}
 #[cfg(test)]
 mod tests {
     use super::*;

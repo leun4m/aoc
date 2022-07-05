@@ -1,18 +1,10 @@
-use crate::util;
+use crate::{util, parser};
 
 pub fn solve(input: &str) {
-    let multiples = parse(input);
-    let lines = input.lines().collect::<Vec<&str>>();
+    let multiples = parser::parse_custom(input, parse_line);
+    let lines = parser::parse_strings(input);
     println!("Part 1: {}", part_one(&multiples));
     println!("Part 2: {}", part_two(&lines));
-}
-
-fn parse(input: &str) -> Vec<Multiples> {
-    input
-        .lines()
-        .filter(|line| !line.is_empty())
-        .map(parse_line)
-        .collect()
 }
 
 fn parse_line(line: &str) -> Multiples {

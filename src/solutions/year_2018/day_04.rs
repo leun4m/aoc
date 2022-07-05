@@ -4,6 +4,8 @@ use chrono::{Duration, NaiveDateTime, NaiveTime, Timelike};
 use itertools::Itertools;
 use regex::Regex;
 
+use crate::parser;
+
 pub fn solve(input: &str) {
     let mut log_lines = parse(input);
 
@@ -131,12 +133,7 @@ lazy_static! {
 const DATE_TIME_FORMAT: &str = "%Y-%m-%d %H:%M";
 
 fn parse(input: &str) -> Vec<Log> {
-    input
-        .lines()
-        .map(|line| line.trim())
-        .filter(|line| !line.is_empty())
-        .map(parse_line)
-        .collect()
+    parser::parse_custom(input, parse_line)
 }
 
 fn parse_line(line: &str) -> Log {

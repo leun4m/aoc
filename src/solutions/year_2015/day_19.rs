@@ -3,6 +3,8 @@ use std::collections::HashSet;
 
 use itertools::Itertools;
 
+use crate::parser;
+
 pub fn solve(input: &str) {
     let (origin, mut replacements) = parse(input);
     for (_, r) in replacements.iter_mut() {
@@ -20,12 +22,7 @@ const PLACEHOLDER: &str = "@";
 const START: &str = "e";
 
 fn parse(input: &str) -> (&str, Replacements) {
-    let relevant_lines: Vec<_> = input
-        .lines()
-        .map(|line| line.trim())
-        .filter(|line| !line.is_empty())
-        .collect();
-
+    let relevant_lines = parser::parse_strings(input);
     let origin = relevant_lines
         .iter()
         .find(|line| !line.contains(REPLACEMENT_ARROW))

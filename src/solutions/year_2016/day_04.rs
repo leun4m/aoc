@@ -1,15 +1,11 @@
-use crate::util;
+use crate::{util, parser};
 use itertools::Itertools;
 use regex::Regex;
 
 pub fn solve(input: &str) {
-    let rooms = parse(input);
+    let rooms = parser::parse_custom(input, parse_line);
     println!("Part 1: {}", part_one(&rooms));
     println!("Part 2: {}", part_two(&rooms));
-}
-
-fn parse(input: &str) -> Vec<Room> {
-    input.lines().map(parse_line).collect::<Vec<Room>>()
 }
 
 fn part_one(rooms: &[Room]) -> u32 {

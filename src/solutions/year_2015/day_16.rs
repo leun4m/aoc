@@ -1,6 +1,8 @@
 use regex::Regex;
 use std::collections::HashMap;
 
+use crate::parser;
+
 #[derive(Debug, PartialEq, Eq)]
 struct Aunt {
     id: u32,
@@ -10,18 +12,10 @@ struct Aunt {
 type AuntData = HashMap<String, u32>;
 
 pub fn solve(input: &str) {
-    let aunts = parse(input);
+    let aunts = parser::parse_custom(input, parse_aunt);
 
     println!("Part 1: {}", part_one(&aunts));
     println!("Part 2: {}", part_two(&aunts));
-}
-
-fn parse(input: &str) -> Vec<Aunt> {
-    input
-        .lines()
-        .filter(|line| !line.is_empty())
-        .map(|line| parse_aunt(line.trim()))
-        .collect()
 }
 
 fn parse_aunt(line: &str) -> Aunt {

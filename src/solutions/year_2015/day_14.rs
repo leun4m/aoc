@@ -1,9 +1,11 @@
 use regex::Regex;
 
+use crate::parser;
+
 const TIME: u32 = 2503;
 
 pub fn solve(input: &str) {
-    let mut reindeers = parse(input);
+    let mut reindeers = parser::parse_custom(input, parse_line);
 
     println!("Part 1: {}", part_one(&mut reindeers));
 
@@ -12,14 +14,6 @@ pub fn solve(input: &str) {
     }
 
     println!("Part 2: {}", part_two(&mut reindeers));
-}
-
-fn parse(input: &str) -> Vec<Reindeer> {
-    input
-        .lines()
-        .filter(|line| !line.is_empty())
-        .map(parse_line)
-        .collect()
 }
 
 fn parse_line(line: &str) -> Reindeer {

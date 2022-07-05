@@ -1,15 +1,14 @@
 use itertools::Itertools;
 use std::collections::HashMap;
 
+use crate::parser;
+
 pub fn solve(input: &str) {
-    let matrix = CharMatrix::build(&parse(input));
+    let matrix = CharMatrix::build(&parser::parse_strings(input));
     println!("Part 1: {}", part_one(&matrix));
     println!("Part 2: {}", part_two(&matrix));
 }
 
-fn parse(input: &str) -> Vec<&str> {
-    input.lines().filter(|x| !x.is_empty()).collect()
-}
 
 fn part_one(matrix: &CharMatrix) -> String {
     matrix.most_common()

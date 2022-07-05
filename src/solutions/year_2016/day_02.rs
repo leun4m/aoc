@@ -1,5 +1,7 @@
 use std::cmp;
 
+use crate::parser;
+
 pub fn solve(input: &str) {
     let instructions = parse(input);
     println!("{}", calc_number(&instructions));
@@ -149,18 +151,17 @@ impl Starfield {
 }
 
 pub fn parse(input: &str) -> Vec<Vec<Direction>> {
-    input
-        .lines()
-        .map(|line| {
-            line.chars()
-                .map(|x| match x {
-                    'U' => Direction::U,
-                    'D' => Direction::D,
-                    'L' => Direction::L,
-                    'R' => Direction::R,
-                    x => panic!("Unexpected symbol: {}", x),
-                })
-                .collect()
+    parser::parse_custom(input, parse_line)
+}
+
+fn parse_line(line: &str) -> Vec<Direction> {
+    line.chars()
+        .map(|x| match x {
+            'U' => Direction::U,
+            'D' => Direction::D,
+            'L' => Direction::L,
+            'R' => Direction::R,
+            x => panic!("Unexpected symbol: {}", x),
         })
         .collect()
 }
