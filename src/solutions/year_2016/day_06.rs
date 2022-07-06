@@ -9,7 +9,6 @@ pub fn solve(input: &str) {
     println!("Part 2: {}", part_two(&matrix));
 }
 
-
 fn part_one(matrix: &CharMatrix) -> String {
     matrix.most_common()
 }

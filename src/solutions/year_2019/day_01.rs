@@ -7,12 +7,12 @@ pub fn solve(input: &str) {
 }
 
 fn part_one(masses: &[i32]) -> i32 {
-    masses.into_iter().map(|mass| fuel_requirement(*mass)).sum()
+    masses.iter().map(|mass| fuel_requirement(*mass)).sum()
 }
 
 fn part_two(masses: &[i32]) -> i32 {
     masses
-        .into_iter()
+        .iter()
         .map(|mass| fuel_requirement_recursive(*mass))
         .sum()
 }

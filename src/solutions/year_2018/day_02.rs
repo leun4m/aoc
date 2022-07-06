@@ -1,4 +1,4 @@
-use crate::{util, parser};
+use crate::{parser, util};
 
 pub fn solve(input: &str) {
     let multiples = parser::parse_custom(input, parse_line);

@@ -15,8 +15,7 @@ where
 }
 
 /// Interprets each non-empty line as independent string
-pub fn parse_strings(input: &str) -> Vec<&str>
-{
+pub fn parse_strings(input: &str) -> Vec<&str> {
     input
         .lines()
         .map(|line| line.trim())
@@ -24,15 +23,16 @@ pub fn parse_strings(input: &str) -> Vec<&str>
         .collect()
 }
 
-/// Performs mapping on each non-empty line 
+/// Performs mapping on each non-empty line
 pub fn parse_custom<T, F>(input: &str, map: F) -> Vec<T>
-where F: Fn(&str) -> T
+where
+    F: Fn(&str) -> T,
 {
     input
         .lines()
         .map(|line| line.trim())
         .filter(|line| !line.is_empty())
-        .map(|line| map(line))
+        .map(map)
         .collect()
 }
 #[cfg(test)]

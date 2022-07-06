@@ -1,4 +1,4 @@
-use crate::{util, parser};
+use crate::{parser, util};
 use itertools::Itertools;
 use regex::Regex;
 
