@@ -1,7 +1,7 @@
 use crate::parser;
 
 pub fn solve(input: &str) {
-    let depths = parser::parse_numbers(input);
+    let depths = parser::lines_as_numbers(input);
     println!("Part 1: {}", part_one(&depths));
     println!("Part 2: {}", part_two(&depths));
 }

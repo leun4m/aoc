@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use crate::parser;
 
 pub fn solve(input: &str) {
-    let numbers = parser::parse_numbers(input);
+    let numbers = parser::lines_as_numbers(input);
     println!("Part 1: {}", part_one(&numbers));
     println!("Part 2: {}", part_two(&numbers));
 }

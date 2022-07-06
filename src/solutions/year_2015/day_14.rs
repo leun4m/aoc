@@ -5,7 +5,7 @@ use crate::parser;
 const TIME: u32 = 2503;
 
 pub fn solve(input: &str) {
-    let mut reindeers = parser::parse_custom(input, parse_line);
+    let mut reindeers = parser::lines_custom(input, parse_line);
 
     println!("Part 1: {}", part_one(&mut reindeers));
 

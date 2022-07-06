@@ -22,7 +22,7 @@ const PLACEHOLDER: &str = "@";
 const START: &str = "e";
 
 fn parse(input: &str) -> (&str, Replacements) {
-    let relevant_lines = parser::parse_strings(input);
+    let relevant_lines = parser::lines_as_strings(input);
     let origin = relevant_lines
         .iter()
         .find(|line| !line.contains(REPLACEMENT_ARROW))

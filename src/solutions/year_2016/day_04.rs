@@ -3,7 +3,7 @@ use itertools::Itertools;
 use regex::Regex;
 
 pub fn solve(input: &str) {
-    let rooms = parser::parse_custom(input, parse_line);
+    let rooms = parser::lines_custom(input, parse_line);
     println!("Part 1: {}", part_one(&rooms));
     println!("Part 2: {}", part_two(&rooms));
 }

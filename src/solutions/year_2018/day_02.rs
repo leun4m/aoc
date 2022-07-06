@@ -1,8 +1,8 @@
 use crate::{parser, util};
 
 pub fn solve(input: &str) {
-    let multiples = parser::parse_custom(input, parse_line);
-    let lines = parser::parse_strings(input);
+    let multiples = parser::lines_custom(input, parse_line);
+    let lines = parser::lines_as_strings(input);
     println!("Part 1: {}", part_one(&multiples));
     println!("Part 2: {}", part_two(&lines));
 }

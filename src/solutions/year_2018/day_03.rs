@@ -2,19 +2,13 @@ use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashSet;
 
+use crate::parser;
+
 pub fn solve(input: &str) {
-    let claims = parse(input);
+    let claims = parser::lines_custom(input, parse_line);
     let grid = build_grid(&claims);
     println!("Part 1: {}", part_one(&grid));
     println!("Part 2: {}", part_two(&grid));
-}
-
-fn parse(input: &str) -> Vec<Claim> {
-    input
-        .lines()
-        .filter(|line| !line.is_empty())
-        .map(parse_line)
-        .collect()
 }
 
 fn parse_line(line: &str) -> Claim {

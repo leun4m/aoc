@@ -133,7 +133,7 @@ lazy_static! {
 const DATE_TIME_FORMAT: &str = "%Y-%m-%d %H:%M";
 
 fn parse(input: &str) -> Vec<Log> {
-    parser::parse_custom(input, parse_line)
+    parser::lines_custom(input, parse_line)
 }
 
 fn parse_line(line: &str) -> Log {

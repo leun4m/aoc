@@ -58,7 +58,7 @@ fn calculate_differences(adapters: &[u64]) -> (i32, i32) {
 }
 
 fn parse_input(input: &str) -> Vec<u64> {
-    let mut adapters = parser::parse_numbers(input);
+    let mut adapters = parser::lines_as_numbers(input);
     adapters.sort_unstable();
     adapters
 }

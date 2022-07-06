@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use crate::parser;
 
 pub fn solve(input: &str) {
-    let matrix = CharMatrix::build(&parser::parse_strings(input));
+    let matrix = CharMatrix::build(&parser::lines_as_strings(input));
     println!("Part 1: {}", part_one(&matrix));
     println!("Part 2: {}", part_two(&matrix));
 }

@@ -1,7 +1,7 @@
 use crate::parser;
 
 pub fn solve(input: &str) {
-    let numbers = parser::parse_numbers(input);
+    let numbers = parser::lines_as_numbers(input);
 
     match find_2_numbers(&numbers) {
         None => println!("Result for Part 1 could not be found!"),

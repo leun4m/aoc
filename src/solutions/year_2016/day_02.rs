@@ -151,7 +151,7 @@ impl Starfield {
 }
 
 pub fn parse(input: &str) -> Vec<Vec<Direction>> {
-    parser::parse_custom(input, parse_line)
+    parser::lines_custom(input, parse_line)
 }
 
 fn parse_line(line: &str) -> Vec<Direction> {

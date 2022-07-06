@@ -3,7 +3,7 @@ use crate::parser;
 const PREAMBLE: usize = 25;
 
 pub fn solve(input: &str) {
-    let numbers = parser::parse_numbers(input);
+    let numbers = parser::lines_as_numbers(input);
     let part_one = find_wrong_line(&numbers);
     if let Some(number) = part_one {
         println!("PART ONE: {}", number);

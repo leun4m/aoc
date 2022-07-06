@@ -1,7 +1,7 @@
 use crate::parser;
 
 pub fn solve(input: &str) {
-    let seats: Vec<(u8, u8)> = parser::parse_custom(input, parse_line);
+    let seats: Vec<(u8, u8)> = parser::lines_custom(input, parse_line);
     let max = seats.iter().map(|&x| seat_id(x)).max().unwrap();
     let mut all_seats = Vec::new();
 

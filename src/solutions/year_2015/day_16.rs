@@ -12,7 +12,7 @@ struct Aunt {
 type AuntData = HashMap<String, u32>;
 
 pub fn solve(input: &str) {
-    let aunts = parser::parse_custom(input, parse_aunt);
+    let aunts = parser::lines_custom(input, parse_aunt);
 
     println!("Part 1: {}", part_one(&aunts));
     println!("Part 2: {}", part_two(&aunts));

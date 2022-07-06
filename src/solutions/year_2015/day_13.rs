@@ -12,7 +12,7 @@ pub fn solve(input: &str) {
 
 fn parse(input: &str) -> Rules {
     let mut rules = Rules::new();
-    for (from, to, happiness) in parser::parse_custom(input, parse_rule) {
+    for (from, to, happiness) in parser::lines_custom(input, parse_rule) {
         rules.add((&from, &to, happiness));
     }
 
