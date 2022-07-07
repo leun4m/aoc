@@ -1,3 +1,5 @@
+use crate::parser;
+
 pub fn solve(input: &str) {
     let lights = parse(input);
     println!("Part 1: {}", part_one(&lights, 100));
@@ -8,20 +10,17 @@ type LightRow = Vec<bool>;
 type LightGrid = Vec<LightRow>;
 
 fn parse(input: &str) -> LightGrid {
-    input
-        .lines()
-        .filter(|line| !line.is_empty())
-        .map(|line| {
-            line.trim()
-                .chars()
-                .map(|c| match c {
-                    '#' => true,
-                    '.' => false,
-                    _ => panic!("Unexpected char: {}", c),
-                })
-                .collect::<Vec<_>>()
+    parser::lines_custom(input, parse_line)
+}
+
+fn parse_line(line: &str) -> Vec<bool> {
+    line.chars()
+        .map(|c| match c {
+            '#' => true,
+            '.' => false,
+            _ => panic!("Unexpected char: {}", c),
         })
-        .collect()
+        .collect::<Vec<_>>()
 }
 
 fn part_one(start: &[LightRow], steps: u32) -> usize {
