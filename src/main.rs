@@ -50,6 +50,10 @@ fn main() {
         return;
     };
 
+    if !input.is_ascii() {
+        eprintln!("WARNING: Input is not ASCII!");
+    }
+
     let start = Instant::now();
 
     solutions::solve(opt.year, opt.day, &input);

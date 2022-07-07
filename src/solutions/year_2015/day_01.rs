@@ -1,31 +1,48 @@
 pub fn solve(input: &str) {
-    if !input.is_ascii() {
-        panic!("Input is not ascii!");
-    }
-    let (floor, index) = count(input);
-    println!("Floor: {}", floor);
-    println!("First time in basement: {}", index);
+    let instructions = parse(input);
+    let (floor, index) = count(&instructions);
+    println!("Part 1: {}", floor);
+    println!("Part 2: {}", index);
 }
 
-fn count(input: &str) -> (i32, i32) {
+enum Instruction {
+    GoUp,
+    GoDown,
+}
+
+fn parse(input: &str) -> Vec<Instruction> {
+    input
+        .chars()
+        .map(|c| match c {
+            '(' => Instruction::GoUp,
+            ')' => Instruction::GoDown,
+            _ => panic!("Unexpected char: {}", c),
+        })
+        .collect()
+}
+
+fn count(instructions: &[Instruction]) -> (i32, i32) {
     let mut floor = 0;
     let mut index = 1;
     let mut reached_basement = false;
-    for chr in input.chars() {
-        match chr {
-            '(' => floor += 1,
-            ')' => floor -= 1,
-            _ => panic!("Unexpected char: {}", chr),
-        }
+
+    for instuction in instructions {
+        floor += match instuction {
+            Instruction::GoUp => 1,
+            Instruction::GoDown => -1,
+        };
+
         if floor == -1 {
             reached_basement = true;
         } else if !reached_basement {
             index += 1;
         }
     }
+
     if !reached_basement {
         index = -1;
     }
+
     (floor, index)
 }
 
@@ -34,11 +51,13 @@ mod tests {
     use super::*;
 
     fn count_floor(input: &str) -> i32 {
-        count(input).0
+        let instructions = parse(input);
+        count(&instructions).0
     }
 
     fn first_base(input: &str) -> i32 {
-        count(input).1
+        let instructions = parse(input);
+        count(&instructions).1
     }
 
     #[test]

@@ -13,10 +13,6 @@ fn houses_visited(positions: &[(i32, i32)]) -> u32 {
 }
 
 fn get_positions(input: &str) -> Vec<(i32, i32)> {
-    if !input.is_ascii() {
-        panic!("Input is not ascii");
-    }
-
     let mut santa = Position(0, 0);
     let mut houses = vec![santa.into()];
 
@@ -28,10 +24,6 @@ fn get_positions(input: &str) -> Vec<(i32, i32)> {
 }
 
 fn get_positions_with_robot(input: &str) -> Vec<(i32, i32)> {
-    if !input.is_ascii() {
-        panic!("Input is not ascii");
-    }
-
     let mut is_santa = true;
     let mut santa = Position(0, 0);
     let mut robot = Position(0, 0);
