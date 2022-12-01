@@ -37,7 +37,7 @@ fn run_modified(lines: &[Operation], change_idx: usize) -> Option<i32> {
             lines[current]
         };
 
-        let result = do_operation(&line, current, global);
+        let result = do_operation(line, current, global);
         current = result.0;
         global = result.1;
     }
@@ -56,7 +56,7 @@ fn run(lines: &[Operation]) -> i32 {
 
     while !visited_lines.contains(&current) {
         visited_lines.insert(current);
-        let result = do_operation(&lines[current], current, global);
+        let result = do_operation(lines[current], current, global);
         current = result.0;
         global = result.1;
     }
@@ -64,7 +64,7 @@ fn run(lines: &[Operation]) -> i32 {
     global
 }
 
-fn do_operation(operation: &Operation, current: usize, global: i32) -> (usize, i32) {
+fn do_operation(operation: Operation, current: usize, global: i32) -> (usize, i32) {
     match operation {
         Operation::Nop(_) => (current + 1, global),
         Operation::Acc(x) => (current + 1, global + x),
@@ -84,10 +84,10 @@ impl Operation {
         let splits: Vec<&str> = operation.split(' ').collect();
         let value = splits[1].parse::<i32>().unwrap();
 
-        match splits[0] {
-            "nop" => Operation::Nop(value),
-            "acc" => Operation::Acc(value),
-            "jmp" => Operation::Jmp(value),
+        match splits.first() {
+            Some(&"nop") => Operation::Nop(value),
+            Some(&"acc") => Operation::Acc(value),
+            Some(&"jmp") => Operation::Jmp(value),
             _ => panic!("unexpected"),
         }
     }

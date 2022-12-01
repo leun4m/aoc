@@ -13,7 +13,7 @@ type Base = i32;
 fn parse(input: &str) -> Table {
     input
         .lines()
-        .map(|row| row.trim())
+        .map(str::trim)
         .filter(|row| !row.is_empty())
         .map(|row| {
             row.split_ascii_whitespace()

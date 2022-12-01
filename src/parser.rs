@@ -13,7 +13,7 @@ where
 pub fn lines_as_strings(input: &str) -> Vec<&str> {
     input
         .lines()
-        .map(|line| line.trim())
+        .map(str::trim)
         .filter(|line| !line.is_empty())
         .collect()
 }
@@ -25,7 +25,7 @@ where
 {
     input
         .lines()
-        .map(|line| line.trim())
+        .map(str::trim)
         .filter(|line| !line.is_empty())
         .map(parse_line)
         .collect()

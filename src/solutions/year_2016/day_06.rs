@@ -51,9 +51,7 @@ impl CharMatrix {
     }
 
     fn add(&mut self, word: &str) {
-        if word.len() != self.size {
-            panic!("Word has different length");
-        }
+        assert!(word.len() == self.size, "Word has different length");
 
         for (i, c) in word.chars().enumerate() {
             *self.field[i].entry(c).or_insert(0) += 1;

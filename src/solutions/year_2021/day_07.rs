@@ -42,9 +42,7 @@ fn find_best_position<F>(heights: &[u32], fuel_cost: F) -> u32
 where
     F: Fn(u32, u32) -> u32,
 {
-    if heights.is_empty() {
-        panic!("heights is empty");
-    }
+    assert!(!heights.is_empty(), "heights is empty");
 
     let min = *heights.iter().min().unwrap();
     let max = *heights.iter().max().unwrap();

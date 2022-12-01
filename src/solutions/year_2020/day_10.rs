@@ -48,9 +48,9 @@ fn calculate_differences(adapters: &[u64]) -> (i32, i32) {
     for adapter in adapters {
         let diff = adapter - previous;
         if diff == 3 {
-            difference_3 += 1
+            difference_3 += 1;
         } else if diff == 1 {
-            difference_1 += 1
+            difference_1 += 1;
         }
         previous = *adapter;
     }

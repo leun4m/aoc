@@ -11,7 +11,7 @@ fn parse(input: &str) -> (Vec<u32>, usize) {
             .filter(|x| !x.is_empty())
             .map(|x| u32::from_str_radix(x, 2).unwrap())
             .collect(),
-        input.lines().map(|x| x.len()).max().unwrap_or_default(),
+        input.lines().map(str::len).max().unwrap_or_default(),
     )
 }
 

@@ -27,10 +27,10 @@ fn contains_axa(text: &str) -> bool {
     for c in text.chars() {
         if pre_last_char == c {
             return true;
-        } else {
-            pre_last_char = last_char;
-            last_char = c;
         }
+
+        pre_last_char = last_char;
+        last_char = c;
     }
     false
 }
@@ -38,17 +38,15 @@ fn contains_axa(text: &str) -> bool {
 fn contains_pair_twice(text: &str) -> bool {
     let mut last_char = NULL_CHAR;
     let mut pairs = HashMap::new();
-    let mut i = 0;
-    for c in text.chars() {
+    for (i, c) in text.chars().enumerate() {
         let pair = format!("{}{}", last_char, c);
         let option = pairs.get(&pair);
         if option.is_some() && *option.unwrap() < (i - 1) {
             return true;
-        } else {
-            pairs.entry(pair).or_insert(i);
-            last_char = c;
-            i += 1;
         }
+
+        pairs.entry(pair).or_insert(i);
+        last_char = c;
     }
     false
 }

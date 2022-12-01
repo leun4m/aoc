@@ -62,7 +62,7 @@ where
     }
 
     pub fn get_edges(&self, from: &T) -> Vec<WeightedEdge<T, W>> {
-        self.edges.get(from).unwrap_or(&Vec::new()).to_vec()
+        self.edges.get(from).unwrap_or(&Vec::new()).clone()
     }
 
     /// Dijkstra's shortest path algorithm.

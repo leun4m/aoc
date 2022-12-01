@@ -65,7 +65,7 @@ fn reconstruct_line(line: &Line) -> u32 {
 
 fn find_mapping(patterns: [&str; 10]) -> HashMap<char, char> {
     let mut size_patterns: HashMap<usize, Vec<&str>> = HashMap::new();
-    for pattern in patterns.iter() {
+    for pattern in &patterns {
         (*size_patterns.entry(pattern.len()).or_default()).push(pattern);
     }
     let all: String = patterns

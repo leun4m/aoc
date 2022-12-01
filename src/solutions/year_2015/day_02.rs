@@ -15,15 +15,14 @@ pub fn solve(input: &str) {
 
 fn parse_line(line: &str) -> (u32, u32, u32) {
     let numbers: Vec<&str> = line.split('x').collect();
-    if numbers.len() != 3 {
-        panic!("There are {} numbers in line: {}", numbers.len(), line)
-    } else {
-        let length = u32::from_str(numbers.first().unwrap()).expect("Could not parse!");
-        let width = u32::from_str(numbers.get(1).unwrap()).expect("Could not parse!");
-        let height = u32::from_str(numbers.get(2).unwrap()).expect("Could not parse!");
 
-        (length, width, height)
-    }
+    assert!(numbers.len() == 3, "Unexpected count of numbers in line.");
+
+    let length = u32::from_str(numbers.first().unwrap()).expect("Could not parse!");
+    let width = u32::from_str(numbers.get(1).unwrap()).expect("Could not parse!");
+    let height = u32::from_str(numbers.get(2).unwrap()).expect("Could not parse!");
+
+    (length, width, height)
 }
 
 fn calc_paper((l, w, h): (u32, u32, u32)) -> u32 {

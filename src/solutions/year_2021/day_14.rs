@@ -25,7 +25,7 @@ fn parse(input: &str) -> (&str, InsertionMap) {
 
     let insertions = input
         .lines()
-        .map(|line| line.trim())
+        .map(str::trim)
         .filter(|line| !line.is_empty())
         .filter(|line| line.contains(ARROW))
         .map(parse_replacement)
@@ -35,7 +35,7 @@ fn parse(input: &str) -> (&str, InsertionMap) {
 }
 
 fn parse_replacement(line: &str) -> ((char, char), char) {
-    let parts: Vec<_> = line.split(ARROW).map(|part| part.trim()).collect();
+    let parts: Vec<_> = line.split(ARROW).map(str::trim).collect();
     (
         (
             parts[0].chars().next().unwrap(),
@@ -157,6 +157,6 @@ mod tests {
     fn iterate_works() {
         let (start, insertions) = parse(INPUT);
         assert_eq!(iterate(start, &insertions, 10), 1588);
-        assert_eq!(iterate(start, &insertions, 40), 2188189693529);
+        assert_eq!(iterate(start, &insertions, 40), 2_188_189_693_529);
     }
 }

@@ -47,11 +47,11 @@ mod test {
 
     #[test]
     fn part_one_works() {
-        assert_eq!(find_2_numbers(&INPUT_NUMBERS), Some(514579));
+        assert_eq!(find_2_numbers(&INPUT_NUMBERS), Some(514_579));
     }
 
     #[test]
     fn part_two_works() {
-        assert_eq!(find_3_numbers(&INPUT_NUMBERS), Some(241861950));
+        assert_eq!(find_3_numbers(&INPUT_NUMBERS), Some(241_861_950));
     }
 }

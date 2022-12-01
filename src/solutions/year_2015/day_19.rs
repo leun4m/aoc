@@ -7,7 +7,7 @@ use crate::parser;
 
 pub fn solve(input: &str) {
     let (origin, mut replacements) = parse(input);
-    for (_, r) in replacements.iter_mut() {
+    for r in replacements.values_mut() {
         r.sort_by_key(|x| x.len());
         r.reverse();
     }
@@ -71,7 +71,7 @@ fn inner_two(origin: &str, aim: &str, replacements: &Replacements) -> usize {
         .collect_vec();
 
     while current != aim {
-        for key in keys.iter() {
+        for key in &keys {
             if current.contains(*key) {
                 let to = replacements
                     .get(*key)
@@ -143,12 +143,12 @@ mod tests {
     #[test]
     fn part_one_works() {
         let (origin, replacements) = parse(INPUT);
-        assert_eq!(part_one(&origin, &replacements), 4);
+        assert_eq!(part_one(origin, &replacements), 4);
     }
 
     #[test]
     fn part_two_works() {
         let (aim, replacements) = parse(INPUT);
-        assert_eq!(part_two(&aim, &replacements), 3);
+        assert_eq!(part_two(aim, &replacements), 3);
     }
 }

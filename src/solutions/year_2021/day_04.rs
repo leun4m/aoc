@@ -82,7 +82,7 @@ fn part_one(drafts: &[BingoNumber], boards: &[BingoBoard]) -> BingoNumber {
     let mut marked_boards: Vec<MarkedBingoBoard> = boards.iter().map(to_marked_board).collect();
 
     for draft in drafts {
-        for board in marked_boards.iter_mut() {
+        for board in &mut marked_boards {
             mark_board(board, *draft);
         }
         let winner = marked_boards.iter().find(|board| has_won(board));
@@ -97,7 +97,7 @@ fn part_two(drafts: &[BingoNumber], boards: &[BingoBoard]) -> BingoNumber {
     let mut marked_boards: Vec<MarkedBingoBoard> = boards.iter().map(to_marked_board).collect();
 
     for draft in drafts {
-        for board in marked_boards.iter_mut() {
+        for board in &mut marked_boards {
             mark_board(board, *draft);
         }
 
@@ -118,7 +118,7 @@ fn mark_board(board: &mut MarkedBingoBoard, draft: BingoNumber) {
         for square in row.iter_mut() {
             if let BingoSquare::Unmarked(num) = &square {
                 if *num == draft {
-                    *square = BingoSquare::Marked(draft)
+                    *square = BingoSquare::Marked(draft);
                 }
             }
         }
@@ -152,7 +152,7 @@ fn sum_up(board: &MarkedBingoBoard) -> BingoNumber {
             row.iter()
                 .map(|num| match num {
                     BingoSquare::Unmarked(x) => *x,
-                    _ => 0,
+                    BingoSquare::Marked(_) => 0,
                 })
                 .sum::<BingoNumber>()
         })

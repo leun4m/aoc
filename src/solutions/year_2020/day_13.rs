@@ -12,6 +12,7 @@ enum BusTime {
     Id(u64),
 }
 
+#[derive(Clone, Copy)]
 struct Bus {
     id: u64,
     departure: u64,
@@ -109,9 +110,12 @@ mod tests {
     #[test]
     fn example2() {
         assert_eq!(3417, part_two(&parse_input("0\n17,x,13,19").1));
-        assert_eq!(754018, part_two(&parse_input("0\n67,7,59,61").1));
-        assert_eq!(779210, part_two(&parse_input("0\n67,x,7,59,61").1));
-        assert_eq!(1261476, part_two(&parse_input("0\n67,7,x,59,61").1));
-        assert_eq!(1202161486, part_two(&parse_input("0\n1789,37,47,1889").1));
+        assert_eq!(754_018, part_two(&parse_input("0\n67,7,59,61").1));
+        assert_eq!(779_210, part_two(&parse_input("0\n67,x,7,59,61").1));
+        assert_eq!(1_261_476, part_two(&parse_input("0\n67,7,x,59,61").1));
+        assert_eq!(
+            1_202_161_486,
+            part_two(&parse_input("0\n1789,37,47,1889").1)
+        );
     }
 }

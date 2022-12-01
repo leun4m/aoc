@@ -151,10 +151,10 @@ enum Packet {
 impl Packet {
     fn sum_version(&self) -> u64 {
         match self {
-            Packet::Literal(l) => l.version as u64,
+            Packet::Literal(l) => u64::from(l.version),
             Packet::Operator(o) => {
-                let own: u64 = o.version as u64;
-                let sub: u64 = o.subpackets.iter().map(|p| p.sum_version()).sum();
+                let own: u64 = u64::from(o.version);
+                let sub: u64 = o.subpackets.iter().map(Packet::sum_version).sum();
                 own + sub
             }
         }
@@ -194,7 +194,7 @@ impl LiteralPacket {
                     if digit == '0' {
                         repeat = false;
                     }
-                    first = false
+                    first = false;
                 } else {
                     digits.push(digit);
                 }
@@ -252,7 +252,7 @@ impl OperatorPacket {
 
         self.subpackets
             .iter()
-            .map(|p| p.value())
+            .map(Packet::value)
             .reduce(operation)
             .unwrap_or(0)
     }

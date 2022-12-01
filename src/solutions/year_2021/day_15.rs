@@ -15,7 +15,7 @@ fn parse(input: &str) -> Vec<Vec<RiskLevel>> {
     input
         .lines()
         .filter(|line| !line.is_empty())
-        .map(|line| line.trim())
+        .map(str::trim)
         .map(|line| {
             line.chars()
                 .map(|c| c.to_string().parse().unwrap())

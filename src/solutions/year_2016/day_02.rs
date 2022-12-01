@@ -20,9 +20,9 @@ pub fn calc_number(instructions: &[Vec<Direction>]) -> String {
                 Direction::L => (pos.0 - 1, pos.1),
                 Direction::R => (pos.0 + 1, pos.1),
             };
-            pos = clamp(&pos);
+            pos = clamp(pos);
         }
-        result.push(number_of_pos(&pos));
+        result.push(number_of_pos(pos));
     }
     result
 }
@@ -60,16 +60,16 @@ enum Starfield {
 }
 
 impl Starfield {
-    fn move_to(&self, dir: &Direction) -> Starfield {
+    fn move_to(self, dir: &Direction) -> Starfield {
         match self {
             Starfield::N1 => match dir {
                 Direction::D => Starfield::N3,
-                _ => *self,
+                _ => self,
             },
             Starfield::N2 => match dir {
                 Direction::R => Starfield::N3,
                 Direction::D => Starfield::N6,
-                _ => *self,
+                _ => self,
             },
             Starfield::N3 => match dir {
                 Direction::U => Starfield::N1,
@@ -80,11 +80,11 @@ impl Starfield {
             Starfield::N4 => match dir {
                 Direction::L => Starfield::N3,
                 Direction::D => Starfield::N8,
-                _ => *self,
+                _ => self,
             },
             Starfield::N5 => match dir {
                 Direction::R => Starfield::N6,
-                _ => *self,
+                _ => self,
             },
             Starfield::N6 => match dir {
                 Direction::U => Starfield::N2,
@@ -106,12 +106,12 @@ impl Starfield {
             },
             Starfield::N9 => match dir {
                 Direction::L => Starfield::N8,
-                _ => *self,
+                _ => self,
             },
             Starfield::NA => match dir {
                 Direction::U => Starfield::N6,
                 Direction::R => Starfield::NB,
-                _ => *self,
+                _ => self,
             },
             Starfield::NB => match dir {
                 Direction::U => Starfield::N7,
@@ -122,16 +122,16 @@ impl Starfield {
             Starfield::NC => match dir {
                 Direction::U => Starfield::N8,
                 Direction::L => Starfield::NB,
-                _ => *self,
+                _ => self,
             },
             Starfield::ND => match dir {
                 Direction::U => Starfield::NB,
-                _ => *self,
+                _ => self,
             },
         }
     }
 
-    fn as_char(&self) -> char {
+    fn as_char(self) -> char {
         match self {
             Starfield::N1 => '1',
             Starfield::N2 => '2',
@@ -173,7 +173,7 @@ pub enum Direction {
     R,
 }
 
-pub fn number_of_pos(pos: &(i32, i32)) -> char {
+pub fn number_of_pos(pos: (i32, i32)) -> char {
     match pos {
         (0, 0) => '1',
         (1, 0) => '2',
@@ -188,7 +188,7 @@ pub fn number_of_pos(pos: &(i32, i32)) -> char {
     }
 }
 
-fn clamp(pos: &(i32, i32)) -> (i32, i32) {
+fn clamp(pos: (i32, i32)) -> (i32, i32) {
     (
         cmp::min(2, cmp::max(0, pos.0)),
         cmp::min(2, cmp::max(0, pos.1)),

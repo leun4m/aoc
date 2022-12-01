@@ -94,7 +94,7 @@ where
     for _ in 0..width {
         let mut row = Vec::new();
         for _ in 0..height {
-            row.push(default)
+            row.push(default);
         }
         matrix.push(row);
     }

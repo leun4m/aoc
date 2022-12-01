@@ -47,7 +47,7 @@ fn move_it_one(instructions: &[Instruction]) -> (i32, i32) {
             Instruction::Right(u) => {
                 current_dir = turn_around(current_dir, u);
             }
-            _ => {}
+            Instruction::Forward(_) => {}
         }
     }
     (x, y)
@@ -94,9 +94,7 @@ fn move_it_two(instructions: &[Instruction]) -> (i32, i32) {
 }
 
 fn turn_around(direction: Direction, degree: i32) -> Direction {
-    if degree % 90 != 0 {
-        panic!("UNEXPECTED DEGREE: {}", degree);
-    }
+    assert!(degree % 90 == 0, "UNEXPECTED DEGREE: {}", degree);
 
     match degree.cmp(&0) {
         Ordering::Less => turn_around(
@@ -122,9 +120,7 @@ fn turn_around(direction: Direction, degree: i32) -> Direction {
 }
 
 fn turn_waypoint((north, east): (i32, i32), degree: i32) -> (i32, i32) {
-    if degree % 90 != 0 {
-        panic!("UNEXPECTED DEGREE: {}", degree);
-    }
+    assert!(degree % 90 == 0, "UNEXPECTED DEGREE: {}", degree);
 
     match degree.cmp(&0) {
         Ordering::Less => turn_waypoint((east, -north), degree + 90),

@@ -12,11 +12,11 @@ fn part_one(aim: u32) -> i32 {
     let mut boundaries = Boundaries::default();
 
     for _ in 1..aim {
-        point = point.move_in(&direction);
-        direction = boundaries.change_dir(&point, direction);
+        point = point.move_in(direction);
+        direction = boundaries.change_dir(point, direction);
     }
 
-    manhatten_distance(&point)
+    manhatten_distance(point)
 }
 
 fn part_two(aim: u32) -> u32 {
@@ -30,8 +30,8 @@ fn part_two(aim: u32) -> u32 {
     while sum <= aim {
         cache.insert(point, sum);
 
-        point = point.move_in(&direction);
-        direction = boundaries.change_dir(&point, direction);
+        point = point.move_in(direction);
+        direction = boundaries.change_dir(point, direction);
 
         sum = sum_neighbours(point, &cache);
     }
@@ -55,7 +55,7 @@ fn sum_neighbours(point: Point, cache: &HashMap<Point, u32>) -> u32 {
     .sum()
 }
 
-fn manhatten_distance(point: &Point) -> i32 {
+fn manhatten_distance(point: Point) -> i32 {
     point.x.abs() + point.y.abs()
 }
 
@@ -80,16 +80,16 @@ struct Boundaries {
 }
 
 impl Boundaries {
-    fn has_reached_left(&self, point: &Point) -> bool {
+    fn has_reached_left(&self, point: Point) -> bool {
         point.x() < self.min.x()
     }
-    fn has_reached_right(&self, point: &Point) -> bool {
+    fn has_reached_right(&self, point: Point) -> bool {
         point.x() > self.max.x()
     }
-    fn has_reached_top(&self, point: &Point) -> bool {
+    fn has_reached_top(&self, point: Point) -> bool {
         point.y() < self.min.y()
     }
-    fn has_reached_bottom(&self, point: &Point) -> bool {
+    fn has_reached_bottom(&self, point: Point) -> bool {
         point.y() > self.max.y()
     }
 
@@ -106,7 +106,7 @@ impl Boundaries {
         self.min = self.min.top();
     }
 
-    fn change_dir(&mut self, point: &Point, direction: Direction) -> Direction {
+    fn change_dir(&mut self, point: Point, direction: Direction) -> Direction {
         if direction == Direction::Left && self.has_reached_left(point) {
             self.extend_left();
             Direction::Down
@@ -132,39 +132,39 @@ struct Point {
 }
 
 impl Point {
-    fn x(&self) -> i32 {
+    fn x(self) -> i32 {
         self.x
     }
-    fn y(&self) -> i32 {
+    fn y(self) -> i32 {
         self.y
     }
 
-    fn left(&self) -> Self {
+    fn left(self) -> Self {
         Self {
             x: self.x - 1,
             y: self.y,
         }
     }
-    fn right(&self) -> Self {
+    fn right(self) -> Self {
         Self {
             x: self.x + 1,
             y: self.y,
         }
     }
-    fn top(&self) -> Self {
+    fn top(self) -> Self {
         Self {
             x: self.x,
             y: self.y - 1,
         }
     }
-    fn bottom(&self) -> Self {
+    fn bottom(self) -> Self {
         Self {
             x: self.x,
             y: self.y + 1,
         }
     }
 
-    fn move_in(&self, direction: &Direction) -> Point {
+    fn move_in(self, direction: Direction) -> Point {
         match direction {
             Direction::Left => self.left(),
             Direction::Right => self.right(),

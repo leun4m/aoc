@@ -19,7 +19,7 @@ fn part_two(addresses: &[&str]) -> usize {
 fn is_tls(ip: &str) -> bool {
     let mut contains_in_supernet = false;
 
-    for part in separate(ip).iter() {
+    for part in &separate(ip) {
         match part {
             IPPart::Supernet(x) => {
                 if is_abba(x) {
@@ -90,7 +90,7 @@ fn get_aba(word: &str) -> Vec<(char, char, char)> {
         }
 
         if chars[i] == chars[i + 2] && chars[i] != chars[i + 1] {
-            result.push((chars[i], chars[i + 1], chars[i + 2]))
+            result.push((chars[i], chars[i + 1], chars[i + 2]));
         }
     }
 

@@ -99,7 +99,7 @@ fn parse_object(inner: &str) -> HashMap<String, JSONElement> {
             match state {
                 State::StartKey => State::EndKey,
                 State::EndKey => State::StartValue,
-                x => x,
+                State::StartValue => state,
             }
         } else if count_brackets == 0 && c == ',' {
             result.insert(key.clone(), parse(&value));
@@ -113,13 +113,13 @@ fn parse_object(inner: &str) -> HashMap<String, JSONElement> {
             match state {
                 State::StartKey => {
                     if !c.is_whitespace() {
-                        key.push(c)
+                        key.push(c);
                     }
                 }
                 State::EndKey => key.push(c),
                 State::StartValue => {
                     if !c.is_whitespace() && c != ':' {
-                        value.push(c)
+                        value.push(c);
                     }
                 }
             }
@@ -176,7 +176,7 @@ mod tests {
     fn parse_string_works() {
         assert_eq!(parse("\"h\""), JSONElement::Text("h".into()));
         assert_eq!(parse("\"Test\""), JSONElement::Text("Test".into()));
-        assert_eq!(parse("\"\""), JSONElement::Text("".into()));
+        assert_eq!(parse("\"\""), JSONElement::Text(String::new()));
     }
 
     #[test]

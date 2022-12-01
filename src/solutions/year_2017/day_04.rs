@@ -51,22 +51,22 @@ mod tests {
 
     #[test]
     fn contains_no_doubles_works() {
-        assert!(contains_no_doubles(&vec!["aa", "bb", "cc", "dd", "ee"]));
-        assert!(!contains_no_doubles(&vec!["aa", "bb", "cc", "dd", "aa"]));
-        assert!(contains_no_doubles(&vec!["aa", "bb", "cc", "dd", "aaa"]));
+        assert!(contains_no_doubles(&["aa", "bb", "cc", "dd", "ee"]));
+        assert!(!contains_no_doubles(&["aa", "bb", "cc", "dd", "aa"]));
+        assert!(contains_no_doubles(&["aa", "bb", "cc", "dd", "aaa"]));
     }
 
     #[test]
     fn contains_no_double_anagram_works() {
-        assert!(contains_no_double_anagrams(&vec!["abcde", "fghij"]));
-        assert!(!contains_no_double_anagrams(&vec!["abcde", "xyz", "ecdab"]));
-        assert!(contains_no_double_anagrams(&vec![
+        assert!(contains_no_double_anagrams(&["abcde", "fghij"]));
+        assert!(!contains_no_double_anagrams(&["abcde", "xyz", "ecdab"]));
+        assert!(contains_no_double_anagrams(&[
             "a", "ab", "abc", "abd", "abf", "abj"
         ]));
-        assert!(contains_no_double_anagrams(&vec![
+        assert!(contains_no_double_anagrams(&[
             "iiii", "oiii", "ooii", "oooi", "oooo"
         ]));
-        assert!(!contains_no_double_anagrams(&vec![
+        assert!(!contains_no_double_anagrams(&[
             "oiii", "ioii", "iioi", "iiio"
         ]));
     }

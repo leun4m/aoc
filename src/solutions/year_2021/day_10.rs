@@ -39,10 +39,10 @@ fn find_error(line: &str) -> Option<char> {
                 None
             }
             ')' | ']' | '}' | '>' => {
-                if match_bracket(c) != opened.pop() {
-                    Some(c)
-                } else {
+                if match_bracket(c) == opened.pop() {
                     None
+                } else {
+                    Some(c)
                 }
             }
             _ => {
@@ -162,6 +162,6 @@ mod tests {
 
     #[test]
     fn part_two_works() {
-        assert_eq!(part_two(&parse(INPUT)), 288957);
+        assert_eq!(part_two(&parse(INPUT)), 288_957);
     }
 }

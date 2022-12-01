@@ -6,7 +6,7 @@ pub fn solve(input: &str) {
     let operations = input
         .trim()
         .lines()
-        .map(|line| line.trim())
+        .map(str::trim)
         .filter(|line| !line.is_empty())
         .map(parse_line)
         .collect_vec();

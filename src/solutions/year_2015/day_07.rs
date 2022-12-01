@@ -179,7 +179,7 @@ fn first_read(
             if let Symbol::Number(a) = &symbol {
                 wires.insert(wire, *a);
             } else {
-                instructions.push(Instruction::Assign(symbol, wire))
+                instructions.push(Instruction::Assign(symbol, wire));
             }
         } else {
             instructions.push(Instruction::parse(
@@ -189,7 +189,7 @@ fn first_read(
                 expression,
                 &wire,
                 line,
-            ))
+            ));
         }
     }
 }

@@ -18,7 +18,7 @@ enum FoldInstruction {
 fn parse(input: &str) -> (Paper, Vec<FoldInstruction>) {
     let paper = input
         .lines()
-        .map(|line| line.trim())
+        .map(str::trim)
         .filter(|line| !line.is_empty())
         .filter(|line| !line.starts_with("fold"))
         .map(parse_pair)
@@ -26,7 +26,7 @@ fn parse(input: &str) -> (Paper, Vec<FoldInstruction>) {
 
     let instructions = input
         .lines()
-        .map(|line| line.trim())
+        .map(str::trim)
         .filter(|line| !line.is_empty())
         .filter(|line| line.starts_with("fold"))
         .map(parse_fold)
@@ -48,10 +48,11 @@ fn parse_fold(input: &str) -> FoldInstruction {
     let trimmed = input.replace("fold along ", "");
     let fold: Vec<_> = trimmed.split('=').collect();
     let value = fold[1].parse().unwrap();
-    match fold[0] {
-        "x" => FoldInstruction::X(value),
-        "y" => FoldInstruction::Y(value),
-        z => panic!("Unexpected axis: {}", z),
+    match fold.first() {
+        Some(&"x") => FoldInstruction::X(value),
+        Some(&"y") => FoldInstruction::Y(value),
+        Some(z) => panic!("Unexpected axis: {}", z),
+        None => panic!("Unexpected value"),
     }
 }
 
@@ -104,10 +105,7 @@ fn paper_to_string(paper: &Paper) -> String {
 
     for y in 0..y_len {
         for x in 0..x_len {
-            let c = match paper.contains(&(x, y)) {
-                true => '#',
-                false => ' ',
-            };
+            let c = if paper.contains(&(x, y)) { '#' } else { ' ' };
             result.push(c);
         }
         result.push('\n');

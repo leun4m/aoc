@@ -12,7 +12,7 @@ fn part_one(rooms: &[Room]) -> u32 {
     rooms
         .iter()
         .filter(|room| room.is_real())
-        .map(|room| room.id())
+        .map(Room::id)
         .sum()
 }
 
@@ -59,9 +59,11 @@ impl Room {
 
     pub fn is_real(&self) -> bool {
         let ranking = get_ranking(&self.name);
-        if ranking.len() < 5 {
-            panic!("Unexpected count of characters: {}", ranking.len());
-        }
+        assert!(
+            ranking.len() >= 5,
+            "Unexpected count of characters: {}",
+            ranking.len()
+        );
 
         ranking[0] == self.checksum[0]
             && ranking[1] == self.checksum[1]

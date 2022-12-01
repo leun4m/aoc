@@ -5,7 +5,7 @@ pub fn solve(input: &str) {
         let mut passport = Passport::new();
         for pairs in passport_data.split_whitespace() {
             let key_value = pairs.split(':').collect::<Vec<&str>>();
-            match key_value[0] {
+            match *key_value.first().unwrap() {
                 "byr" => passport.byr = key_value[1],
                 "iyr" => passport.iyr = key_value[1],
                 "eyr" => passport.eyr = key_value[1],

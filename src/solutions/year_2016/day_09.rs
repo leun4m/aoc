@@ -45,7 +45,7 @@ impl Token {
     fn size(&self) -> usize {
         match self {
             Token::RepeatV1(word, size) => word.len() * size,
-            Token::RepeatV2(vec, size) => vec.iter().map(|x| x.size()).sum::<usize>() * size,
+            Token::RepeatV2(vec, size) => vec.iter().map(Token::size).sum::<usize>() * size,
             Token::Char(_) => 1,
         }
     }
@@ -103,6 +103,6 @@ mod tests {
     fn decompress_v2_works() {
         assert_eq!(part_two("(3x3)XYZ"), 9);
         assert_eq!(part_two("X(8x2)(3x3)ABCY"), 20);
-        assert_eq!(part_two("(27x12)(20x12)(13x14)(7x10)(1x12)A"), 241920);
+        assert_eq!(part_two("(27x12)(20x12)(13x14)(7x10)(1x12)A"), 241_920);
     }
 }

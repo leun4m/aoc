@@ -80,7 +80,7 @@ where
                         *seat
                     }
                 }
-                _ => *seat,
+                Position::Floor => *seat,
             };
             new_row.push(new_seat);
         }
@@ -235,7 +235,7 @@ fn parse_input(input: &str) -> Vec<Vec<Position>> {
                 'L' => Position::SeatEmpty,
                 '#' => Position::SeatOccupied,
                 _ => panic!("Unexpected symbol: {}", c),
-            })
+            });
         }
 
         result.push(row);

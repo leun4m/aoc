@@ -20,8 +20,8 @@ mod tests {
     #[test]
     #[ignore]
     fn example() {
-        assert_eq!(609043, find_number("abcdef", 5));
-        assert_eq!(1048970, find_number("pqrstuv", 5));
-        assert_eq!(9962624, find_number("yzbqklnj", 6));
+        assert_eq!(609_043, find_number("abcdef", 5));
+        assert_eq!(1_048_970, find_number("pqrstuv", 5));
+        assert_eq!(9_962_624, find_number("yzbqklnj", 6));
     }
 }

@@ -45,7 +45,7 @@ fn parse_line(line: &str) -> (u8, u8) {
 }
 
 fn seat_id((row, col): (u8, u8)) -> u32 {
-    (row as u32) * 8 + (col as u32)
+    u32::from(row) * 8 + u32::from(col)
 }
 
 fn adjust_range(current_char: char, lower: char, min: &mut u8, max: &mut u8) {

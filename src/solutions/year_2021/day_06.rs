@@ -76,6 +76,6 @@ mod tests {
     #[test]
     fn part_two_works() {
         let parsed = parse(INPUT);
-        assert_eq!(simulate(&parsed, 256), 26984457539);
+        assert_eq!(simulate(&parsed, 256), 26_984_457_539);
     }
 }

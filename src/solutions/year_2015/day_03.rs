@@ -8,7 +8,7 @@ pub fn solve(input: &str) {
 }
 
 fn houses_visited(positions: &[(i32, i32)]) -> u32 {
-    let unique: HashSet<(i32, i32)> = positions.iter().cloned().collect::<HashSet<_, _>>();
+    let unique: HashSet<(i32, i32)> = positions.iter().copied().collect::<HashSet<_, _>>();
     unique.len() as u32
 }
 

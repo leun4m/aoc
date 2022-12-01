@@ -36,11 +36,7 @@ fn part_one(arrangements: &HashSet<Vec<Bucket>>) -> usize {
 }
 
 fn part_two(arrangements: &HashSet<Vec<Bucket>>) -> usize {
-    let minimum_amount = arrangements
-        .iter()
-        .map(|x| x.len())
-        .min()
-        .unwrap_or_default();
+    let minimum_amount = arrangements.iter().map(Vec::len).min().unwrap_or_default();
     arrangements
         .iter()
         .filter(|x| x.len() == minimum_amount)

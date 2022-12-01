@@ -83,7 +83,7 @@ impl Guard {
     fn get_minute_most_asleep(&self) -> MostAsleep {
         let mut minutes: HashMap<NaiveTime, usize> = HashMap::new();
 
-        for span in self.asleep.iter() {
+        for span in &self.asleep {
             let mut current = span.0.time();
             while current < span.1.time() {
                 let x = minutes.entry(current).or_default();

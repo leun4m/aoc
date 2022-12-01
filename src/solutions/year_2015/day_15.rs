@@ -36,26 +36,26 @@ fn part_two(cookies: &[Cookie]) -> i64 {
 }
 
 fn test_score(cookies: &[Cookie], teaspoons: &[i64]) -> i64 {
-    if cookies.len() != teaspoons.len() {
-        println!("Cookies and teaspoons must have the same length");
-        0
-    } else {
-        sum_all(cookies, teaspoons)
-    }
+    assert!(
+        cookies.len() == teaspoons.len(),
+        "Cookies and teaspoons must have the same length"
+    );
+
+    sum_all(cookies, teaspoons)
 }
 
 fn test_score_with_calories(cookies: &[Cookie], teaspoons: &[i64], calories_wanted: i64) -> i64 {
-    if cookies.len() != teaspoons.len() {
-        println!("Cookies and teaspoons must have the same length");
-        0
-    } else {
-        let calories = sum_properties(cookies, teaspoons, |c| c.calories);
+    assert!(
+        cookies.len() == teaspoons.len(),
+        "Cookies and teaspoons must have the same length"
+    );
 
-        if calories == calories_wanted {
-            sum_all(cookies, teaspoons)
-        } else {
-            0
-        }
+    let calories = sum_properties(cookies, teaspoons, |c| c.calories);
+
+    if calories == calories_wanted {
+        sum_all(cookies, teaspoons)
+    } else {
+        0
     }
 }
 
@@ -73,7 +73,7 @@ fn all_ratios(count: usize, total: i64) -> Vec<Vec<i64>> {
     for i in 0..=total {
         let mut line = Vec::new();
         if count > 1 {
-            for subratio in all_ratios(count - 1, total - i).iter_mut() {
+            for subratio in &mut all_ratios(count - 1, total - i) {
                 line.push(i);
                 line.append(subratio);
                 result.push(line.clone());
@@ -171,7 +171,7 @@ mod tests {
             Cookie::new("Cinnamon".into(), 2, 3, -2, -1, 3),
         ];
 
-        assert_eq!(test_score(&cookies, &[44, 56]), 62842880);
+        assert_eq!(test_score(&cookies, &[44, 56]), 62_842_880);
     }
 
     #[test]

@@ -52,10 +52,10 @@ fn shortest_longest(
 
 fn get_cities(connections: &HashMap<(String, String), u64>) -> Vec<String> {
     let mut cities = HashSet::new();
-    connections.keys().for_each(|(a, b)| {
+    for (a, b) in connections.keys() {
         cities.insert(a.clone());
         cities.insert(b.clone());
-    });
+    }
     cities.into_iter().collect()
 }
 

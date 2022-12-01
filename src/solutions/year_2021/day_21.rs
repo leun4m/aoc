@@ -28,7 +28,7 @@ fn parse(input: &str) -> (Position, Position) {
     let players: Vec<Position> = input
         .lines()
         .filter(|line| line.contains("starting position"))
-        .map(|line| line.trim())
+        .map(str::trim)
         .map(parse_line)
         .collect();
     (players[0], players[1])
@@ -138,9 +138,9 @@ impl Player {
     fn add_score(&mut self, score: u64) {
         self.position += score;
         if self.position % BOARD_MAX == 0 {
-            self.position = BOARD_MAX
+            self.position = BOARD_MAX;
         } else {
-            self.position %= BOARD_MAX
+            self.position %= BOARD_MAX;
         }
         self.score += self.position;
     }
@@ -163,14 +163,17 @@ mod tests {
 
     #[test]
     fn part_one_works() {
-        assert_eq!(part_one(Player::create_at(4), Player::create_at(8)), 739785);
+        assert_eq!(
+            part_one(Player::create_at(4), Player::create_at(8)),
+            739_785
+        );
     }
 
     #[test]
     fn part_two_works() {
         assert_eq!(
             part_two(Player::create_at(4), Player::create_at(8)),
-            444356092776315
+            444_356_092_776_315
         );
     }
 }

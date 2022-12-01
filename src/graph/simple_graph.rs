@@ -22,7 +22,7 @@ where
     }
 
     fn neighbours(&self, node: &T) -> Vec<T> {
-        self.edges.get(node).unwrap().to_vec()
+        self.edges.get(node).unwrap().clone()
     }
 
     fn is_empty(&self) -> bool {

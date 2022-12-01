@@ -1,3 +1,14 @@
+#![warn(clippy::pedantic)]
+#![allow(
+    clippy::cast_sign_loss,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_precision_loss,
+    clippy::module_name_repetitions,
+    clippy::needless_pass_by_value,
+    clippy::similar_names
+)]
+
 #[macro_use]
 extern crate lazy_static;
 

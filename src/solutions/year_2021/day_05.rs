@@ -75,24 +75,24 @@ fn get_points(line: &Line) -> Vec<Point> {
 
         for x in x1..=x2 {
             for y in y1..=y2 {
-                result.push((x, y))
+                result.push((x, y));
             }
         }
     } else {
         let mut xc = point_a.0;
         let mut yc = point_a.1;
 
-        let xmod = if point_a.0 < point_b.0 { 1 } else { -1 };
-        let ymod = if point_a.1 < point_b.1 { 1 } else { -1 };
+        let x_mod = if point_a.0 < point_b.0 { 1 } else { -1 };
+        let y_mod = if point_a.1 < point_b.1 { 1 } else { -1 };
 
         while xc != point_b.0 && yc != point_b.1 {
             result.push((xc, yc));
 
-            xc += xmod;
-            yc += ymod;
+            xc += x_mod;
+            yc += y_mod;
         }
 
-        result.push((point_b.0, point_b.1))
+        result.push((point_b.0, point_b.1));
     }
 
     result

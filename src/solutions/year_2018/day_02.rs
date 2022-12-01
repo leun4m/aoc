@@ -18,7 +18,7 @@ fn parse_line(line: &str) -> Multiples {
 fn part_one(multiples: &[Multiples]) -> u32 {
     let (twice, trice) = multiples
         .iter()
-        .map(|a| a.multiples())
+        .map(Multiples::multiples)
         .reduce(|a, b| (a.0 + b.0, a.1 + b.1))
         .expect("Multiples not empty");
     twice * trice

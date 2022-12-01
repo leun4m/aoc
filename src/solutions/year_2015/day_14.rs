@@ -9,7 +9,7 @@ pub fn solve(input: &str) {
 
     println!("Part 1: {}", part_one(&mut reindeers));
 
-    for reindeer in reindeers.iter_mut() {
+    for reindeer in &mut reindeers {
         reindeer.reset();
     }
 
@@ -34,22 +34,22 @@ fn parse_line(line: &str) -> Reindeer {
 fn part_one(reindeers: &mut [Reindeer]) -> u32 {
     for _ in 0..TIME {
         for reindeer in reindeers.iter_mut() {
-            reindeer.tick()
+            reindeer.tick();
         }
     }
-    reindeers.iter().map(|r| r.distance()).max().unwrap()
+    reindeers.iter().map(Reindeer::distance).max().unwrap()
 }
 
 fn part_two(reindeers: &mut [Reindeer]) -> u32 {
     for _ in 0..TIME {
         for reindeer in reindeers.iter_mut() {
-            reindeer.tick()
+            reindeer.tick();
         }
 
         let first = reindeers.iter_mut().max_by_key(|r| r.distance()).unwrap();
         first.add_point();
     }
-    reindeers.iter().map(|r| r.score()).max().unwrap()
+    reindeers.iter().map(Reindeer::score).max().unwrap()
 }
 
 #[derive(Debug, PartialEq, Eq)]
