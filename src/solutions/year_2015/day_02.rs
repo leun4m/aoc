@@ -18,7 +18,7 @@ fn parse_line(line: &str) -> (u32, u32, u32) {
     if numbers.len() != 3 {
         panic!("There are {} numbers in line: {}", numbers.len(), line)
     } else {
-        let length = u32::from_str(numbers.get(0).unwrap()).expect("Could not parse!");
+        let length = u32::from_str(numbers.first().unwrap()).expect("Could not parse!");
         let width = u32::from_str(numbers.get(1).unwrap()).expect("Could not parse!");
         let height = u32::from_str(numbers.get(2).unwrap()).expect("Could not parse!");
 

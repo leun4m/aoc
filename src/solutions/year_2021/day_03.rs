@@ -22,8 +22,8 @@ fn part_one(numbers: &[u32], bit_size: usize) -> u32 {
 }
 
 fn part_two(numbers: &[u32], bit_size: usize) -> u32 {
-    let f_oxygen = |count_zeros, count_ones| if count_zeros <= count_ones { 1 } else { 0 };
-    let f_co2 = |count_zeros, count_ones| if count_zeros > count_ones { 1 } else { 0 };
+    let f_oxygen = |count_zeros, count_ones| u32::from(count_zeros <= count_ones);
+    let f_co2 = |count_zeros, count_ones| u32::from(count_zeros > count_ones);
 
     let oxygen = calc_property(numbers, bit_size, &f_oxygen);
     let co2 = calc_property(numbers, bit_size, &f_co2);

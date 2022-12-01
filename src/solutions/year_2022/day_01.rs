@@ -13,7 +13,7 @@ type Calories = u32;
 fn parse(input: &str) -> Vec<Vec<Calories>> {
     input
         .split("\n\n")
-        .map(|group| parser::lines_as_numbers(group))
+        .map(parser::lines_as_numbers)
         .collect_vec()
 }
 
@@ -50,13 +50,13 @@ mod tests {
 10000
 ";
 
-let output = vec![
-    vec![1000, 2000, 3000],
-    vec![4000],
-    vec![5000, 6000],
-    vec![7000, 8000, 9000],
-    vec![10000],
-];
+        let output = vec![
+            vec![1000, 2000, 3000],
+            vec![4000],
+            vec![5000, 6000],
+            vec![7000, 8000, 9000],
+            vec![10000],
+        ];
 
         assert_eq!(parse(input), output);
     }
@@ -66,7 +66,7 @@ let output = vec![
         let input = vec![6000, 4000, 11000, 24000, 10000];
         assert_eq!(part_one(&input), 24000);
     }
-    
+
     #[test]
     fn part_two_works() {
         let input = vec![6000, 4000, 11000, 24000, 10000];

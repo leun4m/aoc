@@ -90,10 +90,8 @@ fn numeric(lights: &[LightRow], x: isize, y: isize) -> u32 {
 
     if x < 0 || y < 0 || max_x <= x as usize || max_y <= y as usize {
         0
-    } else if lights[x as usize][y as usize] {
-        1
     } else {
-        0
+        u32::from(lights[x as usize][y as usize])
     }
 }
 

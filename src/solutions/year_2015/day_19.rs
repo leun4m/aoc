@@ -91,11 +91,11 @@ fn inner_two(origin: &str, aim: &str, replacements: &Replacements) -> usize {
 }
 
 fn reverse_replacements<'a>(replacements: &'a Replacements) -> Replacements<'a> {
-    let mut result = HashMap::new();
+    let mut result: HashMap<&str, Vec<&str>> = HashMap::new();
 
     for (key, values) in replacements {
         for v in values {
-            result.entry(*v).or_insert(Vec::new()).push(*key);
+            result.entry(*v).or_default().push(*key);
         }
     }
 

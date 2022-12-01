@@ -42,7 +42,7 @@ fn sum_minutes_asleep(log_lines: &mut [Log]) -> Vec<Guard> {
 
     let mut guards: HashMap<u32, Guard> = HashMap::new();
     let mut current: &mut Guard = &mut Guard::new(0);
-    let mut asleep: NaiveDateTime = NaiveDateTime::from_timestamp(0, 0);
+    let mut asleep: NaiveDateTime = NaiveDateTime::from_timestamp_opt(0, 0).unwrap();
 
     for line in log_lines {
         match line.instruction {
@@ -199,7 +199,10 @@ mod tests {
         assert_eq!(
             parse_line("[1518-11-01 00:00] Guard #10 begins shift"),
             Log {
-                time: NaiveDate::from_ymd(1518, 11, 1).and_hms(0, 0, 0),
+                time: NaiveDate::from_ymd_opt(1518, 11, 1)
+                    .unwrap()
+                    .and_hms_opt(0, 0, 0)
+                    .unwrap(),
                 instruction: Instruction::Begins(10)
             }
         );
@@ -207,7 +210,10 @@ mod tests {
         assert_eq!(
             parse_line("[1518-11-05 00:55] wakes up"),
             Log {
-                time: NaiveDate::from_ymd(1518, 11, 5).and_hms(0, 55, 0),
+                time: NaiveDate::from_ymd_opt(1518, 11, 5)
+                    .unwrap()
+                    .and_hms_opt(0, 55, 0)
+                    .unwrap(),
                 instruction: Instruction::WakesUp
             }
         );
@@ -215,7 +221,10 @@ mod tests {
         assert_eq!(
             parse_line("[1518-11-01 00:30] falls asleep"),
             Log {
-                time: NaiveDate::from_ymd(1518, 11, 1).and_hms(0, 30, 0),
+                time: NaiveDate::from_ymd_opt(1518, 11, 1)
+                    .unwrap()
+                    .and_hms_opt(0, 30, 0)
+                    .unwrap(),
                 instruction: Instruction::FallsAsleep
             }
         );

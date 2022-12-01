@@ -33,7 +33,7 @@ fn part_two(times: &[BusTime]) -> u64 {
         .collect::<Vec<(u64, u64)>>();
 
     let mut time = 0;
-    let mut step_size = indexed_times.get(0).unwrap().1;
+    let mut step_size = indexed_times.first().unwrap().1;
 
     for (i, bus) in indexed_times.iter().skip(1) {
         while (time + i) % bus != 0 {

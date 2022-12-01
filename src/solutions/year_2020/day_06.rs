@@ -27,11 +27,7 @@ fn part_two(groups: &[Vec<Vec<char>>]) -> usize {
                 first_person = false;
                 group_set = person.iter().collect();
             } else {
-                group_set = group_set
-                    .iter()
-                    .filter(|x| person.contains(*x))
-                    .copied()
-                    .collect();
+                group_set.retain(|x| person.contains(*x));
             }
         }
         sum += group_set.len();

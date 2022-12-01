@@ -244,9 +244,9 @@ impl OperatorPacket {
             1 => |a, b| a * b,
             2 => min,
             3 => max,
-            5 => |a, b| if a > b { 1 } else { 0 },
-            6 => |a, b| if a < b { 1 } else { 0 },
-            7 => |a, b| if a == b { 1 } else { 0 },
+            5 => |a, b| u64::from(a > b),
+            6 => |a, b| u64::from(a < b),
+            7 => |a, b| u64::from(a == b),
             x => panic!("Unexpected id: {}", x),
         };
 

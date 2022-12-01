@@ -75,10 +75,7 @@ impl Multiples {
     }
 
     pub fn multiples(&self) -> (u32, u32) {
-        (
-            if self.twice { 1 } else { 0 },
-            if self.trice { 1 } else { 0 },
-        )
+        (u32::from(self.twice), u32::from(self.trice))
     }
 }
 
