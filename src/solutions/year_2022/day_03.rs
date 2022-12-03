@@ -3,6 +3,7 @@ use crate::parser;
 pub fn solve(input: &str) {
     let rucksacks = parser::lines_as_strings(input);
     println!("Part 1: {}", part_one(&rucksacks));
+    println!("Part 2: {}", part_two(&rucksacks));
 }
 
 fn part_one(rucksacks: &[&str]) -> u32 {
@@ -14,13 +15,29 @@ fn part_one(rucksacks: &[&str]) -> u32 {
         .sum()
 }
 
+fn part_two(rucksacks: &[&str]) -> u32 {
+    rucksacks
+        .chunks(3)
+        .collect::<Vec<_>>()
+        .into_iter()
+        .map(find_common_element_in2)
+        .map(priority)
+        .sum()
+}
+
 fn find_common_element_in(compartments: (&str, &str)) -> char {
-    for elem in compartments.0.chars() {
-        if compartments.1.contains(elem) {
-            return elem;
-        }
-    }
-    panic!("Nothing found!")
+    compartments
+        .0
+        .chars()
+        .find(|elem| compartments.1.contains(*elem))
+        .unwrap()
+}
+
+fn find_common_element_in2(compartments: &[&str]) -> char {
+    compartments[0]
+        .chars()
+        .find(|elem| compartments[1].contains(*elem) && compartments[2].contains(*elem))
+        .unwrap()
 }
 
 fn priority(c: char) -> u32 {
@@ -35,6 +52,15 @@ fn priority(c: char) -> u32 {
 mod tests {
     use super::*;
 
+    const EXAMPLE_RUCKSACK: [&str; 6] = [
+        "vJrwpWtwJgWrhcsFMMfFFhFp",
+        "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+        "PmmdzqPrVvPwwTWBwg",
+        "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+        "ttgJtRGJQctTZtZT",
+        "CrZsJsPPZsGzwwsLwLmpwMDw",
+    ];
+
     #[test]
     fn priority_works() {
         assert_eq!(1, priority('a'));
@@ -45,14 +71,11 @@ mod tests {
 
     #[test]
     fn part_one_works() {
-        let rucksacks = [
-            "vJrwpWtwJgWrhcsFMMfFFhFp",
-            "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
-            "PmmdzqPrVvPwwTWBwg",
-            "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
-            "ttgJtRGJQctTZtZT",
-            "CrZsJsPPZsGzwwsLwLmpwMDw",
-        ];
-        assert_eq!(157, part_one(&rucksacks));
+        assert_eq!(157, part_one(&EXAMPLE_RUCKSACK));
+    }
+
+    #[test]
+    fn part_two_works() {
+        assert_eq!(70, part_two(&EXAMPLE_RUCKSACK));
     }
 }
