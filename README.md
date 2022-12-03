@@ -13,6 +13,7 @@ Solutions from the various years of [AdventOfCode](https://adventofcode.com) in 
 | 2019 |      4 % |  1 / 25 |
 | 2020 |     64 % | 16 / 25 |
 | 2021 |     72 % | 18 / 25 |
+| 2022 |     12 % |  3 / 25 |
 
 ## Structure
 
