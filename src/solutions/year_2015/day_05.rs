@@ -11,8 +11,8 @@ pub fn solve(input: &str) {
             counter2 += 1;
         }
     }
-    println!("Part 1: {}", counter1);
-    println!("Part 2: {}", counter2);
+    println!("Part 1: {counter1}");
+    println!("Part 2: {counter2}");
 }
 
 fn is_nice(text: &str) -> bool {
@@ -39,7 +39,7 @@ fn contains_pair_twice(text: &str) -> bool {
     let mut last_char = NULL_CHAR;
     let mut pairs = HashMap::new();
     for (i, c) in text.chars().enumerate() {
-        let pair = format!("{}{}", last_char, c);
+        let pair = format!("{last_char}{c}");
         let option = pairs.get(&pair);
         if option.is_some() && *option.unwrap() < (i - 1) {
             return true;

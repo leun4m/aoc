@@ -6,7 +6,7 @@ pub fn solve(input: &str) {
     let variations = calculate_variations(&adapters);
 
     println!("Part 1: {}", difference_1 * difference_3);
-    println!("Part 2: {}", variations);
+    println!("Part 2: {variations}");
 }
 
 fn calculate_variations(adapters: &[u64]) -> i64 {
@@ -26,7 +26,7 @@ fn variations(ones: usize) -> i64 {
         4 => 7,
         5 => 11,
         // 1/2 * x^2 + 1/2 * x + 1
-        _ => panic!("unexpected number of 1s: {}", ones),
+        _ => panic!("unexpected number of 1s: {ones}"),
     }
 }
 

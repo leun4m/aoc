@@ -162,7 +162,7 @@ impl Packet {
 
     fn value(&self) -> u64 {
         match self {
-            Packet::Literal(packet) => packet.value as u64,
+            Packet::Literal(packet) => packet.value,
             Packet::Operator(packet) => packet.value(),
         }
     }
@@ -227,7 +227,7 @@ impl OperatorPacket {
         let subpackets = match binary.next() {
             Some('0') => OperatorPacket::subpackets_by_length(binary),
             Some('1') => OperatorPacket::subpackets_by_number(binary),
-            Some(x) => panic!("Unexpected digit: {}", x),
+            Some(x) => panic!("Unexpected digit: {x}"),
             None => Vec::new(),
         };
 
@@ -247,7 +247,7 @@ impl OperatorPacket {
             5 => |a, b| u64::from(a > b),
             6 => |a, b| u64::from(a < b),
             7 => |a, b| u64::from(a == b),
-            x => panic!("Unexpected id: {}", x),
+            x => panic!("Unexpected id: {x}"),
         };
 
         self.subpackets

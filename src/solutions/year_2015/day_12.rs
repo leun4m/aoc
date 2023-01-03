@@ -51,7 +51,7 @@ fn parse(input: &str) -> JSONElement {
         let value = parse_object(&trimmed[1..trimmed.len() - 1]);
         JSONElement::Object(value)
     } else {
-        panic!("Unexpected Input: {}", trimmed);
+        panic!("Unexpected Input: {trimmed}");
     }
 }
 

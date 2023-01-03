@@ -51,7 +51,7 @@ fn parse_fold(input: &str) -> FoldInstruction {
     match fold.first() {
         Some(&"x") => FoldInstruction::X(value),
         Some(&"y") => FoldInstruction::Y(value),
-        Some(z) => panic!("Unexpected axis: {}", z),
+        Some(z) => panic!("Unexpected axis: {z}"),
         None => panic!("Unexpected value"),
     }
 }

@@ -9,8 +9,8 @@ pub fn solve(input: &str) {
         paper += calc_paper(dimensions) + extra_paper(dimensions);
         ribbon += calc_ribbon(dimensions);
     }
-    println!("Paper:  {}", paper);
-    println!("Ribbon: {}", ribbon);
+    println!("Paper:  {paper}");
+    println!("Ribbon: {ribbon}");
 }
 
 fn parse_line(line: &str) -> (u32, u32, u32) {

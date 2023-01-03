@@ -22,12 +22,12 @@ fn look_and_say(input: &str) -> String {
         } else if c == previous {
             times += 1;
         } else {
-            let _ = write!(result, "{}{}", times, previous);
+            let _ = write!(result, "{times}{previous}");
             previous = c;
             times = 1;
         }
     }
-    let _ = write!(result, "{}{}", times, previous);
+    let _ = write!(result, "{times}{previous}");
     result
 }
 

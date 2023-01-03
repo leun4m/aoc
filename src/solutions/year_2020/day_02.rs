@@ -18,8 +18,8 @@ pub fn solve(input: &str) {
             valid_2 += 1;
         }
     }
-    println!("Part 1: {}", valid_1);
-    println!("Part 2: {}", valid_2);
+    println!("Part 1: {valid_1}");
+    println!("Part 2: {valid_2}");
 }
 
 fn is_valid_2(min: usize, max: usize, chr: char, password: &str) -> bool {

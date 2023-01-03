@@ -1,8 +1,8 @@
 pub fn solve(input: &str) {
     let instructions = parse(input);
     let (floor, index) = count(&instructions);
-    println!("Part 1: {}", floor);
-    println!("Part 2: {}", index);
+    println!("Part 1: {floor}");
+    println!("Part 2: {index}");
 }
 
 enum Instruction {
@@ -16,7 +16,7 @@ fn parse(input: &str) -> Vec<Instruction> {
         .map(|c| match c {
             '(' => Instruction::GoUp,
             ')' => Instruction::GoDown,
-            _ => panic!("Unexpected char: {}", c),
+            _ => panic!("Unexpected char: {c}"),
         })
         .collect()
 }

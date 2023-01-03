@@ -83,7 +83,7 @@ fn bit_at(number: u32, position: u32) -> u32 {
 }
 
 fn invert(number: u32, bit_size: usize) -> u32 {
-    let inverted: String = format!("{:width$b}", number, width = bit_size)
+    let inverted: String = format!("{number:bit_size$b}")
         .chars()
         .map(|x| match x {
             '1' => '0',

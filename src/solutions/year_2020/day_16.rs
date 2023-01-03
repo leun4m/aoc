@@ -7,7 +7,7 @@ pub fn solve(input: &str) {
     let mut possibilities = get_all_possibilities(&rules, &own_ticket);
     let (error_rate, other_numbers) = analyse_tickets(&tickets, &rules);
 
-    println!("Part 1: {}", error_rate);
+    println!("Part 1: {error_rate}");
     let mapping = detect_mapping(&mut possibilities, &rules, &other_numbers);
     println!("Part 2: {}", multiply_special_fields(&mapping, &own_ticket));
 }

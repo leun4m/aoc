@@ -20,7 +20,7 @@ fn parse_line(input: &str) -> Direction {
         "forward" => Direction::Forward(value),
         "down" => Direction::Down(value),
         "up" => Direction::Up(value),
-        x => panic!("Unexpected direction: {}", x),
+        x => panic!("Unexpected direction: {x}"),
     }
 }
 

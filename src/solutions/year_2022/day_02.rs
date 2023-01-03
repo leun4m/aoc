@@ -26,7 +26,7 @@ fn parse_symbol(input: &str) -> Symbol {
         "X" => Symbol::Player(PlayerSymbol::X),
         "Y" => Symbol::Player(PlayerSymbol::Y),
         "Z" => Symbol::Player(PlayerSymbol::Z),
-        _ => panic!("Unexpected: {}", input),
+        _ => panic!("Unexpected: {input}"),
     }
 }
 

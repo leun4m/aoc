@@ -26,7 +26,7 @@ fn encode(input: &str) -> String {
 
     for line in input.lines() {
         let line_enc = line.replace('\\', "\\\\").replace('\"', "\\\"");
-        let _ = writeln!(result, "\"{}\"", line_enc);
+        let _ = writeln!(result, "\"{line_enc}\"");
     }
 
     result
@@ -58,7 +58,7 @@ fn count(input: &str) -> RiddleResult {
     for line in input.lines() {
         let mut inside = regex
             .captures(line)
-            .unwrap_or_else(|| panic!("This is not surrounded by \": {}", line))
+            .unwrap_or_else(|| panic!("This is not surrounded by \": {line}"))
             .get(1)
             .unwrap()
             .as_str()

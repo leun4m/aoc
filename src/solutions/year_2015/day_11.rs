@@ -7,7 +7,7 @@ pub fn solve(input: &str) {
         }
     }
 
-    println!("{}", new_password);
+    println!("{new_password}");
 }
 
 fn increment(input: &str) -> String {
@@ -25,7 +25,7 @@ fn increment(input: &str) -> String {
         } else {
             c
         };
-        result = format!("{}{}", new_char, result);
+        result = format!("{new_char}{result}");
     }
     result
 }

@@ -63,7 +63,7 @@ fn parse_line(line: &str) -> (String, String, u64) {
     let regex = Regex::new(r"^(\w+) to (\w+) = (\d+)$").unwrap();
     let captures = regex
         .captures(line)
-        .unwrap_or_else(|| panic!("Line doesn't look as expected: {}", line));
+        .unwrap_or_else(|| panic!("Line doesn't look as expected: {line}"));
     (
         captures.get(1).unwrap().as_str().to_string(),
         captures.get(2).unwrap().as_str().to_string(),

@@ -105,7 +105,7 @@ impl Instruction {
             "LSHIFT" => Instruction::LShift(sym_left, sym_right, wire),
             "RSHIFT" => Instruction::RShift(sym_left, sym_right, wire),
             _ => {
-                panic!("Unknown Operator: {}", operator);
+                panic!("Unknown Operator: {operator}");
             }
         }
     }
@@ -137,7 +137,7 @@ impl Instruction {
                 wire.to_string(),
             )
         } else {
-            panic!("Line looks weird: {}", line);
+            panic!("Line looks weird: {line}");
         }
     }
 }

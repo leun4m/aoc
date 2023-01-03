@@ -52,9 +52,7 @@ fn iterate(origin: &str, insertions: &InsertionMap, iterations: usize) -> u64 {
         pattern_count = process(&pattern_count, insertions);
     }
 
-    if let MinMax(min, max) = count_chars(&pattern_count, origin)
-        .iter()
-        .map(|(_, v)| v)
+    if let MinMax(min, max) = count_chars(&pattern_count, origin).values()
         .minmax()
     {
         max - min

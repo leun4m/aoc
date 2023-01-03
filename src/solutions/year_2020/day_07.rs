@@ -12,8 +12,8 @@ pub fn solve(input: &str) {
     //     println!("{}: {:?}", key, value);
     // }
 
-    println!("Part One: {}", part_one);
-    println!("Part Two: {}", part_two);
+    println!("Part One: {part_one}");
+    println!("Part Two: {part_two}");
 }
 
 fn bags_to_be_contained(rules: &HashMap<String, HashMap<String, u32>>, key: &str) -> u32 {

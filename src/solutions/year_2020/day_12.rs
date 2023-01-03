@@ -3,9 +3,9 @@ use std::cmp::Ordering;
 pub fn solve(input: &str) {
     let directions = parse_input(input);
     let (x1, y1) = move_it_one(&directions);
-    println!("Part 1: {} ({} / {})", manhattan_distance(x1, y1), x1, y1);
+    println!("Part 1: {} ({x1} / {y1})", manhattan_distance(x1, y1));
     let (x2, y2) = move_it_two(&directions);
-    println!("Part 2: {} ({} / {})", manhattan_distance(x2, y2), x2, y2);
+    println!("Part 2: {} ({x2} / {y2})", manhattan_distance(x2, y2));
 }
 
 const START_DIRECTION: Direction = Direction::East;
@@ -94,7 +94,7 @@ fn move_it_two(instructions: &[Instruction]) -> (i32, i32) {
 }
 
 fn turn_around(direction: Direction, degree: i32) -> Direction {
-    assert!(degree % 90 == 0, "UNEXPECTED DEGREE: {}", degree);
+    assert!(degree % 90 == 0, "UNEXPECTED DEGREE: {degree}");
 
     match degree.cmp(&0) {
         Ordering::Less => turn_around(
@@ -120,7 +120,7 @@ fn turn_around(direction: Direction, degree: i32) -> Direction {
 }
 
 fn turn_waypoint((north, east): (i32, i32), degree: i32) -> (i32, i32) {
-    assert!(degree % 90 == 0, "UNEXPECTED DEGREE: {}", degree);
+    assert!(degree % 90 == 0, "UNEXPECTED DEGREE: {degree}");
 
     match degree.cmp(&0) {
         Ordering::Less => turn_waypoint((east, -north), degree + 90),
@@ -146,7 +146,7 @@ fn parse_input(input: &str) -> Vec<Instruction> {
             "L" => Instruction::Left(units),
             "R" => Instruction::Right(units),
             "F" => Instruction::Forward(units),
-            _ => panic!("Unexpected direction: {}", direction),
+            _ => panic!("Unexpected direction: {direction}"),
         });
     }
     result

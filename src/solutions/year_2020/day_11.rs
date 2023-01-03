@@ -234,7 +234,7 @@ fn parse_input(input: &str) -> Vec<Vec<Position>> {
                 '.' => Position::Floor,
                 'L' => Position::SeatEmpty,
                 '#' => Position::SeatOccupied,
-                _ => panic!("Unexpected symbol: {}", c),
+                _ => panic!("Unexpected symbol: {c}"),
             });
         }
 

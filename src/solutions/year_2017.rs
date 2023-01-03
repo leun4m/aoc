@@ -13,6 +13,6 @@ pub fn solve_day(day: u8, input: &str) {
         3 => day_03::solve(input),
         4 => day_04::solve(input),
         5 => day_05::solve(input),
-        _ => println!("{}", INVALID_DAY),
+        _ => println!("{INVALID_DAY}"),
     };
 }

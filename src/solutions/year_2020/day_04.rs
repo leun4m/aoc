@@ -14,7 +14,7 @@ pub fn solve(input: &str) {
                 "ecl" => passport.ecl = key_value[1],
                 "pid" => passport.pid = key_value[1],
                 "cid" => passport.cid = key_value[1],
-                x => panic!("Unexpected key {}", x),
+                x => panic!("Unexpected key {x}"),
             }
         }
 
@@ -27,8 +27,8 @@ pub fn solve(input: &str) {
         }
     }
 
-    println!("Valid Passwords (1): {}", passports_valid_simple);
-    println!("Valid Passwords (2): {}", passports_valid_advanced);
+    println!("Valid Passwords (1): {passports_valid_simple}");
+    println!("Valid Passwords (2): {passports_valid_advanced}");
 }
 
 struct Passport<'a> {

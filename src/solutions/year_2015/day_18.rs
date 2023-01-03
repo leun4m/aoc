@@ -18,7 +18,7 @@ fn parse_line(line: &str) -> Vec<bool> {
         .map(|c| match c {
             '#' => true,
             '.' => false,
-            _ => panic!("Unexpected char: {}", c),
+            _ => panic!("Unexpected char: {c}"),
         })
         .collect::<Vec<_>>()
 }

@@ -11,7 +11,7 @@ pub fn solve(input: &str) {
         }
     }
 
-    println!("MAX SEAT ID: {}", max);
+    println!("MAX SEAT ID: {max}");
 
     let my_seat = all_seats.iter().find(|x| !seats.contains(x)).unwrap();
 

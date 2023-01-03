@@ -18,12 +18,12 @@ pub fn solve(input: &str) {
                 trees += 1;
             }
         }
-        println!("Slope {:?} trees: {}", slope, trees);
+        println!("Slope {slope:?} trees: {trees}");
         product *= trees;
         pos = Position::default();
     }
 
-    println!("Product: {}", product);
+    println!("Product: {product}");
 }
 
 fn parse_map(input: &str) -> World {
@@ -37,7 +37,7 @@ fn parse_map(input: &str) -> World {
             let square = match chr {
                 '.' => Square::Open,
                 '#' => Square::Tree,
-                _ => panic!("Unexpected char: {}", chr),
+                _ => panic!("Unexpected char: {chr}"),
             };
             map.insert(Position::new(x, y), square);
             x += 1;
@@ -101,7 +101,7 @@ impl World {
     fn is_tree(&self, position: &Position) -> bool {
         match self.map.get(position) {
             Some(Square::Tree) => true,
-            None => panic!("Not a valid position {}", position),
+            None => panic!("Not a valid position {position}"),
             _ => false,
         }
     }

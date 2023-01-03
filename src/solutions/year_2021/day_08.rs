@@ -155,7 +155,7 @@ fn match_digit(digit: &str) -> u32 {
         "acf" => 7,
         "abcdefg" => 8,
         "abcdfg" => 9,
-        _ => panic!("Unexpected digit: {}", digit),
+        _ => panic!("Unexpected digit: {digit}"),
     }
 }
 

@@ -3,7 +3,7 @@ pub fn solve(input: &str) {
     let bus = part_one(&times, earliest);
     let timestamp = part_two(&times);
     println!("Part 1: {}", calc_result(bus, earliest));
-    println!("Part 2: {}", timestamp);
+    println!("Part 2: {timestamp}");
 }
 
 #[derive(PartialEq, Eq, Copy, Clone, Debug)]

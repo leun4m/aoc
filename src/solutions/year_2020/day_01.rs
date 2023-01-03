@@ -5,11 +5,11 @@ pub fn solve(input: &str) {
 
     match find_2_numbers(&numbers) {
         None => println!("Result for Part 1 could not be found!"),
-        Some(x) => println!("Result Part 1: {}", x),
+        Some(x) => println!("Result Part 1: {x}"),
     }
     match find_3_numbers(&numbers) {
         None => println!("Result for Part 2 could not be found!"),
-        Some(x) => println!("Result Part 2: {}", x),
+        Some(x) => println!("Result Part 2: {x}"),
     }
 }
 

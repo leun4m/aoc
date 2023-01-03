@@ -6,7 +6,7 @@ pub fn solve(input: &str) {
 fn find_number(input: &str, leading_zeros: usize) -> u32 {
     let prefix = "0".repeat(leading_zeros);
     for i in 1.. {
-        if md5::compute(format!("{}{}", input, &i)).starts_with(prefix.as_bytes()) {
+        if md5::compute(format!("{input}{}", &i)).starts_with(prefix.as_bytes()) {
             return i;
         }
     }

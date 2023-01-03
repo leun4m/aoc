@@ -55,7 +55,7 @@ fn print_progress(password: &str) {
 
 fn find_next(input: &str, start: usize) -> (char, usize) {
     for i in start.. {
-        let result = format!("{:x}", md5::compute(format!("{}{}", input, i)));
+        let result = format!("{:x}", md5::compute(format!("{input}{i}")));
         if result.starts_with(SEARCH_PREFIX) {
             return (result.chars().nth(INDEX_OF_INTEREST).unwrap(), i + 1);
         }
@@ -66,7 +66,7 @@ fn find_next(input: &str, start: usize) -> (char, usize) {
 
 fn find_next2(input: &str, start: usize, positions: &[usize]) -> (char, usize, usize) {
     for i in start.. {
-        let result = format!("{:x}", md5::compute(format!("{}{}", input, i)));
+        let result = format!("{:x}", md5::compute(format!("{input}{i}")));
         if result.starts_with(SEARCH_PREFIX) {
             let pos = result
                 .chars()
@@ -88,7 +88,7 @@ fn find_next2(input: &str, start: usize, positions: &[usize]) -> (char, usize, u
 }
 
 fn replace_char(input: &str, index: usize, character: char) -> String {
-    format!("{}{}{}", &input[..index], character, &input[index + 1..])
+    format!("{}{character}{}", &input[..index], &input[index + 1..])
 }
 
 #[cfg(test)]

@@ -6,8 +6,8 @@ pub fn solve(input: &str) {
     let sum_1 = part_one(&groups);
     let sum_2 = part_two(&groups);
 
-    println!("Sum 1: {}", sum_1);
-    println!("Sum 2: {}", sum_2);
+    println!("Sum 1: {sum_1}");
+    println!("Sum 2: {sum_2}");
 }
 
 fn part_one(groups: &[Vec<Vec<char>>]) -> usize {

@@ -5,8 +5,8 @@ use std::cmp::Ordering;
 pub fn solve(input: &str) {
     let target = parse(input);
     let (highest_y, hitting_vectors) = find_best(&target);
-    println!("Part 1: {}", highest_y);
-    println!("Part 2: {}", hitting_vectors);
+    println!("Part 1: {highest_y}");
+    println!("Part 2: {hitting_vectors}");
 }
 
 const TARGET_AREA_KEY: &str = "target area: ";

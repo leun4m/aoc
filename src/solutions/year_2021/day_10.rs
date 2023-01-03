@@ -46,7 +46,7 @@ fn find_error(line: &str) -> Option<char> {
                 }
             }
             _ => {
-                panic!("Unexpected char: {}", c);
+                panic!("Unexpected char: {c}");
             }
         } {
             return Some(invalid);
@@ -67,7 +67,7 @@ fn find_missing(line: &str) -> String {
                 opened.pop();
             }
             _ => {
-                panic!("Unexpected char: {}", c);
+                panic!("Unexpected char: {c}");
             }
         }
     }

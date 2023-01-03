@@ -161,7 +161,7 @@ fn parse_line(line: &str) -> Vec<Direction> {
             'D' => Direction::D,
             'L' => Direction::L,
             'R' => Direction::R,
-            x => panic!("Unexpected symbol: {}", x),
+            x => panic!("Unexpected symbol: {x}"),
         })
         .collect()
 }
@@ -184,7 +184,7 @@ pub fn number_of_pos(pos: (i32, i32)) -> char {
         (0, 2) => '7',
         (1, 2) => '8',
         (2, 2) => '9',
-        _ => panic!("Unexpected pos: {:?}", pos),
+        _ => panic!("Unexpected pos: {pos:?}"),
     }
 }
 
