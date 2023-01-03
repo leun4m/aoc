@@ -1,5 +1,3 @@
-use std::cmp;
-
 use crate::parser;
 
 pub fn solve(input: &str) {
@@ -190,8 +188,8 @@ pub fn number_of_pos(pos: (i32, i32)) -> char {
 
 fn clamp(pos: (i32, i32)) -> (i32, i32) {
     (
-        cmp::min(2, cmp::max(0, pos.0)),
-        cmp::min(2, cmp::max(0, pos.1)),
+        pos.0.clamp(0, 2),
+        pos.1.clamp(0, 2),
     )
 }
 
