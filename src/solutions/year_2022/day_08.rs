@@ -20,7 +20,7 @@ fn parse(input: &str) -> Vec<Vec<TreeSize>> {
 
 fn part_one(forest: &[Vec<TreeSize>]) -> u32 {
     let mut sum = 0;
-    
+
     for y in 0..forest.len() {
         for x in 0..forest[y].len() {
             if is_visble(forest, x, y) {

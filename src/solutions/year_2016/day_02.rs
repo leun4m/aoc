@@ -187,10 +187,7 @@ pub fn number_of_pos(pos: (i32, i32)) -> char {
 }
 
 fn clamp(pos: (i32, i32)) -> (i32, i32) {
-    (
-        pos.0.clamp(0, 2),
-        pos.1.clamp(0, 2),
-    )
+    (pos.0.clamp(0, 2), pos.1.clamp(0, 2))
 }
 
 #[cfg(test)]
