@@ -29,12 +29,14 @@ Usually it's a good idea to write tests according to the examples provided by th
 
 ## Paradigms
 
-The idea is to get to the solution mainly with basic Rust and `std`, so in general additional crates should be added only if really necessary.
+The idea is to get to the solution mainly with basic Rust and `std`, so in general additional crates should be added only with care.
 
 Currently, the only packages used are:
 
-- `structopt` (to not worry about the CLI stuff)
+- `clap` (to not worry about the CLI stuff)
 - `regex` (since many puzzles require parsing input)
-- `md5` [Day 4 in 2015](https://github.com/leun4m/aoc/blob/main/src/solutions/year_2015/day_04.rs) and [Day 5 in 2016](https://github.com/leun4m/aoc/blob/main/src/solutions/year_2016/day_05.rs) required md5 hashing
+- `md5` ([Day 4 in 2015](https://github.com/leun4m/aoc/blob/main/src/solutions/year_2015/day_04.rs) and [Day 5 in 2016](https://github.com/leun4m/aoc/blob/main/src/solutions/year_2016/day_05.rs) require md5 hashing)
 - `itertool` (Provides neat functional stuff for iterators like `unique()`, `sorted()` which `std` doesn't provide)
-- `simple_logger` (for logging)
+- `log` / `env_logger` (for logging)
+- `lazy_static` to declare Regexps as `const`
+- `chrono` for working with dates and times
