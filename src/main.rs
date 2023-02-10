@@ -17,40 +17,48 @@ mod parser;
 mod solutions;
 mod util;
 
+use clap::Parser;
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::path::PathBuf;
 use std::time::Instant;
-use structopt::StructOpt;
 
-#[derive(Debug, StructOpt)]
-#[structopt(
-    name = "AoC Solver",
-    about = "A solver for the Advent of Code riddles.",
+#[derive(Debug, Parser)]
+#[command(
     author,
-    no_version
+    about,
+    help_template = "
+{name}
+{author}
+{about}
+
+{usage-heading}
+{usage}
+
+{all-args}
+"
 )]
 struct Opt {
     /// Set year (2 or 4 digits)
-    #[structopt(short, long)]
+    #[arg(short, long)]
     year: u16,
 
     /// Set day
-    #[structopt(short, long)]
+    #[arg(short, long)]
     day: u8,
 
     /// Input value, requires input-file if not present
-    #[structopt(short, long)]
+    #[arg(short, long)]
     input: Option<String>,
 
     /// Input file - if present this will be taken as input
-    #[structopt(parse(from_os_str))]
+    #[arg()]
     input_file: Option<PathBuf>,
 }
 fn main() {
     env_logger::init();
 
-    let opt = Opt::from_args();
+    let opt = Opt::parse();
 
     let input = if opt.input_file.is_some() {
         read_file(opt.input_file.unwrap())
