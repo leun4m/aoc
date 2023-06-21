@@ -84,7 +84,7 @@ impl Screen {
             .map(|col| col.iter().map(|x| if *x { '#' } else { ' ' }).collect())
             .map(|x: String| {
                 let mut result = String::new();
-                for chunk in &x.chars().into_iter().chunks(CHAR_WIDTH) {
+                for chunk in &x.chars().chunks(CHAR_WIDTH) {
                     result.push_str(&chunk.into_iter().collect::<String>());
                     result.push_str("   ");
                 }
