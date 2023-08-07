@@ -55,7 +55,7 @@ mod tests {
     #[test]
     fn parse_works() {
         let output = parse(INPUT);
-        assert_eq!(output, vec![3, 4, 3, 1, 2])
+        assert_eq!(output, vec![3, 4, 3, 1, 2]);
     }
 
     #[test]

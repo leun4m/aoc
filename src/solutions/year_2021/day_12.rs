@@ -117,6 +117,6 @@ mod tests {
 
     #[test]
     fn part_two_works() {
-        assert_eq!(part_two(&parse(INPUT)), 36)
+        assert_eq!(part_two(&parse(INPUT)), 36);
     }
 }

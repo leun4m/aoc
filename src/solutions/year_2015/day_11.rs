@@ -66,6 +66,6 @@ mod tests {
 
     #[test]
     fn example() {
-        assert_eq!("abc", super::increment("abb"))
+        assert_eq!("abc", super::increment("abb"));
     }
 }

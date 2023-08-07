@@ -130,7 +130,7 @@ mod tests {
                 y_min: -10,
                 y_max: -5
             }
-        )
+        );
     }
 
     #[test]

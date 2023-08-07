@@ -146,7 +146,7 @@ mod tests {
     fn parse_works() {
         let (start, insertions) = parse(INPUT);
         assert_eq!(start, "NNCB");
-        assert_eq!(insertions, HashMap::from(INSERTIONS))
+        assert_eq!(insertions, HashMap::from(INSERTIONS));
     }
 
     #[test]
