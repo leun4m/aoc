@@ -103,7 +103,7 @@ fn sum_properties(cookies: &[Cookie], teaspoons: &[i64], f: PropertyOp) -> i64 {
 
 fn parse_cookie(input: &str) -> Cookie {
     // Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8
-    let captures = Regex::new(r#"(\w+): capacity (-?\d+), durability (-?\d+), flavor (-?\d+), texture (-?\d+), calories (-?\d+)"#).unwrap()
+    let captures = Regex::new(r"(\w+): capacity (-?\d+), durability (-?\d+), flavor (-?\d+), texture (-?\d+), calories (-?\d+)").unwrap()
     .captures(input).expect("Looks weird");
 
     let name: String = captures[1].parse().unwrap();

@@ -33,7 +33,7 @@ fn parse_line(line: &str) -> Reindeer {
 
 fn part_one(reindeers: &mut [Reindeer]) -> u32 {
     for _ in 0..TIME {
-        for reindeer in reindeers.iter_mut() {
+        for reindeer in &mut *reindeers {
             reindeer.tick();
         }
     }
@@ -42,7 +42,7 @@ fn part_one(reindeers: &mut [Reindeer]) -> u32 {
 
 fn part_two(reindeers: &mut [Reindeer]) -> u32 {
     for _ in 0..TIME {
-        for reindeer in reindeers.iter_mut() {
+        for reindeer in &mut *reindeers {
             reindeer.tick();
         }
 

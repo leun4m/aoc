@@ -21,7 +21,7 @@ pub fn solve(input: &str) {
 fn parse_aunt(line: &str) -> Aunt {
     let mut result = HashMap::new();
     // Sue 1: goldfish: 6, trees: 9, akitas: 0
-    let captures = Regex::new(r#"Sue (\d+): ([^$]+)"#)
+    let captures = Regex::new(r"Sue (\d+): ([^$]+)")
         .unwrap()
         .captures(line)
         .expect("Looks weird");
@@ -30,7 +30,7 @@ fn parse_aunt(line: &str) -> Aunt {
     let attributes: String = captures[2].parse().unwrap();
 
     for attribute in attributes.split(',') {
-        let attribute_captures = Regex::new(r#"(\w+): (\d+)"#)
+        let attribute_captures = Regex::new(r"(\w+): (\d+)")
             .unwrap()
             .captures(attribute)
             .unwrap();

@@ -114,8 +114,8 @@ fn part_two(drafts: &[BingoNumber], boards: &[BingoBoard]) -> BingoNumber {
 }
 
 fn mark_board(board: &mut MarkedBingoBoard, draft: BingoNumber) {
-    for row in board.iter_mut() {
-        for square in row.iter_mut() {
+    for row in &mut *board {
+        for square in &mut *row {
             if let BingoSquare::Unmarked(num) = &square {
                 if *num == draft {
                     *square = BingoSquare::Marked(draft);

@@ -35,7 +35,7 @@ fn part_two(root: &JSONElement) -> i32 {
 fn parse(input: &str) -> JSONElement {
     let trimmed = input.trim();
 
-    let regex_number: Regex = Regex::new(r#"^-?\d+$"#).unwrap();
+    let regex_number: Regex = Regex::new(r"^-?\d+$").unwrap();
     let regex_string: Regex = Regex::new(r#"^"([^"]*)"$"#).unwrap();
 
     if let Some(capture) = regex_number.captures(trimmed) {

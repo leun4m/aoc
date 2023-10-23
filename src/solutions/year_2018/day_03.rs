@@ -13,7 +13,7 @@ pub fn solve(input: &str) {
 
 fn parse_line(line: &str) -> Claim {
     // #1 @ 1,3: 4x4
-    let captures = Regex::new(r#"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)"#)
+    let captures = Regex::new(r"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)")
         .unwrap()
         .captures(line)
         .expect("Looks weird");

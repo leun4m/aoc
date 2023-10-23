@@ -36,8 +36,8 @@ fn main_internal(input: &str) -> (u32, u32) {
 
 fn sum_brightness(matrix: &[Vec<u32>]) -> u32 {
     let mut brightness = 0;
-    for row in matrix.iter() {
-        for led in row.iter() {
+    for row in matrix {
+        for led in row {
             brightness += led;
         }
     }
@@ -46,8 +46,8 @@ fn sum_brightness(matrix: &[Vec<u32>]) -> u32 {
 
 fn count_lit_lights(matrix: &[Vec<bool>]) -> u32 {
     let mut lights_on = 0;
-    for row in matrix.iter() {
-        for led in row.iter() {
+    for row in matrix {
+        for led in row {
             if *led {
                 lights_on += 1;
             }
