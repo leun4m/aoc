@@ -4,6 +4,7 @@ use regex::Regex;
 pub fn solve(input: &str) {
     let games = parse(input);
     println!("Part 1: {}", part_one(&games));
+    println!("Part 2: {}", part_two(&games));
 }
 
 const MAX_R: u32 = 12;
@@ -18,10 +19,14 @@ fn part_one(games: &[Game]) -> u32 {
     games.iter().filter(|x| can_play(x)).map(|x| x.id).sum()
 }
 
+fn part_two(games: &[Game]) -> u32 {
+    games.iter().map(minimal_cubes).sum()
+}
+
 fn parse_line(input: &str) -> Game {
-    let a = input.split(":").collect_vec();
+    let a = input.split(':').collect_vec();
     let id = a[0][4..].trim().parse().unwrap();
-    let subsets = a[1].split(";").map(parse_subset).collect();
+    let subsets = a[1].split(';').map(parse_subset).collect();
     Game::new(id, subsets)
 }
 
@@ -42,8 +47,22 @@ fn try_find_capture(regex: &str, input: &str) -> u32 {
 
 fn can_play(game: &Game) -> bool {
     game.subsets.iter().all(|subset| {
-        subset.red_count <= MAX_R && subset.green_count <= MAX_G && subset.blue_count <= MAX_B
+        subset.reds <= MAX_R && subset.greens <= MAX_G && subset.blues <= MAX_B
     })
+}
+
+fn minimal_cubes(game: &Game) -> u32 {
+    let mut r_min = 0;
+    let mut g_min = 0;
+    let mut b_min = 0;
+
+    for subset in &game.subsets {
+        r_min = std::cmp::max(r_min, subset.reds);
+        g_min = std::cmp::max(g_min, subset.greens);
+        b_min = std::cmp::max(b_min, subset.blues);
+    }
+
+    r_min * g_min * b_min
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -60,32 +79,32 @@ impl Game {
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy)]
 struct Subset {
-    red_count: u32,
-    green_count: u32,
-    blue_count: u32,
+    reds: u32,
+    greens: u32,
+    blues: u32,
 }
 
 impl Subset {
     pub fn new() -> Self {
         Self {
-            red_count: 0,
-            green_count: 0,
-            blue_count: 0,
+            reds: 0,
+            greens: 0,
+            blues: 0,
         }
     }
 
     pub fn r(&mut self, red: u32) -> Self {
-        self.red_count = red;
+        self.reds = red;
         *self
     }
 
     pub fn g(&mut self, green: u32) -> Self {
-        self.green_count = green;
+        self.greens = green;
         *self
     }
 
     pub fn b(&mut self, blue: u32) -> Self {
-        self.blue_count = blue;
+        self.blues = blue;
         *self
     }
 }
@@ -142,11 +161,16 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
                 )
             ],
             parse(EXAMPLE_INPUT),
-        )
+        );
     }
 
     #[test]
     fn test_part_one() {
         assert_eq!(8, part_one(&parse(EXAMPLE_INPUT)));
+    }
+
+    #[test]
+    fn test_part_two() {
+        assert_eq!(2286, part_two(&parse(EXAMPLE_INPUT)));
     }
 }
