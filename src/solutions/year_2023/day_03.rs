@@ -5,22 +5,21 @@ pub fn solve(input: &str) {
     println!("Part 1: {}", part_one(&map));
 }
 
-fn part_one(schematic: &Schematic) -> usize {
+fn part_one(schematic: &[Thing]) -> usize {
     let vec = schematic
-        .map
         .iter()
         .filter(|x| !x.1.is_symbol())
         .filter(|x| x.0.iter().any(|z| is_adjacent(z, schematic)))
         .map(|x| x.1.get_value())
         .collect_vec();
 
-    println!("{:?}", vec);
+    println!("{vec:?}");
 
     vec.iter().sum()
 }
 
-fn is_adjacent(point: &Point, schematic: &Schematic) -> bool {
-    get_symbols(&schematic.map)
+fn is_adjacent(point: &Point, schematic: &[Thing]) -> bool {
+    get_symbols(schematic)
         .iter()
         .flat_map(|thing| thing.0.iter())
         .any(|x| next_to(x, point))
@@ -68,51 +67,23 @@ impl Element {
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-struct Schematic {
-    map: Vec<Thing>,
-    width: usize,
-    height: usize,
-}
-
-#[derive(Debug, PartialEq, Eq, Clone)]
 struct Thing(Vec<Point>, Element);
 
-impl Schematic {
-    fn new(map: Vec<Thing>) -> Self {
-        let width = map
-            .iter()
-            .flat_map(|x| x.0.iter())
-            .map(|x| x.0)
-            .max()
-            .unwrap_or_default();
-        let height = map
-            .iter()
-            .flat_map(|x| x.0.iter())
-            .map(|x| x.1)
-            .max()
-            .unwrap_or_default();
-
-        Self { map, width, height }
-    }
-}
-
-fn parse(input: &str) -> Schematic {
+fn parse(input: &str) -> Vec<Thing> {
     let mut map = Vec::new();
 
     for (y, line) in input.lines().enumerate() {
-        let mut number = String::new();
+        let mut digits = String::new();
         for (x, symbol) in line.chars().enumerate() {
             if symbol.is_ascii_digit() {
-                number.push(symbol);
+                digits.push(symbol);
             } else {
-                if !number.is_empty() {
-                    let points = (x - number.len()..x).map(|x0| Point(x0, y)).collect_vec();
+                if !digits.is_empty() {
+                    let points = (x - digits.len()..x).map(|x0| Point(x0, y)).collect_vec();
+                    let number = Element::Number(digits.parse::<usize>().unwrap());
 
-                    map.push(Thing(
-                        points,
-                        Element::Number(number.parse::<usize>().unwrap()),
-                    ));
-                    number.clear();
+                    map.push(Thing(points, number));
+                    digits.clear();
                 }
 
                 if symbol != '.' {
@@ -122,7 +93,7 @@ fn parse(input: &str) -> Schematic {
         }
     }
 
-    Schematic::new(map)
+    map
 }
 
 #[cfg(test)]
@@ -142,7 +113,7 @@ mod tests {
 
     #[test]
     fn test_parse() {
-        let map = Schematic::new(Vec::from([
+        let map = Vec::from([
             Thing(
                 vec![Point(0, 0), Point(1, 0), Point(2, 0)],
                 Element::Number(467),
@@ -183,7 +154,7 @@ mod tests {
                 vec![Point(5, 9), Point(6, 9), Point(7, 9)],
                 Element::Number(598),
             ),
-        ]));
+        ]);
         assert_eq!(map, parse(EXAMPLE_INPUT))
     }
 

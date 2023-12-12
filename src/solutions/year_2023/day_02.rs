@@ -46,9 +46,9 @@ fn try_find_capture(regex: &str, input: &str) -> u32 {
 }
 
 fn can_play(game: &Game) -> bool {
-    game.subsets.iter().all(|subset| {
-        subset.reds <= MAX_R && subset.greens <= MAX_G && subset.blues <= MAX_B
-    })
+    game.subsets
+        .iter()
+        .all(|subset| subset.reds <= MAX_R && subset.greens <= MAX_G && subset.blues <= MAX_B)
 }
 
 fn minimal_cubes(game: &Game) -> u32 {

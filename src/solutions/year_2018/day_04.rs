@@ -125,8 +125,7 @@ impl MostAsleep {
 }
 
 lazy_static! {
-    static ref LINE_REGEX: Regex =
-        Regex::new(r"\[(\d\d\d\d-\d\d-\d\d \d\d:\d\d)\] (.*)").unwrap();
+    static ref LINE_REGEX: Regex = Regex::new(r"\[(\d\d\d\d-\d\d-\d\d \d\d:\d\d)\] (.*)").unwrap();
     static ref GUARD_REGEX: Regex = Regex::new(r"Guard #(\d+) begins shift").unwrap();
 }
 
