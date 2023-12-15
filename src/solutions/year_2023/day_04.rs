@@ -1,8 +1,7 @@
-use itertools::Itertools;
-
 pub fn solve(input: &str) {
     let cards = parse(input);
     println!("Part 1: {}", part_one(&cards));
+    println!("Part 2: {}", part_two(&cards));
 }
 
 fn parse(input: &str) -> Vec<Card> {
@@ -13,15 +12,6 @@ fn parse_line(line: &str) -> Card {
     let parts_colon: Vec<&str> = line.split(':').collect();
     let parts_pipe: Vec<&str> = parts_colon[1].split('|').collect();
 
-    let _id = parts_colon[0]
-        .split(' ')
-        .collect_vec()
-        .iter()
-        .filter(|x| !x.is_empty())
-        .nth(1)
-        .unwrap()
-        .parse()
-        .unwrap();
     let winning_numbers = parts_pipe[0]
         .split(' ')
         .filter(|x| !x.is_empty())
@@ -34,7 +24,6 @@ fn parse_line(line: &str) -> Card {
         .collect();
 
     Card {
-        _id,
         winning_numbers,
         own_numbers,
     }
@@ -49,8 +38,23 @@ fn part_one(cards: &[Card]) -> u32 {
         .sum()
 }
 
+fn part_two(cards: &[Card]) -> usize {
+    let mut card_count = vec![1; cards.len()];
+
+    for (i, card) in cards.iter().enumerate() {
+        let winnings_cards = card.count_winning_numbers();
+
+        for j in (i + 1)..(i + 1 + winnings_cards) {
+            if j < card_count.len() {
+                card_count[j] += card_count[i];
+            }
+        }
+    }
+
+    card_count.iter().sum()
+}
+
 struct Card {
-    _id: u32,
     winning_numbers: Vec<u32>,
     own_numbers: Vec<u32>,
 }
@@ -78,5 +82,10 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
     #[test]
     fn test_part_one() {
         assert_eq!(13, part_one(&parse(EXAMPLE_INPUT)));
+    }
+
+    #[test]
+    fn test_part_two() {
+        assert_eq!(30, part_two(&parse(EXAMPLE_INPUT)));
     }
 }
