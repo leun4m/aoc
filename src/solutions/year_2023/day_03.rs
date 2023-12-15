@@ -105,7 +105,7 @@ fn parse(input: &str) -> Vec<Thing> {
                 }
             }
         }
-        
+
         if !digits.is_empty() {
             let points = (line.chars().count() - digits.len()..line.chars().count())
                 .map(|x0| Point(x0, y))
