@@ -2,12 +2,11 @@ use itertools::Itertools;
 
 pub fn solve(input: &str) {
     let (seeds, blocks) = parse(input);
-    print!("Part 1: {}", part_one(&seeds, &blocks));
+    println!("Part 1: {}", part_one(&seeds, &blocks));
 }
 
-fn parse(input: &str) -> (Vec<usize>, Vec<Block>) {
+fn parse(input: &str) -> (Vec<isize>, Vec<Block>) {
     let blocks = input.split("\n\n").collect_vec();
-    println!("{}", blocks[0]);
     let seeds = blocks[0]
         .split(' ')
         .skip(1)
@@ -42,9 +41,9 @@ fn parse_block(block: &str) -> Block {
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 struct InstLine {
-    dest_range_start: usize,
-    src_range_start: usize,
-    range_length: usize,
+    dest_range_start: isize,
+    src_range_start: isize,
+    range_length: isize,
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -52,13 +51,32 @@ struct Block {
     lines: Vec<InstLine>,
 }
 
-fn part_one(seeds: &[usize], blocks: &[Block]) -> usize {
-    0
+fn part_one(seeds: &[isize], blocks: &[Block]) -> isize {
+    let mut location_numbers = Vec::new();
+
+    for seed in seeds {
+        let mut s = *seed;
+
+        for block in blocks {
+            if let Some(element) = block
+                .lines
+                .iter()
+                .find(|x| x.src_range_start <= s && s <= x.src_range_start + x.range_length)
+            {
+                let diff = s - element.src_range_start;
+                s = element.dest_range_start + diff;
+            }
+        }
+
+        location_numbers.push(s);
+    }
+
+    location_numbers.into_iter().min().unwrap_or_default()
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::solutions::year_2023::day_05::parse;
+    use super::*;
 
     const EXAMPLE_INPUT: &str = "seeds: 79 14 55 13
 
@@ -97,5 +115,11 @@ humidity-to-location map:
     #[test]
     fn test_parse() {
         println!("{:?}", parse(EXAMPLE_INPUT))
+    }
+
+    #[test]
+    fn test_part_one() {
+        let (seeds, blocks) = parse(EXAMPLE_INPUT);
+        assert_eq!(35, part_one(&seeds, &blocks));
     }
 }
