@@ -3,8 +3,8 @@ use itertools::Itertools;
 use crate::parser;
 
 pub fn solve(input: &str) {
-    println!("Part 1: {}", part_one(&parse_one(input)));
-    println!("Part 2: {}", part_two(&parse_two(input)));
+    println!("Part 1: {}", part_one(&parse(input)));
+    println!("Part 2: {}", part_one(&parse(&pre_parse(input))));
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -13,59 +13,29 @@ struct Race {
     record_distance: usize,
 }
 
-fn parse_one(input: &str) -> Vec<Race> {
-    let lines = parser::lines_as_strings(input);
-    let durations = lines[0]
-        .split_ascii_whitespace()
-        .into_iter()
-        .map(|x| x.parse())
-        .filter(|x| x.is_ok())
-        .map(|x| x.unwrap())
-        .collect_vec();
-    let record_distances = lines[1]
-        .split_ascii_whitespace()
-        .into_iter()
-        .map(|x| x.parse())
-        .filter(|x| x.is_ok())
-        .map(|x| x.unwrap())
-        .collect_vec();
+fn parse(input: &str) -> Vec<Race> {
+    let lines = parser::lines_custom(input, |line| {
+        line.split_ascii_whitespace()
+            .map(str::parse)
+            .filter(std::result::Result::is_ok)
+            .map(std::result::Result::unwrap)
+            .collect_vec()
+    });
 
-    (0..durations.len())
+    (0..lines[0].len())
         .map(|i| Race {
-            duration: durations[i],
-            record_distance: record_distances[i],
+            duration: lines[0][i],
+            record_distance: lines[1][i],
         })
         .collect()
 }
 
-fn parse_two(input: &str) -> Race {
-    let lines = parser::lines_as_strings(input);
-
-    let duration = lines[0]
-        .chars()
-        .filter(|x| x.is_ascii_digit())
-        .collect::<String>()
-        .parse()
-        .unwrap_or_default();
-    let record_distance = lines[1]
-        .chars()
-        .filter(|x| x.is_ascii_digit())
-        .collect::<String>()
-        .parse()
-        .unwrap_or_default();
-
-    Race {
-        duration,
-        record_distance,
-    }
+fn pre_parse(input: &str) -> String {
+    input.replace(' ', "").replace(':', " ")
 }
 
 fn part_one(races: &[Race]) -> usize {
     races.iter().map(calc_race).product()
-}
-
-fn part_two(race: &Race) -> usize {
-    calc_race(race)
 }
 
 fn calc_race(race: &Race) -> usize {
@@ -83,7 +53,7 @@ mod tests {
     #[test]
     fn test_parse() {
         assert_eq!(
-            parse_one(EXAMPLE_INPUT),
+            parse(EXAMPLE_INPUT),
             vec![
                 Race {
                     duration: 7,
@@ -103,11 +73,11 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        assert_eq!(part_one(&parse_one(EXAMPLE_INPUT)), 288)
+        assert_eq!(part_one(&parse(EXAMPLE_INPUT)), 288)
     }
 
     #[test]
     fn test_part_two() {
-        assert_eq!(part_two(&parse_two(EXAMPLE_INPUT)), 71503)
+        assert_eq!(part_one(&parse(&pre_parse(EXAMPLE_INPUT))), 71503)
     }
 }
