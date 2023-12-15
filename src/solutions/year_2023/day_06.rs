@@ -3,8 +3,8 @@ use itertools::Itertools;
 use crate::parser;
 
 pub fn solve(input: &str) {
-    println!("Part 1: {}", part_one(&parse(input)));
-    println!("Part 2: {}", part_one(&parse(&pre_parse(input))));
+    println!("Part 1: {}", part_one(input));
+    println!("Part 2: {}", part_two(input));
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -34,7 +34,15 @@ fn pre_parse(input: &str) -> String {
     input.replace(' ', "").replace(':', " ")
 }
 
-fn part_one(races: &[Race]) -> usize {
+fn part_one(input: &str) -> usize {
+    multiply_races(&parse(input))
+}
+
+fn part_two(input: &str) -> usize {
+    multiply_races(&parse(&pre_parse(input)))
+}
+
+fn multiply_races(races: &[Race]) -> usize {
     races.iter().map(calc_race).product()
 }
 
@@ -73,11 +81,11 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        assert_eq!(part_one(&parse(EXAMPLE_INPUT)), 288)
+        assert_eq!(part_one(EXAMPLE_INPUT), 288)
     }
 
     #[test]
     fn test_part_two() {
-        assert_eq!(part_one(&parse(&pre_parse(EXAMPLE_INPUT))), 71503)
+        assert_eq!(part_two(EXAMPLE_INPUT), 71503)
     }
 }
