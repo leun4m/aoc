@@ -3,6 +3,7 @@ use itertools::Itertools;
 pub fn solve(input: &str) {
     let (seeds, blocks) = parse(input);
     println!("Part 1: {}", part_one(&seeds, &blocks));
+    println!("Part 2: {}", part_two(&seeds, &blocks));
 }
 
 fn parse(input: &str) -> (Vec<isize>, Vec<Block>) {
@@ -52,26 +53,46 @@ struct Block {
 }
 
 fn part_one(seeds: &[isize], blocks: &[Block]) -> isize {
-    let mut location_numbers = Vec::new();
+    seeds
+        .iter()
+        .map(|&seed| convert_seed(blocks, seed))
+        .min()
+        .unwrap_or_default()
+}
 
-    for seed in seeds {
-        let mut s = *seed;
+// TODO: doesn't get the right result yet...
+fn part_two(seeds: &[isize], blocks: &[Block]) -> isize {
+    seeds
+        .iter()
+        .chunks(2)
+        .into_iter()
+        .map(|chunk| {
+            let c = chunk.collect_vec();
+            let start = *c[0];
+            let length = *c[1];
+            println!(". {length}");
 
-        for block in blocks {
-            if let Some(element) = block
-                .lines
-                .iter()
-                .find(|x| x.src_range_start <= s && s <= x.src_range_start + x.range_length)
-            {
-                let diff = s - element.src_range_start;
-                s = element.dest_range_start + diff;
-            }
+            (start..start + length)
+                .map(|seed| convert_seed(blocks, seed))
+                .min()
+                .unwrap_or(isize::MAX)
+        })
+        .min()
+        .unwrap_or_default()
+}
+
+fn convert_seed(blocks: &[Block], mut seed: isize) -> isize {
+    for block in blocks {
+        if let Some(element) = block
+            .lines
+            .iter()
+            .find(|x| x.src_range_start <= seed && seed <= x.src_range_start + x.range_length)
+        {
+            seed += element.dest_range_start - element.src_range_start;
         }
-
-        location_numbers.push(s);
     }
 
-    location_numbers.into_iter().min().unwrap_or_default()
+    seed
 }
 
 #[cfg(test)]
@@ -121,5 +142,11 @@ humidity-to-location map:
     fn test_part_one() {
         let (seeds, blocks) = parse(EXAMPLE_INPUT);
         assert_eq!(35, part_one(&seeds, &blocks));
+    }
+
+    #[test]
+    fn test_part_two() {
+        let (seeds, blocks) = parse(EXAMPLE_INPUT);
+        assert_eq!(46, part_two(&seeds, &blocks));
     }
 }
