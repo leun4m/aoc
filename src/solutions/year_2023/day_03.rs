@@ -13,8 +13,6 @@ fn part_one(schematic: &[Thing]) -> usize {
         .map(|x| x.1.get_value())
         .collect_vec();
 
-    println!("{vec:?}");
-
     vec.iter().sum()
 }
 
@@ -90,6 +88,15 @@ fn parse(input: &str) -> Vec<Thing> {
                     map.push(Thing(vec![Point(x, y)], Element::Symbol(symbol)));
                 }
             }
+        }
+        if !digits.is_empty() {
+            let points = (line.chars().count() - digits.len()..line.chars().count())
+                .map(|x0| Point(x0, y))
+                .collect_vec();
+            let number = Element::Number(digits.parse::<usize>().unwrap());
+
+            map.push(Thing(points, number));
+            digits.clear();
         }
     }
 
