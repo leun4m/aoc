@@ -3,24 +3,44 @@ use itertools::Itertools;
 pub fn solve(input: &str) {
     let map = parse(input);
     println!("Part 1: {}", part_one(&map));
+    println!("Part 2: {}", part_two(&map));
 }
 
 fn part_one(schematic: &[Thing]) -> usize {
-    let vec = schematic
+    schematic
         .iter()
         .filter(|x| !x.1.is_symbol())
-        .filter(|x| x.0.iter().any(|z| is_adjacent(z, schematic)))
+        .filter(|x| x.0.iter().any(|z| adjacent_to_symbol(z, schematic)))
         .map(|x| x.1.get_value())
-        .collect_vec();
-
-    vec.iter().sum()
+        .sum()
 }
 
-fn is_adjacent(point: &Point, schematic: &[Thing]) -> bool {
-    get_symbols(schematic)
+fn part_two(schematic: &[Thing]) -> usize {
+    schematic
         .iter()
+        .filter(|x| x.1 == Element::Symbol('*'))
+        .flat_map(|x| x.0.iter())
+        .map(|x| adjecent_numbers(x, schematic))
+        .filter(|x| x.len() == 2)
+        .map(|x| x[0] * x[1])
+        .sum()
+}
+
+fn adjacent_to_symbol(point: &Point, schematic: &[Thing]) -> bool {
+    schematic
+        .iter()
+        .filter(|x| x.1.is_symbol())
         .flat_map(|thing| thing.0.iter())
         .any(|x| next_to(x, point))
+}
+
+fn adjecent_numbers(point: &Point, schematic: &[Thing]) -> Vec<usize> {
+    schematic
+        .iter()
+        .filter(|x| !x.1.is_symbol())
+        .filter(|thing| thing.0.iter().any(|z| next_to(z, point)))
+        .map(|x| x.1.get_value())
+        .collect()
 }
 
 fn next_to(a: &Point, b: &Point) -> bool {
@@ -36,10 +56,6 @@ fn next_to(a: &Point, b: &Point) -> bool {
     ]
     .iter()
     .any(|x| x == b)
-}
-
-fn get_symbols(map: &[Thing]) -> Vec<&Thing> {
-    map.iter().filter(|x| x.1.is_symbol()).collect()
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy)]
@@ -89,6 +105,7 @@ fn parse(input: &str) -> Vec<Thing> {
                 }
             }
         }
+        
         if !digits.is_empty() {
             let points = (line.chars().count() - digits.len()..line.chars().count())
                 .map(|x0| Point(x0, y))
