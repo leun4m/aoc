@@ -7,6 +7,7 @@ use crate::parser;
 pub fn solve(input: &str) {
     let hands = parse(input);
     println!("Part 1: {}", part_one(&hands));
+    println!("Part 2: {}", part_two(&hands));
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -43,17 +44,23 @@ impl Ord for Hand {
 impl Hand {
     fn rank(&self) -> usize {
         let counted = self.count_types();
-        if has_count(&counted, 5) {
+        let jokers = counted
+            .iter()
+            .find(|x| x.0.is_joker())
+            .map(|x| x.1)
+            .unwrap_or_default();
+
+        if Self::is_x_of_a_kind(&counted, jokers, 5) {
             6
-        } else if has_count(&counted, 4) {
+        } else if Self::is_x_of_a_kind(&counted, jokers, 4) {
             5
-        } else if has_count(&counted, 3) && has_count(&counted, 2) {
+        } else if Self::is_a_house(&counted, jokers, 3, 2) {
             4
-        } else if has_count(&counted, 3) {
+        } else if Self::is_x_of_a_kind(&counted, jokers, 3) {
             3
-        } else if got_count(&counted, 2) == 2 {
+        } else if Self::is_a_house(&counted, jokers, 2, 2) {
             2
-        } else if has_count(&counted, 2) {
+        } else if Self::is_x_of_a_kind(&counted, jokers, 2) {
             1
         } else {
             0
@@ -66,17 +73,40 @@ impl Hand {
             .map(|&c| (c, self.hand.iter().filter(|&&x| x == c).count()))
             .collect()
     }
+
+    fn switch_jack_to_joker(&self) -> Self {
+        Self {
+            hand: self.hand.iter().map(|x| x.switch_jack_to_joker()).collect(),
+            bid: self.bid,
+        }
+    }
+
+    fn is_x_of_a_kind(counted: &[(CardLabel, usize)], jokers: usize, count: usize) -> bool {
+        counted.iter().any(|x| x.1 + jokers == count)
+    }
+
+    fn is_a_house(counted: &[(CardLabel, usize)], jokers: usize, a: usize, b: usize) -> bool {
+        let two_most_cards: Vec<usize> = counted
+            .iter()
+            .filter(|x| !x.0.is_joker())
+            .map(|x| x.1)
+            .sorted()
+            .rev()
+            .take(2)
+            .collect();
+
+        if two_most_cards[0] + jokers >= a {
+            let used_jokers = a - two_most_cards[0];
+
+            return two_most_cards[1] + used_jokers >= b;
+        }
+
+        false
+    }
 }
 
-fn has_count(counted: &[(CardLabel, usize)], exact: usize) -> bool {
-    counted.iter().any(|x| x.1 == exact)
-}
-
-fn got_count(counted: &[(CardLabel, usize)], exact: usize) -> usize {
-    counted.iter().filter(|x| x.1 == exact).count()
-}
-
-const CARD_LABELS: [CardLabel; 13] = [
+const CARD_LABELS: [CardLabel; 14] = [
+    CardLabel::Joker,
     CardLabel::Two,
     CardLabel::Three,
     CardLabel::Four,
@@ -94,6 +124,7 @@ const CARD_LABELS: [CardLabel; 13] = [
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 enum CardLabel {
+    Joker,
     Two,
     Three,
     Four,
@@ -128,6 +159,17 @@ impl CardLabel {
             _ => panic!("Unexpected char"),
         }
     }
+
+    fn switch_jack_to_joker(self) -> Self {
+        match self {
+            Self::Jack => Self::Joker,
+            x => x,
+        }
+    }
+
+    fn is_joker(self) -> bool {
+        self == Self::Joker
+    }
 }
 
 fn parse(input: &str) -> Vec<Hand> {
@@ -150,6 +192,16 @@ fn part_one(hands: &[Hand]) -> usize {
         .sum()
 }
 
+fn part_two(hands: &[Hand]) -> usize {
+    hands
+        .iter()
+        .map(Hand::switch_jack_to_joker)
+        .sorted()
+        .enumerate()
+        .map(|(i, hand)| (i + 1) * hand.bid)
+        .sum()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -163,6 +215,11 @@ mod tests {
     #[test]
     fn test_part_one() {
         assert_eq!(part_one(&parse(EXAMPLE_INPUT)), 6440);
+    }
+
+    #[test]
+    fn test_part_two() {
+        assert_eq!(part_two(&parse(EXAMPLE_INPUT)), 5905);
     }
 
     #[test]
