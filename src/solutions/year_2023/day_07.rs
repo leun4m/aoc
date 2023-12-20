@@ -43,35 +43,13 @@ impl Ord for Hand {
 
 impl Hand {
     fn rank(&self) -> usize {
-        let counted = self.count_types();
-        let jokers = counted
+        let stats = &HandStats::from(self);
+        HAND_TYPES
             .iter()
-            .find(|x| x.0.is_joker())
-            .map(|x| x.1)
-            .unwrap_or_default();
-
-        if Self::is_x_of_a_kind(&counted, jokers, 5) {
-            6
-        } else if Self::is_x_of_a_kind(&counted, jokers, 4) {
-            5
-        } else if Self::is_a_house(&counted, jokers, 3, 2) {
-            4
-        } else if Self::is_x_of_a_kind(&counted, jokers, 3) {
-            3
-        } else if Self::is_a_house(&counted, jokers, 2, 2) {
-            2
-        } else if Self::is_x_of_a_kind(&counted, jokers, 2) {
-            1
-        } else {
-            0
-        }
-    }
-
-    fn count_types(&self) -> Vec<(CardLabel, usize)> {
-        CARD_LABELS
-            .iter()
-            .map(|&c| (c, self.hand.iter().filter(|&&x| x == c).count()))
-            .collect()
+            .rev()
+            .find(|x| x.is_this(stats))
+            .map(HandType::rank)
+            .unwrap()
     }
 
     fn switch_jack_to_joker(&self) -> Self {
@@ -80,13 +58,94 @@ impl Hand {
             bid: self.bid,
         }
     }
+}
 
-    fn is_x_of_a_kind(counted: &[(CardLabel, usize)], jokers: usize, count: usize) -> bool {
-        counted.iter().any(|x| x.1 + jokers == count)
+struct HandStats {
+    card_times: Vec<(CardLabel, usize)>,
+    jokers: usize,
+}
+
+impl HandStats {
+    fn from(hand: &Hand) -> Self {
+        let card_times = Self::count_types(hand);
+        HandStats {
+            card_times: card_times
+                .clone()
+                .into_iter()
+                .filter(|x| !x.0.is_joker())
+                .collect_vec(),
+            jokers: card_times
+                .iter()
+                .filter(|x| x.0.is_joker())
+                .map(|x| x.1)
+                .sum(),
+        }
     }
 
-    fn is_a_house(counted: &[(CardLabel, usize)], jokers: usize, a: usize, b: usize) -> bool {
-        let two_most_cards: Vec<usize> = counted
+    fn count_types(hand: &Hand) -> Vec<(CardLabel, usize)> {
+        CARD_LABELS
+            .iter()
+            .map(|&c| (c, hand.hand.iter().filter(|&&x| x == c).count()))
+            .collect()
+    }
+}
+
+const HAND_TYPES: [HandType; 7] = [
+    HandType::HighCard,
+    HandType::OnePair,
+    HandType::TwoPair,
+    HandType::ThreeOfAKind,
+    HandType::FullHouse,
+    HandType::FourOfAKind,
+    HandType::FiveOfAKind,
+];
+
+enum HandType {
+    HighCard,
+    OnePair,
+    TwoPair,
+    ThreeOfAKind,
+    FullHouse,
+    FourOfAKind,
+    FiveOfAKind,
+}
+
+impl HandType {
+    fn rank(&self) -> usize {
+        match self {
+            Self::HighCard => 1,
+            Self::OnePair => 2,
+            Self::TwoPair => 3,
+            Self::ThreeOfAKind => 4,
+            Self::FullHouse => 5,
+            Self::FourOfAKind => 6,
+            Self::FiveOfAKind => 7,
+        }
+    }
+
+    fn is_this(&self, stats: &HandStats) -> bool {
+        match self {
+            Self::HighCard => true,
+            Self::OnePair => Self::is_x_of_a_kind(&stats, 2),
+            Self::ThreeOfAKind => Self::is_x_of_a_kind(&stats, 3),
+            Self::FourOfAKind => Self::is_x_of_a_kind(&stats, 4),
+            Self::FiveOfAKind => Self::is_x_of_a_kind(&stats, 5),
+            Self::TwoPair => Self::is_a_house(&stats, 2, 2),
+            Self::FullHouse => Self::is_a_house(&stats, 3, 2),
+        }
+    }
+
+    fn is_x_of_a_kind(stats: &HandStats, count: usize) -> bool {
+        stats
+            .card_times
+            .iter()
+            .map(|x| x.1)
+            .any(|x| x + stats.jokers == count)
+    }
+
+    fn is_a_house(stats: &HandStats, a: usize, b: usize) -> bool {
+        let two_most_cards: Vec<usize> = stats
+            .card_times
             .iter()
             .filter(|x| !x.0.is_joker())
             .map(|x| x.1)
@@ -95,10 +154,10 @@ impl Hand {
             .take(2)
             .collect();
 
-        if two_most_cards[0] + jokers >= a {
+        if two_most_cards[0] + stats.jokers >= a {
             let used_jokers = a - two_most_cards[0];
 
-            return two_most_cards[1] + used_jokers >= b;
+            return two_most_cards[1] + (stats.jokers - used_jokers) >= b;
         }
 
         false
