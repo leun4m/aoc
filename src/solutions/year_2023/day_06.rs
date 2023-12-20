@@ -76,16 +76,16 @@ mod tests {
                     record_distance: 200
                 },
             ]
-        )
+        );
     }
 
     #[test]
     fn test_part_one() {
-        assert_eq!(part_one(EXAMPLE_INPUT), 288)
+        assert_eq!(part_one(EXAMPLE_INPUT), 288);
     }
 
     #[test]
     fn test_part_two() {
-        assert_eq!(part_two(EXAMPLE_INPUT), 71503)
+        assert_eq!(part_two(EXAMPLE_INPUT), 71503);
     }
 }

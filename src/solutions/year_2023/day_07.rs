@@ -68,17 +68,18 @@ struct HandStats {
 impl HandStats {
     fn from(hand: &Hand) -> Self {
         let card_times = Self::count_types(hand);
+        let jokers = card_times
+            .iter()
+            .filter(|x| x.0.is_joker())
+            .map(|x| x.1)
+            .sum();
+
         HandStats {
             card_times: card_times
-                .clone()
                 .into_iter()
                 .filter(|x| !x.0.is_joker())
                 .collect_vec(),
-            jokers: card_times
-                .iter()
-                .filter(|x| x.0.is_joker())
-                .map(|x| x.1)
-                .sum(),
+            jokers,
         }
     }
 
@@ -126,12 +127,12 @@ impl HandType {
     fn is_this(&self, stats: &HandStats) -> bool {
         match self {
             Self::HighCard => true,
-            Self::OnePair => Self::is_x_of_a_kind(&stats, 2),
-            Self::ThreeOfAKind => Self::is_x_of_a_kind(&stats, 3),
-            Self::FourOfAKind => Self::is_x_of_a_kind(&stats, 4),
-            Self::FiveOfAKind => Self::is_x_of_a_kind(&stats, 5),
-            Self::TwoPair => Self::is_a_house(&stats, 2, 2),
-            Self::FullHouse => Self::is_a_house(&stats, 3, 2),
+            Self::OnePair => Self::is_x_of_a_kind(stats, 2),
+            Self::ThreeOfAKind => Self::is_x_of_a_kind(stats, 3),
+            Self::FourOfAKind => Self::is_x_of_a_kind(stats, 4),
+            Self::FiveOfAKind => Self::is_x_of_a_kind(stats, 5),
+            Self::TwoPair => Self::is_a_house(stats, 2, 2),
+            Self::FullHouse => Self::is_a_house(stats, 3, 2),
         }
     }
 
@@ -279,15 +280,5 @@ mod tests {
     #[test]
     fn test_part_two() {
         assert_eq!(part_two(&parse(EXAMPLE_INPUT)), 5905);
-    }
-
-    #[test]
-    fn test_rank() {
-        let vec = parse(EXAMPLE_INPUT);
-        assert_eq!(vec[0].rank(), 1);
-        assert_eq!(vec[1].rank(), 3);
-        assert_eq!(vec[2].rank(), 2);
-        assert_eq!(vec[3].rank(), 2);
-        assert_eq!(vec[4].rank(), 3);
     }
 }

@@ -135,7 +135,7 @@ humidity-to-location map:
 
     #[test]
     fn test_parse() {
-        println!("{:?}", parse(EXAMPLE_INPUT))
+        println!("{:?}", parse(EXAMPLE_INPUT));
     }
 
     #[test]

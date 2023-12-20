@@ -179,7 +179,7 @@ mod tests {
                 Element::Number(598),
             ),
         ]);
-        assert_eq!(map, parse(EXAMPLE_INPUT))
+        assert_eq!(map, parse(EXAMPLE_INPUT));
     }
 
     #[test]
