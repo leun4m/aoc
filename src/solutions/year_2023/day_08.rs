@@ -1,6 +1,7 @@
 pub fn solve(input: &str) {
-    let parsed = parse(input);
-    println!("Part 1: {}", part_one(parsed));
+    let (i, n) = parse(input);
+    println!("Part 1: {}", part_one(&i, &n));
+    println!("Part 2: {}", part_two(&i, &n));
 }
 
 fn parse(input: &str) -> (Vec<Instruction>, NodeMap) {
@@ -11,7 +12,8 @@ fn parse(input: &str) -> (Vec<Instruction>, NodeMap) {
     (instructions, nodes)
 }
 
-const SIZE: usize = 26 * 26 * 26;
+const LETTERS: usize = 'Z' as usize - 'A' as usize + 1;
+const SIZE: usize = LETTERS * LETTERS * LETTERS;
 
 type NodeMap = [(usize, usize); SIZE];
 
@@ -37,7 +39,9 @@ fn parse_nodes(input: &str) -> NodeMap {
 
 fn parse_address(addr: &str) -> usize {
     let chars: Vec<char> = addr.chars().collect();
-    alpha_to_num(chars[0]) * 26 * 26 + alpha_to_num(chars[1]) * 26 + alpha_to_num(chars[2])
+    alpha_to_num(chars[0]) * LETTERS * LETTERS
+        + alpha_to_num(chars[1]) * LETTERS
+        + alpha_to_num(chars[2])
 }
 
 fn alpha_to_num(c: char) -> usize {
@@ -60,15 +64,15 @@ enum Instruction {
     Right,
 }
 
-fn part_one((instructions, node_map): (Vec<Instruction>, NodeMap)) -> usize {
+fn part_one(instructions: &[Instruction], nodes: &NodeMap) -> usize {
     let mut i = 0;
     let mut k = 0;
     let mut steps = 0;
 
     while k + 1 < SIZE {
         k = match instructions[i] {
-            Instruction::Left => node_map[k].0,
-            Instruction::Right => node_map[k].1,
+            Instruction::Left => nodes[k].0,
+            Instruction::Right => nodes[k].1,
         };
 
         i = (i + 1) % instructions.len();
@@ -76,6 +80,55 @@ fn part_one((instructions, node_map): (Vec<Instruction>, NodeMap)) -> usize {
     }
 
     steps
+}
+
+fn part_two(instructions: &[Instruction], nodes: &NodeMap) -> usize {
+    let indices: Vec<usize> = (0..SIZE)
+        .filter(|&x| nodes[x] != (0, 0))
+        .filter(|x| x % LETTERS == alpha_to_num('A'))
+        .collect();
+    let mut steps_taken = Vec::new();
+    
+    for index in indices {
+        let mut steps = 0;
+        let mut i = 0;
+        let mut k = index;
+
+        while k % LETTERS != alpha_to_num('Z') {
+            k = match instructions[i] {
+                Instruction::Left => nodes[k].0,
+                Instruction::Right => nodes[k].1,
+            };
+    
+            i = (i + 1) % instructions.len();
+            steps += 1;
+        }
+
+        steps_taken.push(steps);
+    }
+
+    lcm(&steps_taken)
+}
+
+fn lcm(numbers: &[usize]) -> usize {
+    let mut result = 1;
+    let mut a = result;
+
+    for i in 0..numbers.len() {
+        let b = numbers[i];
+        result = (a * b) / gcd(a, b);
+        a = result;
+    }
+
+    result
+}
+
+fn gcd(a: usize, b: usize) -> usize {
+    if b == 0 {
+        a
+    } else {
+        gcd(b, a % b)
+    }
 }
 
 #[cfg(test)]
@@ -93,6 +146,17 @@ EEE = (EEE, EEE)
 GGG = (GGG, GGG)
 ZZZ = (ZZZ, ZZZ)";
 
+    const EXAMPLE_INPUT2: &str = "LR
+
+DDA = (DDB, XXX)
+DDB = (XXX, DDZ)
+DDZ = (DDB, XXX)
+EEA = (EEB, XXX)
+EEB = (EEC, EEC)
+EEC = (EEZ, EEZ)
+EEZ = (EEB, EEB)
+XXX = (XXX, XXX)";
+
     #[test]
     fn test_parse() {
         let (instructions, _) = parse(EXAMPLE_INPUT);
@@ -101,6 +165,13 @@ ZZZ = (ZZZ, ZZZ)";
 
     #[test]
     fn test_part_one() {
-        assert_eq!(2, part_one(parse(EXAMPLE_INPUT)));
+        let (instructions, nodes) = parse(EXAMPLE_INPUT);
+        assert_eq!(2, part_one(&instructions, &nodes));
+    }
+
+    #[test]
+    fn test_part_two() {
+        let (instructions, nodes) = parse(EXAMPLE_INPUT2);
+        assert_eq!(6, part_two(&instructions, &nodes));
     }
 }
