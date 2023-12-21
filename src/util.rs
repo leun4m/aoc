@@ -40,6 +40,26 @@ pub fn permutation_heap<T: Clone + Debug>(elements: &mut Vec<T>) -> Vec<Vec<T>> 
     generated_permutations
 }
 
+pub fn least_common_multiplier(numbers: &[usize]) -> usize {
+    let mut result = 1;
+    let mut a = result;
+
+    for b in numbers {
+        result = (a * b) / greatest_common_divisor(a, *b);
+        a = result;
+    }
+
+    result
+}
+
+pub fn greatest_common_divisor(a: usize, b: usize) -> usize {
+    if b == 0 {
+        a
+    } else {
+        greatest_common_divisor(b, a % b)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

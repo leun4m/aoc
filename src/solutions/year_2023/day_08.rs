@@ -1,3 +1,5 @@
+use crate::util;
+
 pub fn solve(input: &str) {
     let (i, n) = parse(input);
     println!("Part 1: {}", part_one(&i, &n));
@@ -21,11 +23,7 @@ fn parse_nodes(input: &str) -> NodeMap {
     let mut nodes = [(0, 0); SIZE];
 
     input.lines().for_each(|line| {
-        let replaced = &line
-            .replace("=", "")
-            .replace("(", "")
-            .replace(")", "")
-            .replace(",", "");
+        let replaced = &line.replace(['=', '(', ')', ','], "");
         let a: Vec<&str> = replaced
             .split(' ')
             .filter(|x| !x.trim().is_empty())
@@ -88,7 +86,7 @@ fn part_two(instructions: &[Instruction], nodes: &NodeMap) -> usize {
         .filter(|x| x % LETTERS == alpha_to_num('A'))
         .collect();
     let mut steps_taken = Vec::new();
-    
+
     for index in indices {
         let mut steps = 0;
         let mut i = 0;
@@ -99,7 +97,7 @@ fn part_two(instructions: &[Instruction], nodes: &NodeMap) -> usize {
                 Instruction::Left => nodes[k].0,
                 Instruction::Right => nodes[k].1,
             };
-    
+
             i = (i + 1) % instructions.len();
             steps += 1;
         }
@@ -107,28 +105,7 @@ fn part_two(instructions: &[Instruction], nodes: &NodeMap) -> usize {
         steps_taken.push(steps);
     }
 
-    lcm(&steps_taken)
-}
-
-fn lcm(numbers: &[usize]) -> usize {
-    let mut result = 1;
-    let mut a = result;
-
-    for i in 0..numbers.len() {
-        let b = numbers[i];
-        result = (a * b) / gcd(a, b);
-        a = result;
-    }
-
-    result
-}
-
-fn gcd(a: usize, b: usize) -> usize {
-    if b == 0 {
-        a
-    } else {
-        gcd(b, a % b)
-    }
+    util::least_common_multiplier(&steps_taken)
 }
 
 #[cfg(test)]
