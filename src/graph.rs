@@ -5,7 +5,7 @@ mod simple_graph;
 mod weighted_graph;
 
 pub use simple_graph::SimpleGraph;
-pub use weighted_graph::WeightedEdge;
+
 pub use weighted_graph::WeightedGraph;
 
 /// A Graph with nodes of Type `T`
