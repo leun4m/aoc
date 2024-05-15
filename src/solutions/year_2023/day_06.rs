@@ -16,9 +16,7 @@ struct Race {
 fn parse(input: &str) -> Vec<Race> {
     let lines = parser::lines_custom(input, |line| {
         line.split_ascii_whitespace()
-            .map(str::parse)
-            .filter(std::result::Result::is_ok)
-            .map(std::result::Result::unwrap)
+            .flat_map(str::parse)
             .collect_vec()
     });
 

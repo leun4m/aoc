@@ -74,7 +74,7 @@ impl Guard {
         self.asleep
             .iter()
             .map(|(from, to)| {
-                let duration_in_sec = to.timestamp() - from.timestamp();
+                let duration_in_sec = to.and_utc().timestamp() - from.and_utc().timestamp();
 
                 duration_in_sec / 60
             })
