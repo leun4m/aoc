@@ -17,6 +17,7 @@ pub trait Graph<T> {
     fn neighbours(&self, node: &T) -> Vec<T>;
 
     /// Returns `true` if graph has no edges
+    #[allow(dead_code)]
     fn is_empty(&self) -> bool;
 
     /// Returns all nodes

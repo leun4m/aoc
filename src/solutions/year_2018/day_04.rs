@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use chrono::{Duration, NaiveDateTime, NaiveTime, Timelike};
+use chrono::{DateTime, Duration, NaiveDateTime, NaiveTime, Timelike, Utc};
 use itertools::Itertools;
 use regex::Regex;
 
@@ -42,7 +42,8 @@ fn sum_minutes_asleep(log_lines: &mut [Log]) -> Vec<Guard> {
 
     let mut guards: HashMap<u32, Guard> = HashMap::new();
     let mut current: &mut Guard = &mut Guard::new(0);
-    let mut asleep: NaiveDateTime = NaiveDateTime::from_timestamp_opt(0, 0).unwrap();
+
+    let mut asleep: NaiveDateTime = DateTime::<Utc>::from_timestamp(0, 0).unwrap().naive_local();
 
     for line in log_lines {
         match line.instruction {
@@ -138,7 +139,10 @@ fn parse(input: &str) -> Vec<Log> {
 fn parse_line(line: &str) -> Log {
     let captures = LINE_REGEX.captures(line).expect("invalid line");
 
-    let datetime = NaiveDateTime::parse_from_str(&captures[1], DATE_TIME_FORMAT).unwrap();
+    let datetime = NaiveDateTime::parse_from_str(&captures[1], DATE_TIME_FORMAT)
+        .unwrap()
+        .and_utc()
+        .naive_local();
 
     let instruction = if let Some(guard) = GUARD_REGEX.captures(line) {
         Instruction::Begins(guard[1].parse().unwrap())
@@ -171,7 +175,7 @@ enum Instruction {
 
 #[cfg(test)]
 mod tests {
-    use chrono::NaiveDate;
+    use chrono::TimeZone;
 
     use super::*;
 
@@ -198,10 +202,9 @@ mod tests {
         assert_eq!(
             parse_line("[1518-11-01 00:00] Guard #10 begins shift"),
             Log {
-                time: NaiveDate::from_ymd_opt(1518, 11, 1)
+                time: TimeZone::with_ymd_and_hms(&Utc, 1518, 11, 1, 0, 0, 0)
                     .unwrap()
-                    .and_hms_opt(0, 0, 0)
-                    .unwrap(),
+                    .naive_local(),
                 instruction: Instruction::Begins(10)
             }
         );
@@ -209,10 +212,9 @@ mod tests {
         assert_eq!(
             parse_line("[1518-11-05 00:55] wakes up"),
             Log {
-                time: NaiveDate::from_ymd_opt(1518, 11, 5)
+                time: TimeZone::with_ymd_and_hms(&Utc, 1518, 11, 5, 0, 55, 0)
                     .unwrap()
-                    .and_hms_opt(0, 55, 0)
-                    .unwrap(),
+                    .naive_local(),
                 instruction: Instruction::WakesUp
             }
         );
@@ -220,10 +222,9 @@ mod tests {
         assert_eq!(
             parse_line("[1518-11-01 00:30] falls asleep"),
             Log {
-                time: NaiveDate::from_ymd_opt(1518, 11, 1)
+                time: TimeZone::with_ymd_and_hms(&Utc, 1518, 11, 1, 0, 30, 0)
                     .unwrap()
-                    .and_hms_opt(0, 30, 0)
-                    .unwrap(),
+                    .naive_local(),
                 instruction: Instruction::FallsAsleep
             }
         );
