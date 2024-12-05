@@ -42,7 +42,7 @@ struct Passport<'a> {
     cid: &'a str,
 }
 
-impl<'a> Passport<'a> {
+impl Passport<'_> {
     fn new() -> Self {
         Passport {
             byr: "",

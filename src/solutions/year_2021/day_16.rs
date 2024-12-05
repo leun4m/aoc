@@ -122,7 +122,7 @@ impl<'a> BinaryIter<'a> {
     }
 }
 
-impl<'a> Iterator for BinaryIter<'a> {
+impl Iterator for BinaryIter<'_> {
     type Item = char;
 
     fn next(&mut self) -> Option<Self::Item> {
