@@ -14,6 +14,7 @@ type PageUpdate = Vec<Page>;
 pub fn solve(input: &str) {
     let (rules, updates) = parse(input);
     println!("Part 1: {}", part_one(&rules, &updates));
+    println!("Part 2: {}", part_two(&rules, &updates));
 }
 
 fn parse(input: &str) -> (RuleSet, Vec<PageUpdate>) {
@@ -53,6 +54,15 @@ fn part_one(rules: &RuleSet, updates: &[PageUpdate]) -> u32 {
         .sum()
 }
 
+fn part_two(rules: &RuleSet, updates: &[PageUpdate]) -> u32 {
+    updates
+        .iter()
+        .filter(|update| !update_ok(rules, update))
+        .map(|update| reorder_update(update, rules))
+        .map(|update| middle_page(&update))
+        .sum()
+}
+
 fn update_ok(rules: &RuleSet, update: &PageUpdate) -> bool {
     for a in 0..update.len() {
         for b in a + 1..update.len() {
@@ -74,6 +84,19 @@ fn against_rules(a: Page, b: Page, rules: &RuleSet) -> bool {
 
 fn middle_page(update: &PageUpdate) -> Page {
     update[update.len() / 2]
+}
+
+fn reorder_update(update: &PageUpdate, rules: &RuleSet) -> PageUpdate {
+    let mut new_update = update.clone();
+    for a in 0..update.len() {
+        for b in a + 1..update.len() {
+            if against_rules(new_update[a], new_update[b], rules) {
+                new_update.swap(a, b);
+            }
+        }
+    }
+    
+    new_update
 }
 
 #[cfg(test)]
@@ -126,5 +149,11 @@ mod tests {
     fn test_part_one() {
         let (rules, updates) = parse(EXAMPLE_INPUT);
         assert_eq!(143, part_one(&rules, &updates));
+    }
+
+    #[test]
+    fn test_part_two() {
+        let (rules, updates) = parse(EXAMPLE_INPUT);
+        assert_eq!(123, part_two(&rules, &updates));
     }
 }
