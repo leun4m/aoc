@@ -64,15 +64,27 @@ fn part_two(rules: &RuleSet, updates: &[PageUpdate]) -> u32 {
 }
 
 fn update_ok(rules: &RuleSet, update: &PageUpdate) -> bool {
-    for a in 0..update.len() {
-        for b in a + 1..update.len() {
-            if against_rules(update[a], update[b], rules) {
+    for i in 0..update.len() {
+        for k in i + 1..update.len() {
+            if against_rules(update[i], update[k], rules) {
                 return false;
             }
         }
     }
 
     true
+}
+fn reorder_update(update: &PageUpdate, rules: &RuleSet) -> PageUpdate {
+    let mut new_update = update.clone();
+    for i in 0..update.len() {
+        for k in i + 1..update.len() {
+            if against_rules(new_update[i], new_update[k], rules) {
+                new_update.swap(i, k);
+            }
+        }
+    }
+
+    new_update
 }
 
 fn against_rules(a: Page, b: Page, rules: &RuleSet) -> bool {
@@ -84,19 +96,6 @@ fn against_rules(a: Page, b: Page, rules: &RuleSet) -> bool {
 
 fn middle_page(update: &PageUpdate) -> Page {
     update[update.len() / 2]
-}
-
-fn reorder_update(update: &PageUpdate, rules: &RuleSet) -> PageUpdate {
-    let mut new_update = update.clone();
-    for a in 0..update.len() {
-        for b in a + 1..update.len() {
-            if against_rules(new_update[a], new_update[b], rules) {
-                new_update.swap(a, b);
-            }
-        }
-    }
-    
-    new_update
 }
 
 #[cfg(test)]
