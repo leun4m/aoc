@@ -11,9 +11,7 @@ struct Matrix {
 }
 
 fn parse(input: &str) -> Matrix {
-    let grid = parser::lines_custom(input, |line| {
-        line.chars().collect::<Vec<char>>()
-    });
+    let grid = parser::lines_custom(input, |line| line.chars().collect::<Vec<char>>());
     let size = grid.len();
 
     Matrix { grid, size }
@@ -45,7 +43,6 @@ fn part_one(matrix: &Matrix) -> usize {
         }
         count += count_twoway(&a);
     }
-    
     for y in 1..matrix.size {
         let mut a = String::new();
         for i in 0..matrix.size - y {
@@ -53,7 +50,7 @@ fn part_one(matrix: &Matrix) -> usize {
         }
         count += count_twoway(&a);
     }
-    
+
     // count diagonal \
     for x in 0..matrix.size {
         let mut a = String::new();
@@ -62,7 +59,6 @@ fn part_one(matrix: &Matrix) -> usize {
         }
         count += count_twoway(&a);
     }
-    
     for y in 1..matrix.size {
         let mut a = String::new();
         for i in 0..matrix.size - y {
