@@ -1,3 +1,5 @@
+use std::ops::{Add, Mul, Neg};
+
 use crate::parser;
 
 pub fn solve(input: &str) {
@@ -6,38 +8,64 @@ pub fn solve(input: &str) {
     println!("Part 2: {}", part_two(&matrix));
 }
 
+const SPACE: char = '.';
+
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+struct Position(isize, isize);
+
+impl Neg for Position {
+    type Output = Position;
+
+    fn neg(self) -> Self::Output {
+        Position(-self.0, -self.1)
+    }
+}
+
+impl Add<Position> for Position {
+    type Output = Position;
+
+    fn add(self, rhs: Position) -> Self::Output {
+        Position(self.0 + rhs.0, self.1 + rhs.1)
+    }
+}
+
+impl Mul<Position> for isize {
+    type Output = Position;
+
+    fn mul(self, rhs: Position) -> Self::Output {
+        Position(self * rhs.0, self * rhs.1)
+    }
+}
+
 struct Matrix {
     grid: Vec<Vec<char>>,
     size: isize,
 }
 
-const SPACE: char = '.';
-
 impl Matrix {
-    fn field(&self, x: isize, y: isize) -> char {
-        if x < 0 || x >= self.size || y < 0 || y >= self.size {
+    fn field(&self, pos: Position) -> char {
+        if pos.0 < 0 || pos.0 >= self.size || pos.1 < 0 || pos.1 >= self.size {
             SPACE
         } else {
-            self.grid[y as usize][x as usize]
+            self.grid[pos.1 as usize][pos.0 as usize]
         }
     }
 
-    fn field_next(&self, x: isize, y: isize, dir: &Direction) -> char {
-        self.field_next_factor(x, y, dir, 1)
+    fn field_next(&self, pos: Position, dir: Direction) -> char {
+        self.field_next_factor(pos, dir, 1)
     }
 
-    fn field_next_factor(&self, x: isize, y: isize, dir: &Direction, factor: isize) -> char {
-        let (dx, dy) = dir.coordinates();
-        self.field(x + dx * factor, y + dy * factor)
+    fn field_next_factor(&self, pos: Position, dir: Direction, factor: isize) -> char {
+        self.field(pos + factor * dir.coordinates())
     }
 
-    fn surrounded_by(&self, x: isize, y: isize, dir: Direction, prev: char, next: char) -> bool {
-        (self.field_next(x, y, &dir) == prev && self.field_next(x, y, &dir.opposing()) == next)
-            || (self.field_next(x, y, &dir) == next
-                && self.field_next(x, y, &dir.opposing()) == prev)
+    fn surrounded_by(&self, pos: Position, dir: Direction, prev: char, next: char) -> bool {
+        (self.field_next(pos, dir) == prev && self.field_next(pos, dir.opposing()) == next)
+            || (self.field_next(pos, dir) == next && self.field_next(pos, dir.opposing()) == prev)
     }
 }
 
+#[derive(Debug, Clone, Copy)]
 enum Direction {
     North,
     South,
@@ -50,43 +78,38 @@ enum Direction {
 }
 
 impl Direction {
-    fn coordinates(&self) -> (isize, isize) {
+    const ALL: [Direction; 8] = [
+        Direction::North,
+        Direction::South,
+        Direction::West,
+        Direction::East,
+        Direction::NorthWest,
+        Direction::NorthEast,
+        Direction::SouthWest,
+        Direction::SouthEast,
+    ];
+
+    const NORTH: Position = Position(0, 1);
+    const WEST: Position = Position(1, 0);
+
+    fn coordinates(self) -> Position {
         match self {
-            Direction::North => (0, -1),
-            Direction::South => (0, 1),
-            Direction::West => (-1, 0),
-            Direction::East => (1, 0),
-            Direction::NorthWest => (-1, -1),
-            Direction::NorthEast => (1, -1),
-            Direction::SouthWest => (-1, 1),
-            Direction::SouthEast => (1, 1),
+            Direction::North => Direction::NORTH,
+            Direction::South => -Direction::NORTH,
+            Direction::West => Direction::WEST,
+            Direction::East => -Direction::WEST,
+            Direction::NorthWest => Direction::NORTH + Direction::WEST,
+            Direction::NorthEast => Direction::NORTH + (-Direction::WEST),
+            Direction::SouthWest => -Direction::NORTH + Direction::WEST,
+            Direction::SouthEast => -Direction::NORTH + (-Direction::WEST),
         }
     }
 
-    fn all() -> [Direction; 8] {
-        [
-            Direction::North,
-            Direction::South,
-            Direction::West,
-            Direction::East,
-            Direction::NorthWest,
-            Direction::NorthEast,
-            Direction::SouthWest,
-            Direction::SouthEast,
-        ]
-    }
-
-    fn opposing(&self) -> Direction {
-        match self {
-            Direction::North => Direction::South,
-            Direction::South => Direction::North,
-            Direction::West => Direction::East,
-            Direction::East => Direction::West,
-            Direction::NorthWest => Direction::SouthEast,
-            Direction::NorthEast => Direction::SouthWest,
-            Direction::SouthWest => Direction::NorthWest,
-            Direction::SouthEast => Direction::NorthEast,
-        }
+    fn opposing(self) -> Direction {
+        *Direction::ALL
+            .iter()
+            .find(|dir| -dir.coordinates() == self.coordinates())
+            .unwrap()
     }
 }
 
@@ -102,11 +125,13 @@ fn part_one(matrix: &Matrix) -> usize {
 
     for x in 0..matrix.size {
         for y in 0..matrix.size {
-            for dir in Direction::all() {
-                if matrix.field_next_factor(x, y, &dir, 0) == 'X'
-                    && matrix.field_next_factor(x, y, &dir, 1) == 'M'
-                    && matrix.field_next_factor(x, y, &dir, 2) == 'A'
-                    && matrix.field_next_factor(x, y, &dir, 3) == 'S'
+            for dir in Direction::ALL {
+                let pos = Position(x, y);
+
+                if matrix.field_next_factor(pos, dir, 0) == 'X'
+                    && matrix.field_next_factor(pos, dir, 1) == 'M'
+                    && matrix.field_next_factor(pos, dir, 2) == 'A'
+                    && matrix.field_next_factor(pos, dir, 3) == 'S'
                 {
                     count += 1;
                 }
@@ -119,16 +144,20 @@ fn part_one(matrix: &Matrix) -> usize {
 
 fn part_two(matrix: &Matrix) -> usize {
     let mut count = 0;
+
     for x in 1..matrix.size - 1 {
         for y in 1..matrix.size - 1 {
-            if matrix.field(x, y) == 'A'
-                && matrix.surrounded_by(x, y, Direction::NorthWest, 'S', 'M')
-                && matrix.surrounded_by(x, y, Direction::NorthEast, 'S', 'M')
+            let pos = Position(x, y);
+
+            if matrix.field(pos) == 'A'
+                && matrix.surrounded_by(pos, Direction::NorthWest, 'S', 'M')
+                && matrix.surrounded_by(pos, Direction::NorthEast, 'S', 'M')
             {
                 count += 1;
             }
         }
     }
+
     count
 }
 
