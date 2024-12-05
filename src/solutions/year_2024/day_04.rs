@@ -8,12 +8,91 @@ pub fn solve(input: &str) {
 
 struct Matrix {
     grid: Vec<Vec<char>>,
-    size: usize,
+    size: isize,
+}
+
+const SPACE: char = '.';
+
+impl Matrix {
+    fn field(&self, x: isize, y: isize) -> char {
+        if x < 0 || x >= self.size || y < 0 || y >= self.size {
+            SPACE
+        } else {
+            self.grid[y as usize][x as usize]
+        }
+    }
+
+    fn field_next(&self, x: isize, y: isize, dir: &Direction) -> char {
+        self.field_next_factor(x, y, dir, 1)
+    }
+
+    fn field_next_factor(&self, x: isize, y: isize, dir: &Direction, factor: isize) -> char {
+        let (dx, dy) = dir.coordinates();
+        self.field(x + dx * factor, y + dy * factor)
+    }
+
+    fn surrounded_by(&self, x: isize, y: isize, dir: Direction, prev: char, next: char) -> bool {
+        (self.field_next(x, y, &dir) == prev && self.field_next(x, y, &dir.opposing()) == next)
+            || (self.field_next(x, y, &dir) == next
+                && self.field_next(x, y, &dir.opposing()) == prev)
+    }
+}
+
+enum Direction {
+    North,
+    South,
+    West,
+    East,
+    NorthWest,
+    NorthEast,
+    SouthWest,
+    SouthEast,
+}
+
+impl Direction {
+    fn coordinates(&self) -> (isize, isize) {
+        match self {
+            Direction::North => (0, -1),
+            Direction::South => (0, 1),
+            Direction::West => (-1, 0),
+            Direction::East => (1, 0),
+            Direction::NorthWest => (-1, -1),
+            Direction::NorthEast => (1, -1),
+            Direction::SouthWest => (-1, 1),
+            Direction::SouthEast => (1, 1),
+        }
+    }
+
+    fn all() -> [Direction; 8] {
+        [
+            Direction::North,
+            Direction::South,
+            Direction::West,
+            Direction::East,
+            Direction::NorthWest,
+            Direction::NorthEast,
+            Direction::SouthWest,
+            Direction::SouthEast,
+        ]
+    }
+
+    fn opposing(&self) -> Direction {
+        match self {
+            Direction::North => Direction::South,
+            Direction::South => Direction::North,
+            Direction::West => Direction::East,
+            Direction::East => Direction::West,
+            Direction::NorthWest => Direction::SouthEast,
+            Direction::NorthEast => Direction::SouthWest,
+            Direction::SouthWest => Direction::NorthWest,
+            Direction::SouthEast => Direction::NorthEast,
+        }
+    }
 }
 
 fn parse(input: &str) -> Matrix {
     let grid = parser::lines_custom(input, |line| line.chars().collect::<Vec<char>>());
-    let size = grid.len();
+    let size = grid.len() as isize;
 
     Matrix { grid, size }
 }
@@ -21,229 +100,36 @@ fn parse(input: &str) -> Matrix {
 fn part_one(matrix: &Matrix) -> usize {
     let mut count = 0;
 
-    // count horizontal -
-    for y in 0..matrix.size {
-        let s = matrix.grid[y].iter().collect::<String>();
-        count += count_twoway(&s);
-    }
-
-    // count vertical |
     for x in 0..matrix.size {
-        let mut a = String::new();
         for y in 0..matrix.size {
-            a.push(matrix.grid[y][x]);
+            for dir in Direction::all() {
+                if matrix.field_next_factor(x, y, &dir, 0) == 'X'
+                    && matrix.field_next_factor(x, y, &dir, 1) == 'M'
+                    && matrix.field_next_factor(x, y, &dir, 2) == 'A'
+                    && matrix.field_next_factor(x, y, &dir, 3) == 'S'
+                {
+                    count += 1;
+                }
+            }
         }
-        count += count_twoway(&a);
-    }
-
-    // count diagonal /
-    for x in 0..matrix.size {
-        let mut a = String::new();
-        for i in 0..matrix.size - x {
-            a.push(matrix.grid[i][x + i]);
-        }
-        count += count_twoway(&a);
-    }
-    for y in 1..matrix.size {
-        let mut a = String::new();
-        for i in 0..matrix.size - y {
-            a.push(matrix.grid[y + i][i]);
-        }
-        count += count_twoway(&a);
-    }
-
-    // count diagonal \
-    for x in 0..matrix.size {
-        let mut a = String::new();
-        for i in 0..matrix.size - x {
-            a.push(matrix.grid[matrix.size - 1 - i][x + i]);
-        }
-        count += count_twoway(&a);
-    }
-    for y in 1..matrix.size {
-        let mut a = String::new();
-        for i in 0..matrix.size - y {
-            a.push(matrix.grid[matrix.size - 1 - y - i][i]);
-        }
-        count += count_twoway(&a);
     }
 
     count
 }
 
 fn part_two(matrix: &Matrix) -> usize {
-    let mut axis = Vec::new();
-
-    let mut findings = Vec::new();
-    // count horizontal -
-    for y in 0..matrix.size {
-        let mut state = LookingForState::Start;
-        let mut pos_a = (0, 0);
-        for x in 0..matrix.size {
-            let c = matrix.grid[y][x];
-
-            state = apply_state(state, c, &mut pos_a, x, y, &mut findings);
-        }
-    }
-    axis.push(findings.clone());
-
-    // count vertical |
-    findings.clear();
-    for x in 0..matrix.size {
-        let mut state = LookingForState::Start;
-        let mut pos_a = (0, 0);
-        for y in 0..matrix.size {
-            let c = matrix.grid[y][x];
-
-            state = apply_state(state, c, &mut pos_a, x, y, &mut findings);
-        }
-    }
-    axis.push(findings.clone());
-
-    // count diagonal /
-    findings.clear();
-    for x in 0..matrix.size {
-        let mut state = LookingForState::Start;
-        let mut pos_a = (0, 0);
-        for i in 0..matrix.size - x {
-            let dx = x + i;
-            let dy = i;
-            let c = matrix.grid[dy][dx];
-            state = apply_state(state, c, &mut pos_a, dx, dy, &mut findings);
-        }
-    }
-    for y in 1..matrix.size {
-        let mut state = LookingForState::Start;
-        let mut pos_a = (0, 0);
-        for i in 0..matrix.size - y {
-            let dx = i;
-            let dy = y + i;
-            let c = matrix.grid[dy][dx];
-            state = apply_state(state, c, &mut pos_a, dx, dy, &mut findings);
-        }
-    }
-    axis.push(findings.clone());
-
-    // count diagonal \
-    findings.clear();
-    for x in 0..matrix.size {
-        let mut state = LookingForState::Start;
-        let mut pos_a = (0, 0);
-        for i in 0..matrix.size - x {
-            let dx = x + i;
-            let dy = matrix.size - 1 - i;
-            let c = matrix.grid[dy][dx];
-            state = apply_state(state, c, &mut pos_a, dx, dy, &mut findings);
-        }
-    }
-    for y in 1..matrix.size {
-        let mut state = LookingForState::Start;
-        let mut pos_a = (0, 0);
-        for i in 0..matrix.size - y {
-            let dx = i;
-            let dy = matrix.size - 1 - y - i;
-            let c = matrix.grid[dy][dx];
-            state = apply_state(state, c, &mut pos_a, dx, dy, &mut findings);
-        }
-    }
-    axis.push(findings.clone());
-
-    count_duplicates_on_axis(axis)
-}
-
-fn apply_state(
-    state: LookingForState,
-    c: char,
-    position_of_a: &mut (usize, usize),
-    x: usize,
-    y: usize,
-    position: &mut Vec<(usize, usize)>,
-) -> LookingForState {
-    match state {
-        LookingForState::Start => {
-            if c == 'M' {
-                LookingForState::MA
-            } else if c == 'S' {
-                LookingForState::SA
-            } else {
-                LookingForState::Start
-            }
-        }
-        LookingForState::MA => {
-            if c == 'A' {
-                *position_of_a = (x, y);
-                LookingForState::MAS
-            } else {
-                LookingForState::Start
-            }
-        }
-        LookingForState::SA => {
-            if c == 'A' {
-                *position_of_a = (x, y);
-                LookingForState::SAM
-            } else {
-                LookingForState::Start
-            }
-        }
-        LookingForState::MAS => {
-            if c == 'S' {
-                position.push(*position_of_a);
-            }
-            LookingForState::Start
-        }
-        LookingForState::SAM => {
-            if c == 'M' {
-                position.push(*position_of_a);
-            }
-            LookingForState::Start
-        }
-    }
-}
-
-#[allow(clippy::upper_case_acronyms)]
-#[derive(Debug, PartialEq, Eq)]
-enum LookingForState {
-    Start,
-    MA,
-    SA,
-    MAS,
-    SAM,
-}
-
-fn count_duplicates_on_axis(axis: Vec<Vec<(usize, usize)>>) -> usize {
     let mut count = 0;
-    for i in 0..axis.len() {
-        for k in i + 1..axis.len() {
-            count += find_duplicates(&axis[i], &axis[k]);
+    for x in 1..matrix.size - 1 {
+        for y in 1..matrix.size - 1 {
+            if matrix.field(x, y) == 'A'
+                && matrix.surrounded_by(x, y, Direction::NorthWest, 'S', 'M')
+                && matrix.surrounded_by(x, y, Direction::NorthEast, 'S', 'M')
+            {
+                count += 1;
+            }
         }
     }
     count
-}
-
-fn find_duplicates(a: &[(usize, usize)], b: &[(usize, usize)]) -> usize {
-    a.iter().filter(|p| b.contains(p)).count()
-}
-
-const SEARCH_WORD: &str = "XMAS";
-
-fn count(text: &str) -> usize {
-    let mut count = 0;
-    let mut start = 0;
-
-    while let Some(pos) = text[start..].find(SEARCH_WORD) {
-        count += 1;
-        start += pos + SEARCH_WORD.len();
-    }
-
-    count
-}
-
-fn count_twoway(text: &str) -> usize {
-    count(text) + count(&reverse_str(text))
-}
-
-fn reverse_str(text: &str) -> String {
-    text.chars().rev().collect()
 }
 
 #[cfg(test)]
@@ -269,31 +155,6 @@ MXMXAXMASX";
     }
 
     #[test]
-    fn test_count() {
-        assert_eq!(count(""), 0);
-        assert_eq!(count("X"), 0);
-        assert_eq!(count("ALPHA"), 0);
-        assert_eq!(count("XMAS"), 1);
-        assert_eq!(count("XMASXMAS"), 2);
-        assert_eq!(count("-XMASXMAS---XMAS"), 3);
-    }
-
-    #[test]
-    fn test_count_twoway() {
-        assert_eq!(count_twoway(""), 0);
-        assert_eq!(count_twoway("X"), 0);
-        assert_eq!(count_twoway("XMAS"), 1);
-        assert_eq!(count_twoway("SAMX"), 1);
-        assert_eq!(count_twoway("SAMXMAS"), 2);
-    }
-
-    #[test]
-    fn test_reverse_str() {
-        assert_eq!("", reverse_str(""));
-        assert_eq!("abc", reverse_str("cba"));
-    }
-
-    #[test]
     fn test_part_one() {
         let matrix = parse(EXAMPLE_INPUT);
         assert_eq!(part_one(&matrix), 18);
@@ -303,18 +164,5 @@ MXMXAXMASX";
     fn test_part_two() {
         let matrix = parse(EXAMPLE_INPUT);
         assert_eq!(part_two(&matrix), 9);
-    }
-
-    #[test]
-    fn test_find_duplicates() {
-        assert_eq!(find_duplicates(&[], &[]), 0);
-        assert_eq!(find_duplicates(&[(1, 1)], &[]), 0);
-        assert_eq!(find_duplicates(&[], &[(1, 1)]), 0);
-        assert_eq!(find_duplicates(&[(1, 1)], &[(1, 1)]), 1);
-        assert_eq!(find_duplicates(&[(1, 1)], &[(2, 2)]), 0);
-        assert_eq!(
-            find_duplicates(&[(1, 1), (2, 2), (3, 3)], &[(2, 2), (3, 3)]),
-            2
-        );
     }
 }
