@@ -12,6 +12,7 @@
 #[macro_use]
 extern crate lazy_static;
 
+mod euclidic;
 mod graph;
 mod parser;
 mod solutions;
