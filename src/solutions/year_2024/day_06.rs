@@ -98,3 +98,24 @@ impl Guard {
         self.direction = self.direction.rotate_clockwise();
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE_INPUT: &str = "....#.....
+.........#
+..........
+..#.......
+.......#..
+..........
+.#..^.....
+........#.
+#.........
+......#...";
+
+    #[test]
+    fn test_part_one() {
+        assert_eq!(41, part_one(&parse(EXAMPLE_INPUT)));
+    }
+}
