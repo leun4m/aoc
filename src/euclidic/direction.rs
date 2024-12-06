@@ -24,8 +24,8 @@ impl Direction {
         Direction::SouthEast,
     ];
 
-    const NORTH: Coord2D = Coord2D(0, 1);
-    const WEST: Coord2D = Coord2D(1, 0);
+    const NORTH: Coord2D = Coord2D(0, -1);
+    const WEST: Coord2D = Coord2D(-1, 0);
 
     pub fn coordinates(self) -> Coord2D {
         match self {
@@ -45,5 +45,19 @@ impl Direction {
             .iter()
             .find(|dir| -dir.coordinates() == self.coordinates())
             .unwrap()
+    }
+
+    pub fn rotate_clockwise(self) -> Direction {
+        match self {
+            Direction::North => Direction::East,
+            Direction::East => Direction::South,
+            Direction::South => Direction::West,
+            Direction::West => Direction::North,
+
+            Direction::NorthEast => Direction::SouthEast,
+            Direction::SouthEast => Direction::SouthWest,
+            Direction::SouthWest => Direction::NorthWest,
+            Direction::NorthWest => Direction::NorthEast,
+        }
     }
 }

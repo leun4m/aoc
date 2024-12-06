@@ -1,7 +1,6 @@
 use std::ops::{Add, Mul, Neg};
 
-
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub struct Coord2D(pub isize, pub isize);
 
 impl Neg for Coord2D {
