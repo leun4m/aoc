@@ -39,19 +39,15 @@ fn parse_line(line: &str) -> Option<Equation> {
 }
 
 fn part_one(equations: &[Equation]) -> i64 {
-    let chains = generate_chains(equations, &[Operator::Add, Operator::Multiply]);
-    equations
-        .iter()
-        .filter(|x| is_valid_equation(x, &chains[x.values.len()]))
-        .map(|x| x.result)
-        .sum()
+    solve_part(equations, &[Operator::Add, Operator::Multiply])
 }
 
 fn part_two(equations: &[Equation]) -> i64 {
-    let chains = generate_chains(
-        equations,
-        &[Operator::Add, Operator::Multiply, Operator::Concatenation],
-    );
+    solve_part(equations, &[Operator::Add, Operator::Multiply, Operator::Concatenation])
+}
+
+fn solve_part(equations: &[Equation], operators: &[Operator]) -> i64 {
+    let chains = generate_chains(equations, operators);
     equations
         .iter()
         .filter(|x| is_valid_equation(x, &chains[x.values.len()]))
