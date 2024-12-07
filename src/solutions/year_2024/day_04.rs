@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 use crate::euclidic::coord::Coord2D;
 use crate::euclidic::direction::Direction;
 use crate::parser;
@@ -46,44 +48,29 @@ fn parse(input: &str) -> Matrix {
 }
 
 fn part_one(matrix: &Matrix) -> usize {
-    let mut count = 0;
-
-    for x in 0..matrix.size {
-        for y in 0..matrix.size {
-            for dir in Direction::ALL {
-                let pos = Coord2D(x, y);
-
-                if matrix.field_next_factor(pos, dir, 0) == 'X'
-                    && matrix.field_next_factor(pos, dir, 1) == 'M'
-                    && matrix.field_next_factor(pos, dir, 2) == 'A'
-                    && matrix.field_next_factor(pos, dir, 3) == 'S'
-                {
-                    count += 1;
-                }
-            }
-        }
-    }
-
-    count
+    (0..matrix.size)
+        .cartesian_product(0..matrix.size)
+        .map(|(x, y)| Coord2D(x, y))
+        .cartesian_product(Direction::ALL)
+        .filter(|&(pos, dir)| {
+            matrix.field_next_factor(pos, dir, 0) == 'X'
+                && matrix.field_next_factor(pos, dir, 1) == 'M'
+                && matrix.field_next_factor(pos, dir, 2) == 'A'
+                && matrix.field_next_factor(pos, dir, 3) == 'S'
+        })
+        .count()
 }
 
 fn part_two(matrix: &Matrix) -> usize {
-    let mut count = 0;
-
-    for x in 1..matrix.size - 1 {
-        for y in 1..matrix.size - 1 {
-            let pos = Coord2D(x, y);
-
-            if matrix.field(pos) == 'A'
+    (1..matrix.size - 1)
+        .cartesian_product(1..matrix.size - 1)
+        .map(|(x, y)| Coord2D(x, y))
+        .filter(|&pos| {
+            matrix.field(pos) == 'A'
                 && matrix.surrounded_by(pos, Direction::NorthWest, 'S', 'M')
                 && matrix.surrounded_by(pos, Direction::NorthEast, 'S', 'M')
-            {
-                count += 1;
-            }
-        }
-    }
-
-    count
+        })
+        .count()
 }
 
 #[cfg(test)]
