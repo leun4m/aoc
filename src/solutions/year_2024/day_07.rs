@@ -37,9 +37,7 @@ fn parse_line(line: &str) -> Option<Equation> {
 }
 
 fn part_one(equations: &[Equation]) -> i64 {
-    let chains = generate_chains(equations, |len| {
-        all_operator_chains(len, &[Operator::Add, Operator::Multiply])
-    });
+    let chains = generate_chains(equations, &[Operator::Add, Operator::Multiply]);
     equations
         .iter()
         .filter(|x| is_valid_equation(x, &chains[x.values.len()]))
@@ -48,12 +46,10 @@ fn part_one(equations: &[Equation]) -> i64 {
 }
 
 fn part_two(equations: &[Equation]) -> i64 {
-    let chains = generate_chains(equations, |len| {
-        all_operator_chains(
-            len,
-            &[Operator::Add, Operator::Multiply, Operator::Concatenation],
-        )
-    });
+    let chains = generate_chains(
+        equations,
+        &[Operator::Add, Operator::Multiply, Operator::Concatenation],
+    );
     equations
         .iter()
         .filter(|x| is_valid_equation(x, &chains[x.values.len()]))
@@ -61,10 +57,7 @@ fn part_two(equations: &[Equation]) -> i64 {
         .sum()
 }
 
-fn generate_chains<F>(equations: &[Equation], operator_retriever: F) -> Vec<Vec<Vec<Operator>>>
-where
-    F: Fn(usize) -> Vec<Vec<Operator>>,
-{
+fn generate_chains(equations: &[Equation], operators: &[Operator]) -> Vec<Vec<Vec<Operator>>> {
     let mut map = Vec::new();
 
     for i in 0..=equations
@@ -73,7 +66,7 @@ where
         .max()
         .unwrap_or_default()
     {
-        map.push(operator_retriever(i));
+        map.push(all_operator_chains(i, operators));
     }
 
     map
@@ -98,6 +91,7 @@ enum Operator {
     Multiply,
     Concatenation,
 }
+
 impl Operator {
     fn apply(self, a: i64, b: i64) -> i64 {
         match self {
