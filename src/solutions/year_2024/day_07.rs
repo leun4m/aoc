@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 use crate::parser;
 
 pub fn solve(input: &str) {
@@ -58,34 +60,32 @@ fn part_two(equations: &[Equation]) -> i64 {
 }
 
 fn generate_chains(equations: &[Equation], operators: &[Operator]) -> Vec<Vec<Vec<Operator>>> {
-    let mut map = Vec::new();
-
-    for i in 0..=equations
+    (0..=equations
         .iter()
         .map(|x| x.values.len())
         .max()
-        .unwrap_or_default()
-    {
-        map.push(all_operator_chains(i, operators));
-    }
-
-    map
+        .unwrap_or_default())
+        .map(|x| all_operator_chains(x, operators))
+        .collect()
 }
 
 fn is_valid_equation(equation: &Equation, chains: &[Vec<Operator>]) -> bool {
-    for operator_chain in chains {
-        let mut value = equation.values[0];
-        for i in 1..equation.values.len() {
-            value = operator_chain[i - 1].apply(value, equation.values[i]);
-            if value > equation.result {
-                break;
-            }
-        }
-        if value == equation.result {
-            return true;
-        }
-    }
-    false
+    chains.iter().any(|chain| {
+        equation
+            .values
+            .iter()
+            .skip(1)
+            .zip(chain)
+            .try_fold(equation.values[0], |acc, (&x, operator)| {
+                let new_value = operator.apply(acc, x);
+                if new_value > equation.result {
+                    None
+                } else {
+                    Some(new_value)
+                }
+            })
+            .map_or(false, |final_value| final_value == equation.result)
+    })
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -109,28 +109,18 @@ fn all_operator_chains(len: usize, operators: &[Operator]) -> Vec<Vec<Operator>>
     if len == 0 {
         Vec::new()
     } else if len == 1 {
-        let mut vec = Vec::new();
-        for operator in operators {
-            vec.push(vec![*operator]);
-        }
-        vec
+        operators.iter().map(|&x| vec![x]).collect()
     } else {
-        let mut all_chains: Vec<Vec<Operator>> = Vec::new();
-
-        let prev_chains = {
-            let len = len - 1;
-            all_operator_chains(len, operators)
-        };
-
-        for operator in operators {
-            for prev_chain in &prev_chains {
-                let mut chain: Vec<Operator> = Vec::new();
-                chain.append(&mut prev_chain.clone());
+        operators
+            .iter()
+            .cartesian_product(all_operator_chains(len - 1, operators))
+            .map(|(operator, prev_chain)| {
+                let mut chain = prev_chain.to_vec();
                 chain.push(*operator);
-                all_chains.push(chain);
-            }
-        }
-        all_chains
+
+                chain
+            })
+            .collect()
     }
 }
 
