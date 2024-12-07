@@ -109,7 +109,7 @@ fn all_operator_chains(len: usize, operators: &[Operator]) -> Vec<Vec<Operator>>
             .iter()
             .cartesian_product(all_operator_chains(len - 1, operators))
             .map(|(operator, prev_chain)| {
-                let mut chain = prev_chain.to_vec();
+                let mut chain = prev_chain.clone();
                 chain.push(*operator);
 
                 chain

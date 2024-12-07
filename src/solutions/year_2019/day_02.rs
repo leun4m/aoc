@@ -5,7 +5,7 @@ pub fn solve(input: &str) {
 
     println!("Part 1: {}", run_with(&opcodes, 12, 2));
 
-    let (noun, verb) = part_two(&opcodes, 19690720);
+    let (noun, verb) = part_two(&opcodes, 19_690_720);
     println!("Part 2: {}", 100 * noun + verb);
 }
 
@@ -18,16 +18,16 @@ const OPCODE_STOP: Opcode = 99;
 fn parse(input: &str) -> Vec<Opcode> {
     input
         .split(',')
-        .map(|x| x.trim())
+        .map(str::trim)
         .filter(|x| !x.is_empty())
         .map(|x| x.parse().unwrap())
         .collect()
 }
 
-fn part_two(opcodes_orig: &[Opcode], result: Opcode) -> (Opcode, Opcode) {
+fn part_two(opcodes: &[Opcode], result: Opcode) -> (Opcode, Opcode) {
     (0..99)
         .cartesian_product(0..99)
-        .find(|(noun, verb)| run_with(&opcodes_orig, *noun, *verb) == result)
+        .find(|(noun, verb)| run_with(opcodes, *noun, *verb) == result)
         .unwrap()
 }
 
@@ -39,7 +39,7 @@ fn run_with(opcodes_orig: &[usize], noun: usize, verb: usize) -> usize {
     run(&mut opcodes)
 }
 
-fn run(opcodes: &mut Vec<usize>) -> usize {
+fn run(opcodes: &mut [usize]) -> usize {
     let mut i = 0;
     while opcodes[i] != OPCODE_STOP {
         let a = opcodes[opcodes[i + 1]];
