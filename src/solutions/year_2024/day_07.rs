@@ -107,9 +107,7 @@ impl Operator {
 
 fn all_operator_chains(len: usize, operators: &[Operator]) -> Vec<Vec<Operator>> {
     if len == 0 {
-        Vec::new()
-    } else if len == 1 {
-        operators.iter().map(|&x| vec![x]).collect()
+        vec![vec![]]
     } else {
         operators
             .iter()
