@@ -1,8 +1,11 @@
+use std::vec;
+
 use crate::parser;
 
 pub fn solve(input: &str) {
     let equations = parse(input);
     println!("Part 1: {}", part_one(&equations));
+    println!("Part 2: {}", part_two(&equations));
 }
 
 fn parse(input: &str) -> Vec<Equation> {
@@ -39,13 +42,24 @@ fn parse_line(line: &str) -> Option<Equation> {
 fn part_one(equations: &[Equation]) -> i64 {
     equations
         .iter()
-        .filter(|x| is_valid_equation(x))
+        .filter(|x| is_valid_equation(x, chains))
         .map(|x| x.result)
         .sum()
 }
 
-fn is_valid_equation(equation: &Equation) -> bool {
-    for operator_chain in chains(equation.values.len()) {
+fn part_two(equations: &[Equation]) -> i64 {
+    equations
+        .iter()
+        .filter(|x| is_valid_equation(x, chains_with_concat))
+        .map(|x| x.result)
+        .sum()
+}
+
+fn is_valid_equation<F>(equation: &Equation, operator_retriever: F) -> bool
+where
+    F: Fn(usize) -> Vec<Vec<Operator>>,
+{
+    for operator_chain in operator_retriever(equation.values.len()) {
         let mut value = equation.values[0];
         for i in 1..equation.values.len() {
             value = operator_chain[i - 1].apply(value, equation.values[i]);
@@ -61,12 +75,14 @@ fn is_valid_equation(equation: &Equation) -> bool {
 enum Operator {
     Add,
     Multiply,
+    Concatenation,
 }
 impl Operator {
     fn apply(&self, a: i64, b: i64) -> i64 {
         match self {
             Operator::Add => a + b,
             Operator::Multiply => a * b,
+            Operator::Concatenation => format!("{}{}", a, b).parse().unwrap(),
         }
     }
 }
@@ -80,8 +96,34 @@ fn chains(len: usize) -> Vec<Vec<Operator>> {
         let mut v: Vec<Vec<Operator>> = Vec::new();
 
         let a = chains(len - 1);
-        
+
         for operator in [Operator::Add, Operator::Multiply] {
+            for prev_line in &a {
+                let mut line: Vec<Operator> = Vec::new();
+                line.append(&mut prev_line.clone());
+                line.push(operator);
+                v.push(line);
+            }
+        }
+        v
+    }
+}
+
+fn chains_with_concat(len: usize) -> Vec<Vec<Operator>> {
+    if len == 0 {
+        Vec::new()
+    } else if len == 1 {
+        vec![
+            vec![Operator::Add],
+            vec![Operator::Multiply],
+            vec![Operator::Concatenation],
+        ]
+    } else {
+        let mut v: Vec<Vec<Operator>> = Vec::new();
+
+        let a = chains_with_concat(len - 1);
+
+        for operator in [Operator::Add, Operator::Multiply, Operator::Concatenation] {
             for prev_line in &a {
                 let mut line: Vec<Operator> = Vec::new();
                 line.append(&mut prev_line.clone());
@@ -108,7 +150,7 @@ mod tests {
 292: 11 6 16 20";
 
     #[test]
-    fn test_possible_chains() {
+    fn test_chains() {
         assert_eq!(
             vec![vec![Operator::Add], vec![Operator::Multiply]],
             chains(1)
@@ -131,6 +173,6 @@ mod tests {
 
     #[test]
     fn test_part_two() {
-        // assert_eq!(6, part_two(&parse(EXAMPLE_INPUT)));
+        assert_eq!(11387, part_two(&parse(EXAMPLE_INPUT)));
     }
 }
