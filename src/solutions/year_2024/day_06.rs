@@ -8,6 +8,7 @@ use crate::{
 pub fn solve(input: &str) {
     let matrix = parse(input);
     println!("Part 1: {}", part_one(&matrix));
+    println!("Part 2: {}", part_two(&matrix));
 }
 
 fn parse(input: &str) -> Matrix {
@@ -26,21 +27,54 @@ fn parse(input: &str) -> Matrix {
 }
 
 fn part_one(matrix: &Matrix) -> usize {
+    find_visited(matrix).len()
+}
+
+fn part_two(matrix: &Matrix) -> usize {
+    let mut count = 0;
+    let original = find_visited(matrix);
+
+    for pos in original {
+        if matrix.field(pos) != Field::Guard {
+            let mut m = matrix.clone();
+            m.set_field(pos, Field::Obstacle);
+            if find_circle(&m) {
+                count += 1;
+            }
+        }
+    }
+
+    count
+}
+
+fn find_visited(matrix: &Matrix) -> HashSet<Coord2D> {
     let mut guard = matrix.find_guard();
     let mut visited = HashSet::new();
 
     while matrix.in_bounds(guard.position) {
         visited.insert(guard.position);
-        let new_pos = guard.position + guard.direction.coordinates();
 
-        if matrix.field(new_pos) == Field::Obstacle {
-            guard.rotate();
-        } else {
-            guard.move_to(new_pos);
-        }
+        guard.take_step(matrix);
     }
 
-    visited.len()
+    visited
+}
+
+fn find_circle(matrix: &Matrix) -> bool {
+    let overflow = matrix.size * matrix.size;
+    let mut count = 0;
+    let mut guard = matrix.find_guard();
+
+    while matrix.in_bounds(guard.position) {
+        count += 1;
+        if overflow < count {
+            return true;
+        }
+
+        guard.take_step(matrix);
+    }
+
+    false
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -50,6 +84,7 @@ enum Field {
     Guard,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 struct Matrix {
     grid: Vec<Vec<Field>>,
     size: isize,
@@ -62,6 +97,10 @@ impl Matrix {
         } else {
             Field::Empty
         }
+    }
+
+    fn set_field(&mut self, pos: Coord2D, field: Field) {
+        self.grid[pos.1 as usize][pos.0 as usize] = field
     }
 
     fn find_guard(&self) -> Guard {
@@ -97,6 +136,15 @@ impl Guard {
     fn rotate(&mut self) {
         self.direction = self.direction.rotate_clockwise();
     }
+
+    fn take_step(&mut self, matrix: &Matrix) {
+        let new_pos = self.position + self.direction.coordinates();
+        if matrix.field(new_pos) == Field::Obstacle {
+            self.rotate();
+        } else {
+            self.move_to(new_pos);
+        }
+    }
 }
 
 #[cfg(test)]
@@ -117,5 +165,10 @@ mod tests {
     #[test]
     fn test_part_one() {
         assert_eq!(41, part_one(&parse(EXAMPLE_INPUT)));
+    }
+
+    #[test]
+    fn test_part_two() {
+        assert_eq!(6, part_two(&parse(EXAMPLE_INPUT)));
     }
 }
