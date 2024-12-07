@@ -1,55 +1,31 @@
+use itertools::Itertools;
+
 pub fn solve(input: &str) {
     let (left, right) = parse(input);
-    println!(
-        "Part 1: {}",
-        part_one(&mut left.clone(), &mut right.clone())
-    );
+    println!("Part 1: {}", part_one(&left, &right));
     println!("Part 2: {}", part_two(&left, &right));
 }
 
 fn parse(input: &str) -> (Vec<i64>, Vec<i64>) {
-    let mut left = Vec::new();
-    let mut right = Vec::new();
-
-    for line in input.lines() {
-        if let Some((l, r)) = line.split_once("   ") {
-            left.push(l.parse().unwrap());
-            right.push(r.parse().unwrap());
-        }
-    }
-
-    (left, right)
+    input
+        .lines()
+        .filter_map(|line| line.split_once("   "))
+        .map(|(a, b)| (a.parse::<i64>().unwrap(), b.parse::<i64>().unwrap()))
+        .unzip()
 }
 
-fn part_one(left: &mut Vec<i64>, right: &mut Vec<i64>) -> i64 {
-    left.sort();
-    right.sort();
-
-    let mut sum = 0;
-
-    for i in 0..left.len() {
-        sum += i64::abs(left[i] - right[i]);
-    }
-
-    sum
+fn part_one(left: &[i64], right: &[i64]) -> i64 {
+    left.iter()
+        .sorted()
+        .zip(right.iter().sorted())
+        .map(|(a, b)| i64::abs(a - b))
+        .sum()
 }
 
 fn part_two(left: &[i64], right: &[i64]) -> i64 {
-    let mut sum = 0;
-
-    for elem in left {
-        let mut factor = 0;
-
-        for j in 0..right.len() {
-            if *elem == right[j] {
-                factor += 1;
-            }
-        }
-
-        sum += *elem * factor;
-    }
-
-    sum
+    left.iter()
+        .map(|&x| x * (right.iter().filter(|&&y| y == x).count() as i64))
+        .sum()
 }
 
 #[cfg(test)]
@@ -66,7 +42,7 @@ mod tests {
     #[test]
     fn test_part_one() {
         let (left, right) = parse(EXAMPLE_INPUT);
-        assert_eq!(11, part_one(&mut left.clone(), &mut right.clone()));
+        assert_eq!(11, part_one(&left, &right));
     }
 
     #[test]
