@@ -77,6 +77,9 @@ fn is_valid_equation(equation: &Equation, chains: &[Vec<Operator>]) -> bool {
         let mut value = equation.values[0];
         for i in 1..equation.values.len() {
             value = operator_chain[i - 1].apply(value, equation.values[i]);
+            if value > equation.result {
+                break;
+            }
         }
         if value == equation.result {
             return true;
