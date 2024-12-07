@@ -100,7 +100,7 @@ impl Matrix {
     }
 
     fn set_field(&mut self, pos: Coord2D, field: Field) {
-        self.grid[pos.1 as usize][pos.0 as usize] = field
+        self.grid[pos.1 as usize][pos.0 as usize] = field;
     }
 
     fn find_guard(&self) -> Guard {

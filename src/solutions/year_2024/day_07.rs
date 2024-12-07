@@ -1,5 +1,3 @@
-use std::vec;
-
 use crate::parser;
 
 pub fn solve(input: &str) {
@@ -11,8 +9,7 @@ pub fn solve(input: &str) {
 fn parse(input: &str) -> Vec<Equation> {
     parser::lines_custom(input, parse_line)
         .into_iter()
-        .filter(|x| x.is_some())
-        .map(|x| x.unwrap())
+        .flatten()
         .collect()
 }
 
@@ -26,8 +23,8 @@ fn parse_line(line: &str) -> Option<Equation> {
         let equation = Equation {
             result: result.parse().unwrap(),
             values: values
-                .split(" ")
-                .map(|x| x.trim())
+                .split(' ')
+                .map(str::trim)
                 .filter(|x| !x.is_empty())
                 .map(|x| x.parse().unwrap())
                 .collect(),
@@ -40,26 +37,46 @@ fn parse_line(line: &str) -> Option<Equation> {
 }
 
 fn part_one(equations: &[Equation]) -> i64 {
+    let chains = generate_chains(equations, chains);
     equations
         .iter()
-        .filter(|x| is_valid_equation(x, chains))
+        .filter(|x| is_valid_equation(x, &chains[x.values.len()]))
         .map(|x| x.result)
         .sum()
 }
 
 fn part_two(equations: &[Equation]) -> i64 {
+    let chains = generate_chains(equations, chains_with_concat);
     equations
         .iter()
-        .filter(|x| is_valid_equation(x, chains_with_concat))
+        .filter(|x| is_valid_equation(x, &chains[x.values.len()]))
         .map(|x| x.result)
         .sum()
 }
 
-fn is_valid_equation<F>(equation: &Equation, operator_retriever: F) -> bool
+fn generate_chains<F>(
+    equations: &[Equation],
+    operator_retriever: F,
+) -> Vec<Vec<Vec<Operator>>>
 where
     F: Fn(usize) -> Vec<Vec<Operator>>,
 {
-    for operator_chain in operator_retriever(equation.values.len()) {
+    let mut map = Vec::new();
+
+    for i in 0..=equations
+        .iter()
+        .map(|x| x.values.len())
+        .max()
+        .unwrap_or_default()
+    {
+        map.push(operator_retriever(i));
+    }
+
+    map
+}
+
+fn is_valid_equation(equation: &Equation, chains: &[Vec<Operator>]) -> bool {
+    for operator_chain in chains {
         let mut value = equation.values[0];
         for i in 1..equation.values.len() {
             value = operator_chain[i - 1].apply(value, equation.values[i]);
@@ -78,11 +95,11 @@ enum Operator {
     Concatenation,
 }
 impl Operator {
-    fn apply(&self, a: i64, b: i64) -> i64 {
+    fn apply(self, a: i64, b: i64) -> i64 {
         match self {
             Operator::Add => a + b,
             Operator::Multiply => a * b,
-            Operator::Concatenation => format!("{}{}", a, b).parse().unwrap(),
+            Operator::Concatenation => format!("{a}{b}").parse().unwrap(),
         }
     }
 }
