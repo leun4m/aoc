@@ -1,12 +1,45 @@
 use itertools::Itertools;
 use log::debug;
 
-pub fn solve(_: &str) {
-    println!("Part 1: {}", part_one());
-    println!("Part 2: {}", part_two());
+pub fn solve(input: &str) {
+    let boss = parse(input);
+    println!("Part 1: {}", part_one(&boss));
+    println!("Part 2: {}", part_two(&boss));
 }
 
-fn part_one() -> i32 {
+const PLAYER_HP: i32 = 100;
+
+const STR_HIT_POINTS: &str = "Hit Points:";
+const STR_DAMAGE: &str = "Damage:";
+const STR_ARMOR: &str = "Armor:";
+
+fn parse(input: &str) -> Player {
+    let mut hit_points = 0;
+    let mut damage = 0;
+    let mut armor = 0;
+
+    for line in input.lines() {
+        if line.starts_with(STR_HIT_POINTS) {
+            hit_points = line.replace(STR_HIT_POINTS, "").trim().parse().unwrap();
+        }
+
+        if line.starts_with(STR_DAMAGE) {
+            damage = line.replace(STR_DAMAGE, "").trim().parse().unwrap();
+        }
+
+        if line.starts_with(STR_ARMOR) {
+            armor = line.replace(STR_ARMOR, "").trim().parse().unwrap();
+        }
+    }
+
+    Player {
+        hit_points,
+        damage,
+        armor,
+    }
+}
+
+fn part_one(boss: &Player) -> i32 {
     let mut gold = 0;
     let mut has_won = false;
     let all_combos = all_combinations();
@@ -19,47 +52,36 @@ fn part_one() -> i32 {
         let mut min_hp = 200;
         for combi in combis {
             let mut player = Player {
-                hit_points: 100,
+                hit_points: PLAYER_HP,
                 damage: damage(&combi),
                 armor: armor(&combi),
             };
-            let mut boss = Player {
-                hit_points: 109,
-                damage: 8,
-                armor: 2,
-            };
 
-            if fight(&mut player, &mut boss) {
+            if fight(&mut player, &mut boss.clone()) {
                 has_won = true;
             }
             min_hp = std::cmp::min(boss.hit_points, min_hp);
         }
-        println!("{min_hp}");
     }
 
     gold
 }
 
-fn part_two() -> i32 {
-    let mut max_costs = 0;
-    for (combi, cost) in all_combinations() {
-        let mut player = Player {
-            hit_points: 100,
-            damage: damage(&combi),
-            armor: armor(&combi),
-        };
-        let mut boss = Player {
-            hit_points: 109,
-            damage: 8,
-            armor: 2,
-        };
+fn part_two(boss: &Player) -> i32 {
+    all_combinations()
+        .iter()
+        .filter(|(combi, _)| {
+            let mut player = Player {
+                hit_points: PLAYER_HP,
+                damage: damage(&combi),
+                armor: armor(&combi),
+            };
 
-        if !fight(&mut player, &mut boss) {
-            max_costs = std::cmp::max(max_costs, cost);
-        }
-    }
-
-    max_costs
+            !fight(&mut player, &mut boss.clone())
+        })
+        .map(|(_, cost)| *cost)
+        .max()
+        .unwrap()
 }
 
 fn combinations(gold: i32, all_combos: &[(Vec<Item>, i32)]) -> Vec<&Vec<Item>> {
@@ -117,7 +139,7 @@ fn fight(player: &mut Player, boss: &mut Player) -> bool {
     boss.hit_points < 0
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct Player {
     hit_points: i32,
     damage: i32,
@@ -266,6 +288,22 @@ const RINGS: [Item; 8] = [
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    const EXAMPLE_INPUT: &str = "Hit Points: 109
+Damage: 8
+Armor: 2";
+
+    #[test]
+    fn test_parse() {
+        assert_eq!(
+            Player {
+                hit_points: 109,
+                damage: 8,
+                armor: 2
+            },
+            parse(EXAMPLE_INPUT)
+        );
+    }
 
     #[test]
     fn test_fight() {
