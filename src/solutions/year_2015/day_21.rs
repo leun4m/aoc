@@ -1,19 +1,21 @@
 use itertools::Itertools;
+use log::debug;
 
 pub fn solve(_: &str) {
     println!("Part 1: {}", part_one());
+    println!("Part 2: {}", part_two());
 }
 
 fn part_one() -> i32 {
     let mut gold = 0;
     let mut has_won = false;
     let all_combos = all_combinations();
-    println!("all_combos: {}", all_combos.len());
+    debug!("all_combos: {}", all_combos.len());
     while !has_won {
         gold += 1;
         let combis = combinations(gold, &all_combos);
 
-        println!("Gold: {gold}\tCombis: {}", combis.len());
+        debug!("Gold: {gold}\tCombis: {}", combis.len());
         let mut min_hp = 200;
         for combi in combis {
             let mut player = Player {
@@ -36,6 +38,28 @@ fn part_one() -> i32 {
     }
 
     gold
+}
+
+fn part_two() -> i32 {
+    let mut max_costs = 0;
+    for (combi, cost) in all_combinations() {
+        let mut player = Player {
+            hit_points: 100,
+            damage: damage(&combi),
+            armor: armor(&combi),
+        };
+        let mut boss = Player {
+            hit_points: 109,
+            damage: 8,
+            armor: 2,
+        };
+
+        if !fight(&mut player, &mut boss) {
+            max_costs = std::cmp::max(max_costs, cost);
+        }
+    }
+
+    max_costs
 }
 
 fn combinations(gold: i32, all_combos: &[(Vec<Item>, i32)]) -> Vec<&Vec<Item>> {
