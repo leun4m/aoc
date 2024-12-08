@@ -136,7 +136,7 @@ fn fight(player: &mut Player, boss: &mut Player) -> bool {
         players_turn = !players_turn;
     }
 
-    boss.hit_points < 0
+    boss.hit_points <= 0
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
