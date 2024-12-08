@@ -51,13 +51,13 @@ fn part_one(boss: &Player) -> i32 {
         debug!("Gold: {gold}\tCombis: {}", combis.len());
         let mut min_hp = 200;
         for combi in combis {
-            let mut player = Player {
+            let player = Player {
                 hit_points: PLAYER_HP,
-                damage: damage(&combi),
-                armor: armor(&combi),
+                damage: damage(combi),
+                armor: armor(combi),
             };
 
-            if fight(&mut player, &mut boss.clone()) {
+            if fight(&player, boss) {
                 has_won = true;
             }
             min_hp = std::cmp::min(boss.hit_points, min_hp);
@@ -71,13 +71,13 @@ fn part_two(boss: &Player) -> i32 {
     all_combinations()
         .iter()
         .filter(|(combi, _)| {
-            let mut player = Player {
+            let player = Player {
                 hit_points: PLAYER_HP,
-                damage: damage(&combi),
-                armor: armor(&combi),
+                damage: damage(combi),
+                armor: armor(combi),
             };
 
-            !fight(&mut player, &mut boss.clone())
+            !fight(&player, boss)
         })
         .map(|(_, cost)| *cost)
         .max()
@@ -124,19 +124,26 @@ fn ring_combinations() -> Vec<Vec<Item>> {
         .collect()
 }
 
-fn fight(player: &mut Player, boss: &mut Player) -> bool {
+fn fight(player: &Player, boss: &Player) -> bool {
     let mut players_turn = true;
-    while player.hit_points > 0 && boss.hit_points > 0 {
+
+    let mut boss_hp = boss.hit_points;
+    let mut player_hp = player.hit_points;
+
+    let player_attack = std::cmp::max(1, player.damage - boss.armor);
+    let boss_attack = std::cmp::max(1, boss.damage - player.armor);
+
+    while player_hp > 0 && boss_hp > 0 {
         if players_turn {
-            boss.hit_points -= std::cmp::max(1, player.damage - boss.armor);
+            boss_hp -= player_attack;
         } else {
-            player.hit_points -= std::cmp::max(1, boss.damage - player.armor);
+            player_hp -= boss_attack;
         }
 
         players_turn = !players_turn;
     }
 
-    boss.hit_points <= 0
+    boss_hp <= 0
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -307,16 +314,16 @@ Armor: 2";
 
     #[test]
     fn test_fight() {
-        let mut player = Player {
+        let player = Player {
             hit_points: 8,
             damage: 5,
             armor: 5,
         };
-        let mut boss = Player {
+        let boss = Player {
             hit_points: 12,
             damage: 7,
             armor: 2,
         };
-        assert_eq!(true, fight(&mut player, &mut boss));
+        assert!(fight(&player, & boss));
     }
 }
