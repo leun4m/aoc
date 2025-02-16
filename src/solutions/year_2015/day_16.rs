@@ -11,6 +11,11 @@ struct Aunt {
 
 type AuntData = HashMap<String, u32>;
 
+lazy_static!(
+    static ref SUE_REGEX: Regex = Regex::new(r"Sue (\d+): ([^$]+)").unwrap();
+    static ref ATTRIBUTE_REGEX :Regex = Regex::new(r"(\w+): (\d+)").unwrap();
+);
+
 pub fn solve(input: &str) {
     let aunts = parser::lines_custom(input, parse_aunt);
 
@@ -21,8 +26,7 @@ pub fn solve(input: &str) {
 fn parse_aunt(line: &str) -> Aunt {
     let mut result = HashMap::new();
     // Sue 1: goldfish: 6, trees: 9, akitas: 0
-    let captures = Regex::new(r"Sue (\d+): ([^$]+)")
-        .unwrap()
+    let captures =  SUE_REGEX
         .captures(line)
         .expect("Looks weird");
 
@@ -30,8 +34,7 @@ fn parse_aunt(line: &str) -> Aunt {
     let attributes: String = captures[2].parse().unwrap();
 
     for attribute in attributes.split(',') {
-        let attribute_captures = Regex::new(r"(\w+): (\d+)")
-            .unwrap()
+        let attribute_captures = ATTRIBUTE_REGEX
             .captures(attribute)
             .unwrap();
         let key = attribute_captures[1].parse().unwrap();

@@ -43,7 +43,10 @@ fn part_one(equations: &[Equation]) -> i64 {
 }
 
 fn part_two(equations: &[Equation]) -> i64 {
-    solve_part(equations, &[Operator::Add, Operator::Multiply, Operator::Concatenation])
+    solve_part(
+        equations,
+        &[Operator::Add, Operator::Multiply, Operator::Concatenation],
+    )
 }
 
 fn solve_part(equations: &[Equation], operators: &[Operator]) -> i64 {
@@ -67,20 +70,17 @@ fn generate_chains(equations: &[Equation], operators: &[Operator]) -> Vec<Vec<Ve
 
 fn is_valid_equation(equation: &Equation, chains: &[Vec<Operator>]) -> bool {
     chains.iter().any(|chain| {
-        equation
-            .values
-            .iter()
-            .skip(1)
-            .zip(chain)
-            .try_fold(equation.values[0], |acc, (&x, operator)| {
+        equation.values.iter().skip(1).zip(chain).try_fold(
+            equation.values[0],
+            |acc, (&x, operator)| {
                 let new_value = operator.apply(acc, x);
                 if new_value > equation.result {
                     None
                 } else {
                     Some(new_value)
                 }
-            })
-            .map_or(false, |final_value| final_value == equation.result)
+            },
+        ) == Some(equation.result)
     })
 }
 

@@ -14,8 +14,8 @@ pub fn solve(input: &str) {
 fn main_internal(input: &str) -> (u32, u32) {
     let mut io_matrix = create_2d_matrix(WIDTH, HEIGHT, false);
     let mut led_matrix = create_2d_matrix(WIDTH, HEIGHT, 0);
+    let regex = Regex::new(r"^(.+) (\d+),(\d+) through (\d+),(\d+)$").unwrap();
     for line in input.lines() {
-        let regex = Regex::new(r"^(.+) (\d+),(\d+) through (\d+),(\d+)$").unwrap();
         let cap = regex
             .captures(line)
             .unwrap_or_else(|| panic!("Invalid cmd: {}", &line));

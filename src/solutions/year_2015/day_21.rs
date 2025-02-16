@@ -324,6 +324,6 @@ Armor: 2";
             damage: 7,
             armor: 2,
         };
-        assert!(fight(&player, & boss));
+        assert!(fight(&player, &boss));
     }
 }
