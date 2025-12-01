@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::LazyLock};
 
 use chrono::{DateTime, Duration, NaiveDateTime, NaiveTime, Timelike, Utc};
 use itertools::Itertools;
@@ -125,10 +125,10 @@ impl MostAsleep {
     }
 }
 
-static LINE_REGEX: std::sync::LazyLock<Regex> =
-    std::sync::LazyLock::new(|| Regex::new(r"\[(\d\d\d\d-\d\d-\d\d \d\d:\d\d)\] (.*)").unwrap());
-static GUARD_REGEX: std::sync::LazyLock<Regex> =
-    std::sync::LazyLock::new(|| Regex::new(r"Guard #(\d+) begins shift").unwrap());
+static LINE_REGEX: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"\[(\d\d\d\d-\d\d-\d\d \d\d:\d\d)\] (.*)").unwrap());
+static GUARD_REGEX: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"Guard #(\d+) begins shift").unwrap());
 
 const DATE_TIME_FORMAT: &str = "%Y-%m-%d %H:%M";
 

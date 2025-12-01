@@ -1,6 +1,6 @@
 use itertools::Itertools;
 use regex::Regex;
-use std::cmp::min;
+use std::{cmp::min, sync::LazyLock};
 
 pub fn solve(input: &str) {
     let operations = input
@@ -26,10 +26,8 @@ const SCREEN_HEIGHT: usize = 6;
 
 const CHAR_WIDTH: usize = 5;
 
-static ROTATION_REGEX: std::sync::LazyLock<Regex> =
-    std::sync::LazyLock::new(|| Regex::new(r"=(\d+) by (\d+)").unwrap());
-static RECT_REGEX: std::sync::LazyLock<Regex> =
-    std::sync::LazyLock::new(|| Regex::new(r"(\d+)x(\d+)").unwrap());
+static ROTATION_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"=(\d+) by (\d+)").unwrap());
+static RECT_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(\d+)x(\d+)").unwrap());
 
 struct Screen {
     pixels: [[bool; SCREEN_WIDTH]; SCREEN_HEIGHT],

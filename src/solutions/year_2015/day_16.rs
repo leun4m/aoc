@@ -1,5 +1,5 @@
 use regex::Regex;
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::LazyLock};
 
 use crate::parser;
 
@@ -11,10 +11,8 @@ struct Aunt {
 
 type AuntData = HashMap<String, u32>;
 
-static SUE_REGEX: std::sync::LazyLock<Regex> =
-    std::sync::LazyLock::new(|| Regex::new(r"Sue (\d+): ([^$]+)").unwrap());
-static ATTRIBUTE_REGEX: std::sync::LazyLock<Regex> =
-    std::sync::LazyLock::new(|| Regex::new(r"(\w+): (\d+)").unwrap());
+static SUE_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"Sue (\d+): ([^$]+)").unwrap());
+static ATTRIBUTE_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(\w+): (\d+)").unwrap());
 
 pub fn solve(input: &str) {
     let aunts = parser::lines_custom(input, parse_aunt);
