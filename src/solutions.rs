@@ -10,6 +10,7 @@ mod year_2021;
 mod year_2022;
 mod year_2023;
 mod year_2024;
+mod year_2025;
 
 pub fn solve(year: u16, day: u8, input: &str) {
     match year {
@@ -23,6 +24,7 @@ pub fn solve(year: u16, day: u8, input: &str) {
         22 | 2022 => year_2022::solve_day(day, input),
         23 | 2023 => year_2023::solve_day(day, input),
         24 | 2024 => year_2024::solve_day(day, input),
+        25 | 2025 => year_2025::solve_day(day, input),
         _ => println!("{}", util::INVALID_YEAR),
     }
 }
