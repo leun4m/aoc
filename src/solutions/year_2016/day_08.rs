@@ -26,10 +26,10 @@ const SCREEN_HEIGHT: usize = 6;
 
 const CHAR_WIDTH: usize = 5;
 
-lazy_static! {
-    static ref ROTATION_REGEX: Regex = Regex::new(r"=(\d+) by (\d+)").unwrap();
-    static ref RECT_REGEX: Regex = Regex::new(r"(\d+)x(\d+)").unwrap();
-}
+static ROTATION_REGEX: std::sync::LazyLock<Regex> =
+    std::sync::LazyLock::new(|| Regex::new(r"=(\d+) by (\d+)").unwrap());
+static RECT_REGEX: std::sync::LazyLock<Regex> =
+    std::sync::LazyLock::new(|| Regex::new(r"(\d+)x(\d+)").unwrap());
 
 struct Screen {
     pixels: [[bool; SCREEN_WIDTH]; SCREEN_HEIGHT],

@@ -21,7 +21,7 @@ const REPLACEMENT_ARROW: &str = "=>";
 const PLACEHOLDER: &str = "@";
 const START: &str = "e";
 
-fn parse(input: &str) -> (&str, Replacements) {
+fn parse(input: &str) -> (&str, Replacements<'_>) {
     let relevant_lines = parser::lines_as_strings(input);
     let origin = relevant_lines
         .iter()
@@ -117,7 +117,7 @@ mod tests {
     H => HO
     H => OH
     O => HH
-    
+
     HOH";
 
     #[test]

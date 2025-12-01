@@ -17,10 +17,10 @@ fn parse(input: &str) -> (Vec<Instruction>, NodeMap) {
 const LETTERS: usize = 'Z' as usize - 'A' as usize + 1;
 const SIZE: usize = LETTERS * LETTERS * LETTERS;
 
-type NodeMap = [(usize, usize); SIZE];
+type NodeMap = Vec<(usize, usize)>;
 
 fn parse_nodes(input: &str) -> NodeMap {
-    let mut nodes = [(0, 0); SIZE];
+    let mut nodes = vec![(0, 0); SIZE];
 
     input.lines().for_each(|line| {
         let replaced = &line.replace(['=', '(', ')', ','], "");

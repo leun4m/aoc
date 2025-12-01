@@ -137,7 +137,7 @@ impl Player {
 
     fn add_score(&mut self, score: u64) {
         self.position += score;
-        if self.position % BOARD_MAX == 0 {
+        if self.position.is_multiple_of(BOARD_MAX) {
             self.position = BOARD_MAX;
         } else {
             self.position %= BOARD_MAX;

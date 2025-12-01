@@ -137,21 +137,14 @@ where
     }
 }
 
+#[derive(Default)]
 enum Distance<W>
 where
     W: Ord,
 {
     Some(W),
+    #[default]
     Infinite,
-}
-
-impl<W> Default for Distance<W>
-where
-    W: Ord,
-{
-    fn default() -> Self {
-        Self::Infinite
-    }
 }
 
 impl<W> PartialOrd<W> for Distance<W>

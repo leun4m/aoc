@@ -9,9 +9,6 @@
     clippy::similar_names
 )]
 
-#[macro_use]
-extern crate lazy_static;
-
 mod euclidic;
 mod graph;
 mod parser;

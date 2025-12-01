@@ -59,18 +59,13 @@ fn manhatten_distance(point: Point) -> i32 {
     point.x.abs() + point.y.abs()
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, Default)]
 enum Direction {
+    #[default]
     Right,
     Up,
     Down,
     Left,
-}
-
-impl Default for Direction {
-    fn default() -> Self {
-        Self::Right
-    }
 }
 
 #[derive(Debug, Default)]

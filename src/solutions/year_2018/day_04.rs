@@ -125,10 +125,10 @@ impl MostAsleep {
     }
 }
 
-lazy_static! {
-    static ref LINE_REGEX: Regex = Regex::new(r"\[(\d\d\d\d-\d\d-\d\d \d\d:\d\d)\] (.*)").unwrap();
-    static ref GUARD_REGEX: Regex = Regex::new(r"Guard #(\d+) begins shift").unwrap();
-}
+static LINE_REGEX: std::sync::LazyLock<Regex> =
+    std::sync::LazyLock::new(|| Regex::new(r"\[(\d\d\d\d-\d\d-\d\d \d\d:\d\d)\] (.*)").unwrap());
+static GUARD_REGEX: std::sync::LazyLock<Regex> =
+    std::sync::LazyLock::new(|| Regex::new(r"Guard #(\d+) begins shift").unwrap());
 
 const DATE_TIME_FORMAT: &str = "%Y-%m-%d %H:%M";
 
@@ -248,7 +248,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "not working on GitHub?!"]
+    // #[ignore = "not working on GitHub?!"]
     fn part_two_works() {
         let result = part_two(&sum_minutes_asleep(&mut parse(INPUT)));
         assert_eq!(4455, result);

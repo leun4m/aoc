@@ -34,13 +34,16 @@ fn part_two(aim: u64, start: u64) -> u64 {
 }
 
 fn presents_in_house(house: u64) -> u64 {
-    (1..=house).filter(|i| house % i == 0).map(|x| x * 10).sum()
+    (1..=house)
+        .filter(|i| house.is_multiple_of(*i))
+        .map(|x| x * 10)
+        .sum()
 }
 
 fn presents_in_house_new(house: u64) -> u64 {
     (1..=house)
         .filter(|i| house / i <= 50)
-        .filter(|i| house % i == 0)
+        .filter(|i| house.is_multiple_of(*i))
         .map(|x| x * 11)
         .sum()
 }

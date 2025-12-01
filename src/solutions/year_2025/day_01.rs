@@ -76,7 +76,6 @@ fn part_two(rotations: &[Rotation]) -> usize {
     counter
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

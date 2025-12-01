@@ -23,11 +23,7 @@ fn part_two(heights: &[u32]) -> u32 {
 }
 
 fn abs_diff(a: u32, b: u32) -> u32 {
-    if a < b {
-        b - a
-    } else {
-        a - b
-    }
+    b.abs_diff(a)
 }
 
 fn step_costs(a: u32) -> u32 {

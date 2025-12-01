@@ -12,7 +12,7 @@ type Cave<'a> = &'a str;
 const START: &str = "start";
 const END: &str = "end";
 
-fn parse(input: &str) -> SimpleGraph<Cave> {
+fn parse(input: &str) -> SimpleGraph<Cave<'_>> {
     let mut graph = SimpleGraph::new();
 
     for (a, b) in input
@@ -27,7 +27,7 @@ fn parse(input: &str) -> SimpleGraph<Cave> {
     graph
 }
 
-fn parse_pair(input: &str) -> (Cave, Cave) {
+fn parse_pair(input: &str) -> (Cave<'_>, Cave<'_>) {
     let words: Vec<&str> = input.trim().split('-').collect();
     (words[0], words[1])
 }

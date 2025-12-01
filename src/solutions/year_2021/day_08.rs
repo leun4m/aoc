@@ -7,7 +7,7 @@ pub fn solve(input: &str) {
     println!("Part 2: {}", part_two(&lines));
 }
 
-fn parse(input: &str) -> Vec<Line> {
+fn parse(input: &str) -> Vec<Line<'_>> {
     input
         .lines()
         .filter(|line| !line.is_empty())
@@ -15,7 +15,7 @@ fn parse(input: &str) -> Vec<Line> {
         .collect()
 }
 
-fn parse_line(line: &str) -> Line {
+fn parse_line(line: &str) -> Line<'_> {
     let splitted: Vec<_> = line.split('|').collect();
     Line {
         patterns: splitted[0]

@@ -23,7 +23,7 @@ type RuleChoices<'a> = HashMap<&'a str, HashSet<usize>>;
 type RuleIndex<'a> = HashMap<&'a str, usize>;
 type PositionTicketNumbers = HashMap<usize, HashSet<TicketNumber>>;
 
-fn parse_input(input: &str) -> (RuleIntervals, Ticket, Vec<Ticket>) {
+fn parse_input(input: &str) -> (RuleIntervals<'_>, Ticket, Vec<Ticket>) {
     let mut lines = input.lines();
     let rules = parse_rules(&mut lines);
     skip_lines_until(&mut lines, INPUT_HEADLINE_YOUR_TICKET);
