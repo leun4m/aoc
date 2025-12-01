@@ -72,7 +72,7 @@ impl CharMatrix {
             .iter()
             .sorted_by_key(|(_, value)| *value)
             .map(|(key, _)| *key)
-            .last()
+            .next_back()
             .unwrap()
     }
 }

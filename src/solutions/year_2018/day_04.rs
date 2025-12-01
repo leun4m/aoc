@@ -19,7 +19,7 @@ fn part_one(guards: &[Guard]) -> u32 {
     let guard = guards
         .iter()
         .sorted_by_key(|g| g.sum_minutes_asleep())
-        .last()
+        .next_back()
         .unwrap();
 
     guard.id * guard.get_minute_most_asleep().minutes()
@@ -31,7 +31,7 @@ fn part_two(guards: &[Guard]) -> u32 {
         .map(|g| (g, g.get_minute_most_asleep()))
         .sorted_by_key(|x| x.1.times())
         .map(|x| (x.0, x.1.minutes()))
-        .last()
+        .next_back()
         .unwrap();
 
     result.0.id * result.1
@@ -93,7 +93,7 @@ impl Guard {
             }
         }
 
-        if let Some(a) = minutes.iter().sorted_by_key(|x| x.1).last() {
+        if let Some(a) = minutes.iter().sorted_by_key(|x| x.1).next_back() {
             MostAsleep::MinuteTimes(a.0.minute(), 0)
         } else {
             MostAsleep::None

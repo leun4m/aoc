@@ -65,7 +65,7 @@ impl Position {
             'v' => self.go_south(),
             '<' => self.go_west(),
             _ => panic!("Unexpected char: {c}"),
-        };
+        }
     }
 }
 

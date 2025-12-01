@@ -63,7 +63,7 @@ where
 }
 
 fn calc_gamma(numbers: &[u32], bit_size: usize) -> u32 {
-    let half = (numbers.len() + 1) / 2;
+    let half = numbers.len().div_ceil(2);
 
     (0..(bit_size as u32))
         .collect::<Vec<u32>>()

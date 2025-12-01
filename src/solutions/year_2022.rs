@@ -12,5 +12,5 @@ pub fn solve_day(day: u8, input: &str) {
         3 => day_03::solve(input),
         8 => day_08::solve(input),
         _ => println!("{INVALID_DAY}"),
-    };
+    }
 }
