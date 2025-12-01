@@ -9,6 +9,8 @@ pub fn solve(input: &str) {
 fn parse(input: &str) -> Vec<Rotation> {
     input
         .lines()
+        .map(str::trim)
+        .filter(|x| !x.is_empty())
         .map(|x| x.split_at(1))
         .map(|(direction, steps)| to_rotation(direction, steps))
         .collect()
@@ -72,4 +74,33 @@ fn part_two(rotations: &[Rotation]) -> usize {
         }
     }
     counter
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const INPUT: &str = "
+L68
+L30
+R48
+L5
+R60
+L55
+L1
+L99
+R14
+L82
+";
+
+    #[test]
+    fn part_one_works() {
+        assert_eq!(3, part_one(&parse(INPUT)));
+    }
+
+    #[test]
+    fn part_two_works() {
+        assert_eq!(6, part_two(&parse(INPUT)));
+    }
 }
